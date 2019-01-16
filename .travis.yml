@@ -1,0 +1,44 @@
+language: node_js
+
+node_js: stable
+
+sudo: required
+
+# 使用安全列表指定要构建的分支
+branches:
+  only:
+  - master
+  - stable
+
+cache: npm
+
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install sshpass
+
+install:
+- npm install -g cnpm --registry=https://registry.npm.taobao.org
+
+script:
+- cnpm i
+- npm run build
+
+addons:
+  ssh_known_hosts:
+   - $HOST
+
+after_success:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker build  -t zealsay/zealsay_material_ui:$TRAVIS_BRANCH-$TRAVIS_BUILD_ID .
+  - docker push zealsay/zealsay_material_ui:$TRAVIS_BRANCH-$TRAVIS_BUILD_ID;
+  - sshpass -p $VPS_PASSWORD ssh -o stricthostkeychecking=no travis@$HOST "/home/travis/zealsay/travis-deploy-web.sh $TRAVIS_BRANCH-$TRAVIS_BUILD_ID"
+
+
+notifications:
+  email:
+    recipients:
+      - zhangleifor@163.com
+      - jinjinyike@163.com
+    on_success: always # default: change
+    on_failure: always # default: always
