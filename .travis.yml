@@ -17,11 +17,9 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install sshpass
 
-install:
-- npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 script:
-- cnpm i
+- npm i
 - npm run build
 
 addons:
