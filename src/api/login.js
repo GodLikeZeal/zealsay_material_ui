@@ -1,7 +1,7 @@
 import request from '@/util/request'
 import qs from 'qs'
 
-export function loginByUsername(username, password) {
+export function loginByUsername (username, password) {
   const data = {
     username,
     password
@@ -13,14 +13,14 @@ export function loginByUsername(username, password) {
   })
 }
 
-export function logout() {
+export function logout () {
   return request({
     url: '/api/v1/authentication/logout',
     method: 'post'
   })
 }
 
-export function getUserInfo(token) {
+export function getUserInfo (token) {
   return request({
     url: '/api/v1/authentication/user',
     method: 'get',
