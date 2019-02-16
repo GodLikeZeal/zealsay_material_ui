@@ -61,7 +61,7 @@ const user = {
         loginByUsername(username, userInfo.password).then(response => {
           const code = response.code
           const data = response.data
-          if (code === 200) {
+          if (code === '200') {
             commit('SET_TOKEN', data.token)
             setToken(data.token)
           } else {
