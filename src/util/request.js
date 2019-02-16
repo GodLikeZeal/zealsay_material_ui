@@ -3,7 +3,6 @@ import cloneDeep from 'lodash.clonedeep'
 import store from '@/store'
 import { createRequestToken } from '@/util/auth'
 
-
 // const prifix = 'http://47.105.51.137:8090'
 const prifix = 'https://api.zealsay.com'
 // console.log(prifix)
@@ -45,7 +44,7 @@ export default function request (options) {
   return fetch(options).then((response) => {
     const { statusText, status } = response
     const data = response.data
-    if (data.code==='404'||data.code==='401') {
+    if (data.code === '404' || data.code === '401') {
       // 跳转404路由
       this.$router.push({ path: `/error/${data.code}` })
       return

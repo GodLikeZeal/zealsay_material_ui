@@ -22,12 +22,12 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <img
-                    src="/static/m.png"
+                    src="../assets/logo.png"
                     alt="Vue Material Admin"
-                    width="120"
-                    height="120"
+                    width="200"
+                    height="150"
                   >
-                  <h1 class="flex my-4 primary--text">Material Admin Template</h1>
+                  <h1 class="flex my-4 primary--text">zealsay 后台系统</h1>
                 </div>
                 <v-form>
                   <v-text-field
@@ -45,6 +45,12 @@
                     type="password"
                     v-model="model.password"
                   ></v-text-field>
+                  <v-alert
+                          :value= alert
+                          type="error"
+                  >
+                    {{msg}}
+                  </v-alert>
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -63,7 +69,7 @@
                   color="primary"
                   @click="login"
                   :loading="loading"
-                >Login</v-btn>
+                >登 录</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -77,6 +83,8 @@
 export default {
   data () {
     return {
+      alert: false,
+      msg: 'aa',
       loading: false,
       model: {
         username: 'zeal',
@@ -104,6 +112,7 @@ export default {
           this.$router.push({ path: this.redirect || '/dashboard' });
         })
         .catch(() => {
+          console.log('失败')
           this.loading = false;
         });
     }
