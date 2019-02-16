@@ -3,16 +3,16 @@ export default [
   {
     path: '*',
     meta: {
-      public: true,
+      public: true
     },
     redirect: {
       path: '/404'
     }
-  },  
+  },
   {
     path: '/404',
     meta: {
-      public: true,
+      public: true
     },
     name: 'NotFound',
     component: () => import(
@@ -24,7 +24,7 @@ export default [
   {
     path: '/403',
     meta: {
-      public: true,
+      public: true
     },
     name: 'AccessDenied',
     component: () => import(
@@ -36,7 +36,7 @@ export default [
   {
     path: '/500',
     meta: {
-      public: true,
+      public: true
     },
     name: 'ServerError',
     component: () => import(
@@ -48,7 +48,7 @@ export default [
   {
     path: '/login',
     meta: {
-      public: true,
+      public: true
     },
     name: 'Login',
     component: () => import(

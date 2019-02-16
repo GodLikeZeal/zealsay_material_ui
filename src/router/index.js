@@ -5,7 +5,7 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
 Vue.use(Router);
-const router =  new Router({
+const router = new Router({
   base: '/',
   mode: 'history',
   linkActiveClass: 'active',
