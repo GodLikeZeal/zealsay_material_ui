@@ -1,74 +1,58 @@
-const Menu =  [
-  { header: 'Apps' },
+const Menu = [
+  { header: '看板' },
   {
     title: 'Dashboard',
     group: 'apps',
     icon: 'dashboard',
-    name: 'Dashboard',
+    name: 'Dashboard'
   },
+  { header: '用户' },
   {
-    title: '用户列表',
-    group: 'apps',
-    icon: 'dashboard',
-    name: 'userList',
-  },
-  {
-    title: 'Widgets',
-    group: 'widgets',
-    component: 'widgets',
-    icon: 'widgets',
+    title: '用户管理',
+    group: 'user',
+    icon: 'group',
     items: [
-      { name: 'social', title: 'Social', component: 'components/social' },
-    ]
-  },  
-  { header: 'UI Elements' },
-  {
-    title: 'General',
-    group: 'components',
-    component: 'components',
-    icon: 'tune',
-    items: [
-      { name: 'alerts', title: 'Alerts', component: 'components/alerts' },
+      { name: 'list', title: '用户列表', component: 'userList' },
+      { name: 'add', title: '用户添加', component: 'components/social' }
     ]
   },
   {
-    title: 'Layout',
-    group: 'layout',
-    component: 'layout',
-    icon: 'view_compact',
+    title: '角色管理',
+    group: 'role',
+    icon: 'people_outline',
     items: [
-      { name: 'bottom-sheets', title: 'Bottom panels', component: 'components/bottom-sheets' },
-    ]
-  },  
-  {
-    title: 'Forms & Controls',
-    group: 'forms',
-    component: 'forms',
-    icon: 'edit',
-    items: [
-      { name: 'basic', title: 'General', component: 'components/basic-forms' },
+      { name: 'list', title: '角色列表', component: 'components/social' },
+      { name: 'add', title: '角色添加', component: 'components/social' }
     ]
   },
-  { divider: true },
-  { header: 'Extras' },
+  { header: '站点资源' },
   {
-    title: 'Pages',
-    group: 'extra',
-    icon: 'list',
+    title: '文章',
+    group: 'article',
+    icon: 'book',
     items: [
-      { name: 'Login', title: 'Login', component: 'Login' },
-      { name: '404', title: '404', component: 'NotFound' },
-      { name: '403', title: '403', component: 'AccessDenied' },
-      { name: '500', title: '500', component: 'ServerError' },
+      { name: 'list', title: '文章列表', component: 'components/alerts' },
+      { name: 'write', title: '写文章', component: 'components/alerts' },
+      { name: 'menu', title: '分类目录', component: 'components/alerts' },
+      { name: 'label', title: '标签管理', component: 'components/alerts' }
     ]
   },
+  {
+    title: '媒体',
+    group: 'media',
+    icon: 'panorama',
+    items: [
+      { name: 'list', title: '媒体库', component: 'components/alerts' },
+      { name: 'write', title: '添加', component: 'components/alerts' }
+    ]
+  }
 ];
 // reorder menu
 Menu.forEach((item) => {
   if (item.items) {
     item.items.sort((x, y) => {
-      let textA = x.title.toUpperCase();
-      let textB = y.title.toUpperCase();
+      const textA = x.title.toUpperCase();
+      const textB = y.title.toUpperCase();
       return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
     });
   }
