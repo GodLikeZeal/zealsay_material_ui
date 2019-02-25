@@ -30,10 +30,10 @@
                   <h1 class="flex my-4 primary--text">zealsay 后台系统</h1>
                 </div>
                 <v-alert
-                  :value="errVisible"
+                  :value="visible"
                   type="info"
                 >
-                  {{errMessage}}
+                  {{errMsg}}
                 </v-alert>
                 <v-form>
                   <v-text-field
@@ -97,8 +97,8 @@ export default {
         password: "123456"
       },
       redirect: undefined,
-      errVisible:false,
-      errMessage:""
+      visible:false,
+      errMsg:""
     };
   },
   watch: {
@@ -119,13 +119,13 @@ export default {
           this.loading = false;
           this.$router.push({ path: this.redirect || "/dashboard" });
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          console.log("失败");
           this.loading = false;
-          this.errVisible=true;
-          this.errMessage=error;
+          this.visible=true;
+          this.errMsg=err;
           setTimeout(()=>{
-            this.errVisible=false;
+            this.visible=false
           },3000)
         });
     }
