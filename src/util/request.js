@@ -49,19 +49,21 @@ export default function request (options) {
       this.$router.push({ path: `/error/${data.code}` })
       return
     }
-    // if(data.code!=='200'){
-    //   Message({
-    //     message: data.message,
-    //     type: 'error',
-    //     duration: 5 * 1000
-    //   })
-    // }
+    if(data.code!=='200'){
+      // Message({
+      //   message: data.message,
+      //   type: 'error',
+      //   duration: 5 * 1000
+      // })
+    }
     return Promise.resolve({
       success: true,
       statusCode: status,
       ...data
     })
+    
   }).catch((error) => {
+    console.log(error)
     const { response } = error
     let msg
     let statusCode
