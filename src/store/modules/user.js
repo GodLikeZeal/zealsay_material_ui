@@ -66,7 +66,7 @@ const user = {
             setToken(data.token)
             resolve()
           } else {
-            reject(data.message)
+            reject(response.message)
           }
         }).catch(error => {
           reject(error)
