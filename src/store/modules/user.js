@@ -64,10 +64,10 @@ const user = {
           if (code === '200') {
             commit('SET_TOKEN', data.token)
             setToken(data.token)
+            resolve()
           } else {
-
+            reject(data.message)
           }
-          resolve()
         }).catch(error => {
           reject(error)
         })

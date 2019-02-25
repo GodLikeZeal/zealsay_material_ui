@@ -29,6 +29,12 @@
                   >
                   <h1 class="flex my-4 primary--text">zealsay 后台系统</h1>
                 </div>
+                <v-alert
+                  :value="visible"
+                  type="info"
+                >
+                  {{errMsg}}
+                </v-alert>
                 <v-form>
                   <v-text-field
                     append-icon="person"
@@ -46,8 +52,8 @@
                     v-model="model.password"
                   ></v-text-field>
                   <v-alert
-                          :value= alert
-                          type="error"
+                    :value=alert
+                    type="error"
                   >
                     {{msg}}
                   </v-alert>
@@ -81,39 +87,46 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       alert: false,
-      msg: 'aa',
+      msg: "aa",
       loading: false,
       model: {
-        username: 'zeal',
-        password: '123456'
+        username: "zeal",
+        password: "123456"
       },
-      redirect: undefined
+      redirect: undefined,
+      visible:false,
+      errMsg:""
     };
   },
   watch: {
     $route: {
-      handler: function (route) {
+      handler: function(route) {
         this.redirect = route.query && route.query.redirect;
       },
       immediate: true
     }
   },
   methods: {
-    login () {
+    login() {
       this.loading = true;
       // 登录接口待调试
       this.$store
-        .dispatch('LoginByUsername', this.model)
+        .dispatch("LoginByUsername", this.model)
         .then(() => {
           this.loading = false;
-          this.$router.push({ path: this.redirect || '/dashboard' });
+          this.$router.push({ path: this.redirect || "/dashboard" });
         })
-        .catch(() => {
-          console.log('失败')
+        .catch((err) => {
+          console.log("失败");
           this.loading = false;
+          this.visible=true;
+          this.errMsg=err;
+          setTimeout(()=>{
+            this.visible=false
+          },3000)
         });
     }
   }
