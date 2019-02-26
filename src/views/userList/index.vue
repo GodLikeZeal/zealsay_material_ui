@@ -57,15 +57,12 @@
         slot-scope="props"
       >
         <td>
-          <v-layout>
-            <v-img
-              :src='props.item.avatar'
-              class="img"
-              width='30'
-              height='30'
-              contain
-            ></v-img>
-          </v-layout>
+          <v-avatar
+                  size="32px"
+                  color="grey lighten-4"
+          >
+            <img :src='props.item.avatar' alt="avatar">
+          </v-avatar>
         </td>
         <td>{{ props.item.username }}</td>
         <td>{{ props.item.name }}</td>
@@ -78,52 +75,14 @@
             justify-space-around
             class="mb-2"
           >
-            <v-icon blue @click="handleClick(props.item)">info</v-icon>
+            <v-icon blue @click="handleClick(props.item)">fa-vcard</v-icon>
             <v-icon @click="formTrue('编辑',props.item)">fa-edit</v-icon>
           </v-layout>
         </td>
       </template>
     </v-data-table>
-    <v-dialog
-      v-model="dialogVisible"
-      width="500"
-    >
-      <v-card>
-        <v-card-title
-        >
-          <span class="headline">账户详情</span>
-        </v-card-title>
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            flat
-            @click="dialogVisible = false"
-          >
-            YES
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="formVisible" max-width="500px">
-        <v-card>
-            <v-card-title>
-                <span class="headline">{{ title }}</span>
-            </v-card-title>
-            <v-card-text>
-                <forms ref='addForm' :sum='succModel' :ruleForm="row" :type='title=="编辑"?1:0'></forms>
-            </v-card-text>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click="formVisible=false">Cancel</v-btn>
-                <v-btn color="blue darken-1" flat @click="sumForm">Save</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+
+
   </div>
 </template>
 <script>
