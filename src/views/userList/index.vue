@@ -66,16 +66,19 @@
         </td>
         <td>{{ props.item.username }}</td>
         <td>{{ props.item.name }}</td>
-        <td>{{ props.item.email }}</td>
+        <td v-if="props.item.sex==0"> <img width="24px" src="../../assets/sex/boy.png"/></td>
+        <td v-if="props.item.sex==1"> <img width="24px" src="../../assets/sex/girl.png"/></td>
         <td>{{ props.item.age }}</td>
-        <td>{{ props.item.sex==0?'男':'女' }}</td>
-        <td>{{ props.item.status }}</td>
+        <td>{{ props.item.email }}</td>
+        <td v-if="props.item.status == 'NORMAL'" class="text-info">正常</td>
+        <td v-if="props.item.status == 'DISABLED'" class="text-error">禁用</td>
+        <td v-if="props.item.status == 'LOCK'" class="text-warning">锁定</td>
         <td>
           <v-layout
             justify-space-around
             class="mb-2"
           >
-            <v-icon blue @click="handleClick(props.item)">fa-vcard</v-icon>
+            <v-icon @click="handleClick(props.item)">fa-vcard</v-icon>
             <v-icon @click="formTrue('编辑',props.item)">fa-edit</v-icon>
           </v-layout>
         </td>
@@ -105,10 +108,10 @@ export default {
           value: "username"
         },
         { text: "姓名", value: "name" },
-        { text: "邮箱", value: "email" },
-        { text: "年龄", value: "age" },
         { text: "性别", value: "sex" },
-        { text: "status", value: "status" },
+        { text: "年龄", value: "age" },
+        { text: "邮箱", value: "email" },
+        { text: "状态", value: "status" },
         { text: "操作", value: "" }
       ],
       desserts: [],
@@ -165,6 +168,18 @@ export default {
 .v-image__image {
   width: 30px;
   height: 30px;
+}
+.text-info {
+  color: forestgreen;
+  font-weight: bold;
+}
+.text-error {
+  color: #dc6752;
+  font-weight: bold;
+}
+.text-warning {
+  color: #dca173;
+  font-weight: bold;
 }
 </style>
 
