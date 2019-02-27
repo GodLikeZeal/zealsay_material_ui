@@ -1,4 +1,9 @@
+import Vue from 'vue';
 import VuetifyDialog from 'vuetify-dialog'
+import context from 'vue-router';
+
+const property = '$dialog'
+
 Vue.use(VuetifyDialog, {
   context,
   property,

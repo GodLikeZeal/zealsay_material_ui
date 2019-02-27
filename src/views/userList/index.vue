@@ -78,8 +78,8 @@
             justify-space-around
             class="mb-2"
           >
-            <v-icon @click="handleClick(props.item)">fa-vcard</v-icon>
-            <v-icon @click="formTrue('编辑',props.item)">fa-edit</v-icon>
+            <v-icon @click="handleInfo(props.item)">fa-vcard</v-icon>
+            <v-icon @click="handleEdit('编辑',props.item)">fa-edit</v-icon>
           </v-layout>
         </td>
       </template>
@@ -91,6 +91,7 @@
 <script>
 import { getUserList } from "@/api/user";
 import forms from './components/form'
+
 export default {
     name: "User",
   components: { forms },
@@ -134,7 +135,7 @@ export default {
     sumForm(){
       this.$refs.addForm.submitForm('ruleForm')
     },
-    formTrue(title, row) {
+    handleEdit(title, row) {
       this.title = title;
       if (row) {
         this.row = row;
@@ -142,10 +143,13 @@ export default {
       this.formVisible = true;
       console.log(this.row);
     },
-    handleClick(row) {
+    handleInfo(row) {
       this.row = row;
-      this.dialogVisible = true;
       console.log(this.row);
+      const res =  this.$dialog.confirm({
+        text: '能弹出来让我试试吗?',
+        title: 'Warning'
+      })
     },
   }
 };
