@@ -42,7 +42,6 @@
       >
         <v-btn
           color="info"
-          @click="formTrue('添加用户')"
         >添加</v-btn>
         <v-btn color="info">删除</v-btn>
       </v-flex>
@@ -91,10 +90,11 @@
 <script>
 import { getUserList } from "@/api/user";
 import forms from './components/form'
+import info from './components/info'
 
 export default {
     name: "User",
-  components: { forms },
+  components: { forms,info },
   data() {
     return {
       phone: "",
@@ -146,10 +146,7 @@ export default {
     handleInfo(row) {
       this.row = row;
       console.log(this.row);
-      const res =  this.$dialog.confirm({
-        text: '能弹出来让我试试吗?',
-        title: 'Warning'
-      })
+      const res =  this.$dialog.show(info)
     },
   }
 };

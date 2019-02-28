@@ -16,9 +16,39 @@ Vue.use(VuetifyDialog, {
       }
     },
     icon: false, // to disable icon just put false
-    width: 500
+    title: '操作提示'
   },
-  warning: {},
-  error: {},
-  prompt: {}
+  warning: {
+    actions: {
+      false: '取消',
+      true: {
+        text: '确定',
+        color: 'primary'
+      }
+    },
+    icon: false, // to disable icon just put false
+    title: '警告'
+  },
+  error: {
+    actions: {
+      false: '取消',
+      true: {
+        text: '确定',
+        color: 'primary'
+      }
+    },
+    icon: false, // to disable icon just put false
+    title: '操作失败'
+  },
+  prompt: {
+    actions: {
+      false: '取消',
+      true: {
+        text: '确定',
+        color: 'primary'
+      }
+    },
+    icon: false, // to disable icon just put false
+    title: '操作提示'
+  }
 })
