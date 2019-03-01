@@ -60,7 +60,7 @@
                   size="32px"
                   color="grey lighten-4"
           >
-            <img :src='props.item.avatar' alt="avatar">
+            <v-img :lazy-src="props.item.avatar" :src="props.item.avatar" alt="avatar"></v-img>
           </v-avatar>
         </td>
         <td>{{ props.item.username }}</td>

@@ -1,22 +1,44 @@
 <template>
-    <v-card>
-        <v-img
-                src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-                aspect-ratio="2.75"
-        ></v-img>
-
-        <v-card-title primary-title>
-            <div>
-                <h3 class="headline mb-0">Kangaroo Valley Safari</h3>
-                <div> {{ card_text }} </div>
-            </div>
-        </v-card-title>
-
-        <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
-            <v-btn flat color="orange">Explore</v-btn>
-        </v-card-actions>
-    </v-card>
+    <v-layout>
+        <v-flex >
+            <v-card>
+                <v-img
+                        class="white--text"
+                        height="200px"
+                        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+                >
+                    <v-container fill-height fluid>
+                        <v-layout fill-height>
+                            <v-flex xs12 align-end flexbox>
+                                <v-img class="avator" height="64" width="64" src="https://pan.zealsay.com/d01373f082025aaf26d82daff3edab64024f1aef.jpg"></v-img>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-img>
+                <v-card-title>
+                    <div>
+                        <span class="grey--text">21 岁</span>
+                        <v-divider
+                                class="mx-3"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <span>男</span>
+                        <v-divider
+                                class="mx-3"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <span>zeal</span>
+                    </div>
+                </v-card-title>
+                <v-card-actions>
+                    <v-btn flat color="orange">Share</v-btn>
+                    <v-btn flat color="orange">Explore</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-flex>
+    </v-layout>
 </template>
 
 <script>
@@ -30,6 +52,9 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+    .avator {
+        margin: 60px auto auto;
+        border-radius: 50%;
+    }
 </style>
