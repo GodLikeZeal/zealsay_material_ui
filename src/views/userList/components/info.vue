@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <v-flex >
+        <v-flex>
             <v-card>
                 <v-img
                         class="white--text"
@@ -10,26 +10,29 @@
                     <v-container fill-height fluid>
                         <v-layout fill-height>
                             <v-flex xs12 align-end flexbox>
-                                <v-img class="avator" height="64" width="64" src="https://pan.zealsay.com/d01373f082025aaf26d82daff3edab64024f1aef.jpg"></v-img>
+                                <v-img class="avator" height="64" width="64"
+                                       src="https://pan.zealsay.com/d01373f082025aaf26d82daff3edab64024f1aef.jpg"></v-img>
                             </v-flex>
                         </v-layout>
                     </v-container>
                 </v-img>
                 <v-card-title>
-                    <div>
-                        <span class="grey--text">21 岁</span>
+                    <div class="row center">
+                        <span class="teal--text xs4">{{ row.age }} 岁</span>
                         <v-divider
                                 class="mx-3"
+                                dark
                                 inset
                                 vertical
                         ></v-divider>
-                        <span>男</span>
+                        <span class="xs4">男</span>
                         <v-divider
                                 class="mx-3"
+                                dark
                                 inset
                                 vertical
                         ></v-divider>
-                        <span>zeal</span>
+                        <span class="xs4">zeal</span>
                     </div>
                 </v-card-title>
                 <v-card-actions>
@@ -44,9 +47,21 @@
 <script>
     export default {
         name: "info",
-        data () {
+        props: {
+            row:{
+                type: Object,
+                default: function () {
+                    return {
+                        age:'',
+                        sex:''
+                    }
+                }
+            }
+        },
+        data() {
             return {
-                card_text: 'Lorem ipsum dolor sit amet, brute iriure accusata ne mea. Eos suavitate referrentur ad, te duo agam libris qualisque, utroque quaestio accommodare no qui. Et percipit laboramus usu, no invidunt verterem nominati mel. Dolorem ancillae an mei, ut putant invenire splendide mel, ea nec propriae adipisci. Ignota salutandi accusamus in sed, et per malis fuisset, qui id ludus appareat.'
+                age: 12,
+                sex: '男'
             }
         }
     }
@@ -56,5 +71,9 @@
     .avator {
         margin: 60px auto auto;
         border-radius: 50%;
+    }
+
+    .center {
+        margin: 0 auto;
     }
 </style>
