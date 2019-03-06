@@ -66,8 +66,8 @@
                 </td>
                 <td>{{ props.item.username }}</td>
                 <td>{{ props.item.name }}</td>
-                <td v-if="props.item.sex==0"><img width="24px" src="../../assets/sex/boy.png"/></td>
-                <td v-if="props.item.sex==1"><img width="24px" src="../../assets/sex/girl.png"/></td>
+                <td v-if="props.item.sex==1"><img width="24px" src="../../assets/sex/boy.png"/></td>
+                <td v-if="props.item.sex==0"><img width="24px" src="../../assets/sex/girl.png"/></td>
                 <td>{{ props.item.age }}</td>
                 <td>{{ props.item.email }}</td>
                 <td v-if="props.item.status == 'NORMAL'" class="text-info">正常</td>
@@ -146,7 +146,7 @@
             handleInfo(row) {
                 this.row = row;
                 console.log(this.row);
-                const res = this.$dialog.show(info)
+                const res = this.$dialog.show(info,{row:row})
             },
         }
     };

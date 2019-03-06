@@ -11,34 +11,27 @@
                         <v-layout fill-height>
                             <v-flex xs12 align-end flexbox>
                                 <v-img class="avator" height="64" width="64"
-                                       src="https://pan.zealsay.com/d01373f082025aaf26d82daff3edab64024f1aef.jpg"></v-img>
+                                       :lazy-src="row.avatar" :src="row.avatar"></v-img>
                             </v-flex>
                         </v-layout>
                     </v-container>
                 </v-img>
                 <v-card-title>
                     <div class="row center">
-                        <span class="teal--text xs4">{{ row.age }} 岁</span>
-                        <v-divider
-                                class="mx-3"
-                                dark
-                                inset
-                                vertical
-                        ></v-divider>
-                        <span class="xs4">男</span>
-                        <v-divider
-                                class="mx-3"
-                                dark
-                                inset
-                                vertical
-                        ></v-divider>
-                        <span class="xs4">zeal</span>
+                        <span class="indigo--text text-detail">{{ row.age }} 岁</span>
+                        <span class="text-detail" v-if="row.sex==1" title="男"><img width="15px" src="../../../assets/sex/boy.png"/></span>
+                        <span class="text-detail" v-if="row.sex==0" title="女"><img width="15px" src="../../../assets/sex/girl.png"/></span>
+                        <span class="indigo--text text-detail">{{ row.username }}</span>
                     </div>
+                    <v-card-text>
+                        <p class="grey--text"> <span class="text-detail">姓名 ：{{ row.name }}</span>  <span>城市：{{ row.city ? row.city : "暂无"}}</span>  <span class="text-detail">注册于：{{ row.registerAt }} </span></p>
+                        <p v-if="row.phoneNumber" ><span class="text-detail grey--text">手机号 ：{{ row.phoneNumber }}</span> <v-icon small color="success"> fa-check-circle</v-icon><span  class="green--text"> 已绑定</span></p>
+                        <p v-else><span class="text-detail grey--text">手机号 ：无</span> <v-icon small color="warning"> fa-exclamation-circle</v-icon><span  class="orange--text"> 未绑定</span></p>
+                        <p v-if="row.email" ><span class="text-detail grey--text">邮 箱 ：{{ row.email }}</span> <v-icon small color="success"> fa-check-circle</v-icon><span  class="green--text"> 已绑定</span></p>
+                        <p v-else><span class="text-detail grey--text">邮 箱 ：无</span> <v-icon small color="warning"> fa-exclamation-circle</v-icon><span  class="orange--text"> 未绑定</span></p>
+                        <p class="grey--text"><span class="text-detail">地址 ：{{ row.address ? row.address : "无" }}</span></p>
+                    </v-card-text>
                 </v-card-title>
-                <v-card-actions>
-                    <v-btn flat color="orange">Share</v-btn>
-                    <v-btn flat color="orange">Explore</v-btn>
-                </v-card-actions>
             </v-card>
         </v-flex>
     </v-layout>
@@ -52,8 +45,22 @@
                 type: Object,
                 default: function () {
                     return {
-                        age:'',
-                        sex:''
+                        address: "",
+                        age: 23,
+                        area: '',
+                        avatar: "",
+                        city: "",
+                        deptId: "",
+                        email: "",
+                        label: "",
+                        lastPasswordResetDate: "",
+                        name: "",
+                        phoneNumber: "",
+                        registerAt: "",
+                        roleId: "",
+                        sex: 0,
+                        status: "",
+                        username: ""
                     }
                 }
             }
@@ -75,5 +82,8 @@
 
     .center {
         margin: 0 auto;
+    }
+    .text-detail {
+        margin: 0 15px;
     }
 </style>
