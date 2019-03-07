@@ -11,6 +11,18 @@
             >
                 <v-text-field
                         label="Solo"
+                        v-model="username"
+                        placeholder="用户名"
+                        solo
+                ></v-text-field>
+            </v-flex>
+            <v-flex
+                    xs12
+                    sm6
+                    md3
+            >
+                <v-text-field
+                        label="Solo"
                         v-model="phone"
                         placeholder="手机号码"
                         solo
@@ -31,20 +43,16 @@
             <v-flex
                     xs6
                     sm2
-                    md2
+                    md1
             >
                 <v-btn color="info">搜索</v-btn>
             </v-flex>
             <v-flex
                     xs12
                     sm6
-                    md3
+                    md1
             >
-                <v-btn
-                        color="info"
-                >添加
-                </v-btn>
-                <v-btn color="info">删除</v-btn>
+                <v-btn color="error" title="禁用"> 禁用 <br> <v-icon small>fa-ban</v-icon></v-btn>
             </v-flex>
         </v-layout>
         <v-data-table
@@ -72,21 +80,22 @@
                 <td v-if="props.item.sex==0"><img width="24px" src="../../assets/sex/girl.png"/></td>
                 <td>{{ props.item.age }}</td>
                 <td>{{ props.item.email }}</td>
-                <td v-if="props.item.status == 'NORMAL'" class="text-info">正常</td>
-                <td v-if="props.item.status == 'DISABLED'" class="text-error">禁用</td>
-                <td v-if="props.item.status == 'LOCK'" class="text-warning">锁定</td>
+                <td v-if="props.item.status == 'NORMAL'" class="text-info">正常 <v-icon small>fa-plug</v-icon></td>
+                <td v-if="props.item.status == 'DISABLED'" class="text-error">禁用 <v-icon small>fa-ban</v-icon></td>
+                <td v-if="props.item.status == 'LOCK'" class="text-warning">锁定 <v-icon small>fa-lock</v-icon></td>
                 <td>
                     <v-layout
                             justify-space-around
                             class="mb-2"
                     >
-                        <v-icon @click="handleInfo(props.item)">fa-vcard</v-icon>
-                        <v-icon @click="handleEdit('编辑',props.item)">fa-edit</v-icon>
+                        <v-icon title="详情" @click="handleInfo(props.item)">fa-vcard</v-icon>
+                        <v-icon title="编辑" @click="handleEdit('编辑',props.item)">fa-edit</v-icon>
+                        <v-icon title="禁用" @click="handleDisabled(props.item)">fa-times</v-icon>
                     </v-layout>
                 </td>
             </template>
         </v-data-table>
-        <div class="right"><Pagination :pagination="pagination"></Pagination></div>
+        <div class="right pagination"><Pagination :pagination="pagination"></Pagination></div>
     </div>
 </template>
 <script>
@@ -102,6 +111,7 @@
             return {
                 phone: "",
                 email: "",
+                username:"",
                 headers: [
                     {
                         text: "头像",
@@ -138,7 +148,6 @@
                 this.pagination.page = res.data.currentPage;
                 this.pagination.rowsPerPage = res.data.pageSize;
                 this.pagination.totalItems = res.data.total;
-                console.log(this.pagination);
             });
         },
         methods: {
@@ -159,8 +168,13 @@
             handleInfo(row) {
                 this.row = row;
                 console.log(this.row);
-                const res = this.$dialog.show(info,{row:row})
+                this.$dialog.show(info,{row:row})
             },
+            handleDisabled(row) {
+                this.row = row;
+                console.log(this.row);
+                this.$dialog.show(info,{row:row})
+            }
         }
     };
 </script>
@@ -201,6 +215,9 @@
     .text-warning {
         color: #dca173;
         font-weight: bold;
+    }
+    .pagination {
+        margin: 20px;
     }
 </style>
 
