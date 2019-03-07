@@ -49,7 +49,9 @@
         </v-layout>
         <v-data-table
                 :headers="headers"
+                :pagination.sync="pagination"
                 :items="desserts"
+                hide-actions
                 class="elevation-1"
         >
             <template
@@ -84,17 +86,18 @@
                 </td>
             </template>
         </v-data-table>
-
+        <div class="right"><Pagination :pagination="pagination"></Pagination></div>
     </div>
 </template>
 <script>
     import {getUserList} from "@/api/user";
     import forms from './components/form'
     import info from './components/info'
+    import Pagination from "../../components/table/Pagination";
 
     export default {
         name: "User",
-        components: {forms, info},
+        components: {Pagination, forms, info},
         data() {
             return {
                 phone: "",
@@ -116,6 +119,13 @@
                     {text: "操作", value: ""}
                 ],
                 desserts: [],
+                pagination:{
+                    descending: true,
+                    page: 1,
+                    rowsPerPage: 10, // -1 for All
+                    sortBy: "",
+                    totalItems: 2
+                },
                 row: {},
                 dialogVisible: false,
                 formVisible: false,
@@ -125,11 +135,14 @@
         created() {
             getUserList().then(res => {
                 this.desserts = res.data.records;
+                this.pagination.page = res.data.currentPage;
+                this.pagination.rowsPerPage = res.data.pageSize;
+                this.pagination.totalItems = res.data.total;
+                console.log(this.pagination);
             });
         },
         methods: {
             succModel() {
-                console.log(111)
                 this.formVisible = false;
             },
             sumForm() {
