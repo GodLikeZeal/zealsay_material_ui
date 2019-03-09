@@ -11,8 +11,8 @@
             >
                 <v-text-field
                         label="Solo"
-                        v-model="username"
-                        placeholder="用户名"
+                        v-model="searchData.name"
+                        placeholder="姓名"
                         solo
                 ></v-text-field>
             </v-flex>
@@ -23,7 +23,7 @@
             >
                 <v-text-field
                         label="Solo"
-                        v-model="phone"
+                        v-model="searchData.phoneNumber"
                         placeholder="手机号码"
                         solo
                 ></v-text-field>
@@ -35,7 +35,7 @@
             >
                 <v-text-field
                         label="Solo"
-                        v-model="email"
+                        v-model="searchData.email"
                         placeholder="邮箱"
                         solo
                 ></v-text-field>
@@ -45,14 +45,14 @@
                     sm2
                     md1
             >
-                <v-btn color="info">搜索</v-btn>
+                <v-btn color="info" @click="search(searchData)">搜索</v-btn>
             </v-flex>
             <v-flex
                     xs12
                     sm6
                     md1
             >
-                <v-btn color="error" title="禁用"> 禁用 <br> <v-icon small>fa-ban</v-icon></v-btn>
+                <v-btn color="error" title="禁用"> 禁用 <br/> <v-icon small>fa-ban</v-icon></v-btn>
             </v-flex>
         </v-layout>
         <v-data-table
@@ -105,41 +105,39 @@
     import Pagination from "../../components/table/Pagination";
 
     export default {
-        name: "User",
+        name: 'User',
         components: {Pagination, forms, info},
         data() {
             return {
-                phone: "",
-                email: "",
-                username:"",
+                searchData: {},
                 headers: [
                     {
-                        text: "头像",
-                        value: "avatar"
+                        text: '头像',
+                        value: 'avatar'
                     },
                     {
-                        text: "用户名",
-                        value: "username"
+                        text: '用户名',
+                        value: 'username'
                     },
-                    {text: "姓名", value: "name"},
-                    {text: "性别", value: "sex"},
-                    {text: "年龄", value: "age"},
-                    {text: "邮箱", value: "email"},
-                    {text: "状态", value: "status"},
-                    {text: "操作", value: ""}
+                    {text: '姓名', value: 'name'},
+                    {text: '性别', value: 'sex'},
+                    {text: '年龄', value: 'age'},
+                    {text: '邮箱', value: 'email'},
+                    {text: '状态', value: 'status'},
+                    {text: '操作', value: ''}
                 ],
                 desserts: [],
                 pagination:{
                     descending: true,
                     page: 1,
                     rowsPerPage: 10, // -1 for All
-                    sortBy: "",
+                    sortBy: '',
                     totalItems: 2
                 },
                 row: {},
                 dialogVisible: false,
                 formVisible: false,
-                title: ""
+                title: ''
             };
         },
         created() {
@@ -151,8 +149,13 @@
             });
         },
         methods: {
-            succModel() {
-                this.formVisible = false;
+            search(obj) {
+                getUserList(obj).then(res => {
+                    this.desserts = res.data.records;
+                    this.pagination.page = res.data.currentPage;
+                    this.pagination.rowsPerPage = res.data.pageSize;
+                    this.pagination.totalItems = res.data.total;
+                });
             },
             sumForm() {
                 this.$refs.addForm.submitForm('ruleForm')

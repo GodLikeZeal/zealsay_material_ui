@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VuetifyDialog from 'vuetify-dialog'
 import context from 'vue-router';
 
-const property = '$dialog'
+const property = '$dialog';
 
 Vue.use(VuetifyDialog, {
   context,
@@ -51,4 +51,4 @@ Vue.use(VuetifyDialog, {
     icon: false, // to disable icon just put false
     title: '操作提示'
   }
-})
+});

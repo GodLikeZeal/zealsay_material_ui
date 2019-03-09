@@ -5,7 +5,7 @@ export function loginByUsername (username, password) {
   const data = {
     username,
     password
-  }
+  };
   return request({
     url: '/api/v1/authentication/login',
     method: 'post',

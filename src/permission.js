@@ -5,16 +5,16 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
 import { getToken } from '@/util/auth' // getToken from cookie
 
-NProgress.configure({ showSpinner: false });// NProgress Configuration
+NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
 // permission judge function
 function hasPermission(roles, permissionRoles) {
-  if (roles.indexOf('ADMIN') >= 0) return true ;// admin permission passed directly
+  if (roles.indexOf('ADMIN') >= 0) return true; // admin permission passed directly
   if (!permissionRoles) return true;
   return roles.some(role => permissionRoles.indexOf(role) >= 0)
 }
 
-const whiteList = ['/login', '/404']// no redirect whitelist
+const whiteList = ['/login', '/404'];// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start(); // start progress bar
