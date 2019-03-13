@@ -52,54 +52,107 @@
                     sm6
                     md1
             >
-                <v-btn color="error" title="禁用"> 禁用 <br/> <v-icon small>fa-ban</v-icon></v-btn>
+                <v-btn color="error" title="禁用" @click="handleDisabledSelected(selected)"> 封禁 <br/>
+                    <v-icon small>fa-ban</v-icon>
+                </v-btn>
             </v-flex>
         </v-layout>
         <v-data-table
+                v-model="selected"
                 :headers="headers"
                 :pagination.sync="pagination"
                 :items="desserts"
+                :loading="loading"
                 hide-actions
+                select-all
                 class="elevation-1"
         >
+            <template v-slot:headers="props">
+                <tr>
+                    <th>
+                        <v-checkbox
+                                :input-value="props.all"
+                                :indeterminate="props.indeterminate"
+                                primary
+                                hide-details
+                                @click.stop="toggleAll"
+                        ></v-checkbox>
+                    </th>
+                    <th
+                            v-for="header in props.headers"
+                            :key="header.text"
+                            :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                            @click="changeSort(header.value)"
+                    >
+                        <v-icon small>arrow_upward</v-icon>
+                        {{ header.text }}
+                    </th>
+                </tr>
+            </template>
             <template
                     slot="items"
                     slot-scope="props"
             >
-                <td>
-                    <v-avatar
-                            size="32px"
-                            color="grey lighten-4"
-                    >
-                        <v-img :lazy-src="props.item.avatar" :src="props.item.avatar" alt="avatar"></v-img>
-                    </v-avatar>
-                </td>
-                <td>{{ props.item.username }}</td>
-                <td>{{ props.item.name }}</td>
-                <td v-if="props.item.sex==1"><img width="24px" src="../../assets/sex/boy.png"/></td>
-                <td v-if="props.item.sex==0"><img width="24px" src="../../assets/sex/girl.png"/></td>
-                <td>{{ props.item.age }}</td>
-                <td>{{ props.item.email }}</td>
-                <td v-if="props.item.status == 'NORMAL'" class="text-info">正常 <v-icon small>fa-plug</v-icon></td>
-                <td v-if="props.item.status == 'DISABLED'" class="text-error">禁用 <v-icon small>fa-ban</v-icon></td>
-                <td v-if="props.item.status == 'LOCK'" class="text-warning">锁定 <v-icon small>fa-lock</v-icon></td>
-                <td>
-                    <v-layout
-                            justify-space-around
-                            class="mb-2"
-                    >
-                        <v-icon title="详情" @click="handleInfo(props.item)">fa-vcard</v-icon>
-                        <v-icon title="编辑" @click="handleEdit('编辑',props.item)">fa-edit</v-icon>
-                        <v-icon title="禁用" @click="handleDisabled(props.item)">fa-times</v-icon>
-                    </v-layout>
-                </td>
+                <tr :active="props.selected">
+                    <td @click="props.selected = !props.selected">
+                        <v-checkbox
+                                :input-value="props.selected"
+                                primary
+                                hide-details
+                        ></v-checkbox>
+                    </td>
+                    <td class="text-xs-right">
+                        <v-avatar
+                                size="32px"
+                                color="grey lighten-4"
+                        >
+                            <v-img :lazy-src="props.item.avatar" :src="props.item.avatar" alt="avatar"></v-img>
+                        </v-avatar>
+                    </td>
+                    <td class="text-xs-right">{{ props.item.username }}</td>
+                    <td class="text-xs-right">{{ props.item.name }}</td>
+                    <td class="text-xs-right" v-if="props.item.sex==1"><img width="24px"
+                                                                            src="../../assets/sex/boy.png"/></td>
+                    <td class="text-xs-right" v-if="props.item.sex==0"><img width="24px"
+                                                                            src="../../assets/sex/girl.png"/></td>
+                    <td class="text-xs-right">{{ props.item.age }}</td>
+                    <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
+                    <td class="text-xs-right">{{ props.item.email }}</td>
+                    <td class="text-xs-right text-info" v-if="props.item.status == 'NORMAL'">正常
+                        <v-icon color="success" small>fa-plug</v-icon>
+                    </td>
+                    <td class="text-xs-right text-error" v-if="props.item.status == 'DISABLED'">封禁
+                        <v-icon color="error" small>fa-ban</v-icon>
+                    </td>
+                    <td class="text-xs-right text-warning" v-if="props.item.status == 'LOCK'">锁定
+                        <v-icon color="warning" small>fa-lock</v-icon>
+                    </td>
+                    <td class="text-xs-right">
+                        <v-layout
+                                justify-center
+                                class="mb-2"
+                        >
+                                <v-btn icon flat color="primary" title="详情" @click="handleInfo(props.item)">
+                                    <v-icon>portrait</v-icon>
+                                </v-btn>
+                                <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
+                                    <v-icon >create</v-icon>
+                                </v-btn>
+                                <v-btn icon flat color="primary" title="禁用" @click="handleDisabled(props.item)">
+                                    <v-icon >remove_circle</v-icon>
+                                </v-btn>
+                        </v-layout>
+                    </td>
+                </tr>
             </template>
         </v-data-table>
-        <div class="right pagination"><Pagination :pagination="pagination"></Pagination></div>
+        <div class="right pagination">
+            <Pagination :pagination="pagination"></Pagination>
+        </div>
     </div>
 </template>
 <script>
-    import {getUserList} from "@/api/user";
+    import {getUserList, disabeledUser, disabeledUserBatch} from "@/api/user";
     import forms from './components/form'
     import info from './components/info'
     import Pagination from "../../components/table/Pagination";
@@ -110,6 +163,8 @@
         data() {
             return {
                 searchData: {},
+                selected: [],
+                loading: true,
                 headers: [
                     {
                         text: '头像',
@@ -122,12 +177,13 @@
                     {text: '姓名', value: 'name'},
                     {text: '性别', value: 'sex'},
                     {text: '年龄', value: 'age'},
+                    {text: '手机号', value: 'phoneNumber'},
                     {text: '邮箱', value: 'email'},
                     {text: '状态', value: 'status'},
                     {text: '操作', value: ''}
                 ],
                 desserts: [],
-                pagination:{
+                pagination: {
                     descending: true,
                     page: 1,
                     rowsPerPage: 10, // -1 for All
@@ -146,6 +202,7 @@
                 this.pagination.page = res.data.currentPage;
                 this.pagination.rowsPerPage = res.data.pageSize;
                 this.pagination.totalItems = res.data.total;
+                this.loading = false;
             });
         },
         methods: {
@@ -157,26 +214,118 @@
                     this.pagination.totalItems = res.data.total;
                 });
             },
-            sumForm() {
-                this.$refs.addForm.submitForm('ruleForm')
+            toggleAll() {
+                if (this.selected.length) this.selected = [];
+                else this.selected = this.desserts.slice()
             },
-            handleEdit(title, row) {
-                this.title = title;
-                if (row) {
-                    this.row = row;
+            changeSort(column) {
+                if (this.pagination.sortBy === column) {
+                    this.pagination.descending = !this.pagination.descending
+                } else {
+                    this.pagination.sortBy = column;
+                    this.pagination.descending = false
                 }
-                this.formVisible = true;
-                console.log(this.row);
+            },
+            handleEdit(row) {
+                this.$dialog.show(forms, {row: row})
             },
             handleInfo(row) {
-                this.row = row;
-                console.log(this.row);
-                this.$dialog.show(info,{row:row})
+                this.$dialog.show(info, {row: row})
             },
             handleDisabled(row) {
-                this.row = row;
-                console.log(this.row);
-                this.$dialog.show(info,{row:row})
+                this.$dialog.error({
+                    title: '操作提示',
+                    text: '确认要封禁吗？',
+                    actions: {
+                        false: '取消',
+                        true: {
+                            text: '确认',
+                            color: 'error',
+                            handle: () => {
+                                disabeledUser(row.id).then(res => {
+                                    if (res.code === '200') {
+                                        this.$dialog.warning({
+                                            title: '操作提示',
+                                            text: '操作成功！',
+                                            actions: {
+                                                false: {
+                                                    text: '取消',
+                                                    handle: () => {
+                                                        this.search('');
+                                                    }
+                                                },
+                                                true: {
+                                                    text: '确定',
+                                                    color: 'warning',
+                                                    handle: () => {
+                                                        this.search('');
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        this.$dialog.error({
+                                            title: '操作提示',
+                                            text: res.message
+                                        })
+                                    }
+                                });
+                            }
+                        }
+                    }
+                })
+
+            },
+            handleDisabledSelected(selected) {
+                let param = selected.map(s => s.id);
+                if (param.length > 0) {
+                    this.$dialog.error({
+                        title: '操作提示',
+                        text: '确认要封禁吗？',
+                        actions: {
+                            false: '取消',
+                            true: {
+                                text: '确认',
+                                color: 'error',
+                                handle: () => {
+                                    disabeledUserBatch(param).then(res => {
+                                        if (res.code === '200') {
+                                            this.$dialog.warning({
+                                                title: '操作提示',
+                                                text: '操作成功！',
+                                                actions: {
+                                                    false: {
+                                                        text: '取消',
+                                                        handle: () => {
+                                                            this.search('');
+                                                        }
+                                                    },
+                                                    true: {
+                                                        text: '确定',
+                                                        color: 'warning',
+                                                        handle: () => {
+                                                            this.search('');
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            this.$dialog.error({
+                                                title: '操作提示',
+                                                text: res.message
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    })
+                } else {
+                    this.$dialog.error({
+                        title: '操作提示',
+                        text: '请至少选择一条需要封禁的用户！'
+                    })
+                }
             }
         }
     };
@@ -219,6 +368,7 @@
         color: #dca173;
         font-weight: bold;
     }
+
     .pagination {
         margin: 20px;
     }

@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import './plugins/axios'
 import './plugins/vuetify'
 import './plugins/dialog'
 import App from './App.vue'

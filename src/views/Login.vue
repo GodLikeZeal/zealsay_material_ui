@@ -121,10 +121,10 @@
                         this.$router.push({path: this.redirect || "/dashboard"});
                     })
                     .catch((err) => {
-                        // this.$dialog.notify.error('网络异常，请稍后重试');
+                        console.log(err);
                         this.loading = false;
                         this.visible = true;
-                        this.errMsg = err;
+                        this.errMsg = err.message;
                         setTimeout(() => {
                             this.visible = false
                         }, 3000)

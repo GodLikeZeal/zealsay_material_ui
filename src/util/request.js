@@ -81,9 +81,8 @@ export default function request(options) {
       msg = data.message || statusText
     } else {
       statusCode = 600;
-      msg = error.message || 'Network Error';
-      // this.$dialog.notify.error('网络异常，请稍后重试');
+      msg = error.message || '网络异常，请检查后重试!';
     }
-    return Promise.reject(new Error({ success: false, statusCode, message: msg }))
+    return Promise.reject({ success: false, statusCode, message: msg })
   })
 }
