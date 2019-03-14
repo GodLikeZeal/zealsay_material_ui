@@ -1,28 +1,23 @@
 <template>
     <v-card>
         <v-container fill-height fluid>
-            <v-layout fill-height>
+            <v-layout fill-height class="center" >
                 <v-flex xs12 align-center flexbox>
-                    <upload-btn visibility="hidden">
-                        <template slot="icon">
-                            <v-img class="avator" height="64" width="64"
-                                   :lazy-src="row.avatar" :src="row.avatar"></v-img>
-                        </template>
-                    </upload-btn>
+                    <a href="#" title="点击修改头像">
+                        <vue-initials-img class="avator"  height="64" width="64" :name="row.username" :lazy-src="row.avatar" :src="row.avatar" />
+                    </a>
                     <p xs4 align="center">点击修改头像</p>
                 </v-flex>
             </v-layout>
         </v-container>
         <v-card-title>
-        </v-card-title>
-        <v-card-text>
             <v-container grid-list-md>
                 <v-layout wrap>
                     <v-flex xs12 sm6 md4>
                         <v-text-field hint="用户名不能包含空格和特殊字符" label="用户名*" v-model="row.username" required></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                        <v-text-field label="姓名" v-model="row.name" hint="example of helper text only on focus"></v-text-field>
+                        <v-text-field label="姓名" v-model="row.name" hint="输入真实姓名"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                         <v-text-field
@@ -40,7 +35,10 @@
                     </v-flex>
                     <v-flex xs12 sm6>
                         <v-select
-                                :items="['男','女']"
+                                :items="sexs"
+                                item-text="text"
+                                item-value="value"
+                                :value="row.sex"
                                 label="性别*"
                                 required
                         ></v-select>
@@ -53,6 +51,8 @@
                     </v-flex>
                 </v-layout>
             </v-container>
+        </v-card-title>
+        <v-card-text>
             <small>*indicates required field</small>
         </v-card-text>
         <v-card-actions>
@@ -99,6 +99,10 @@ export default {
     data: () => ({
         valid: true,
         name: '',
+        sexs:[
+            {value:1,text:'男'},
+            {value:0,text:'女'}
+        ],
         nameRules: [
             v => !!v || 'Name is required',
             v => (v && v.length <= 10) || 'Name must be less than 10 characters'
@@ -139,8 +143,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+    .center {
+        text-align: center;
+    }
     .avator {
-        margin: 60px auto auto;
         border-radius: 50%;
     }
 </style>

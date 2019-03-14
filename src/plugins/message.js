@@ -8,4 +8,4 @@ Vue.use(VuetifyMessage, {
   timeout: 3000, // default
   mode: '',
   property: 'message' // default
-})
+});
