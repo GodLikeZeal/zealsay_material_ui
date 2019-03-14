@@ -227,7 +227,10 @@
                 }
             },
             handleEdit(row) {
-                this.$dialog.show(forms, {row: row})
+                this.$dialog.show(forms, {
+                    row: row,
+                    width: 600
+                })
             },
             handleInfo(row) {
                 this.$dialog.show(info, {row: row})

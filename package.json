@@ -19,6 +19,7 @@
     "vuetify": "^1.5.3",
     "vuetify-dialog": "^0.3.3",
     "vuetify-message": "^0.2.1",
+    "vuetify-upload-button": "^1.2.2",
     "vuex": "^3.1.0"
   },
   "devDependencies": {
@@ -48,7 +49,10 @@
       "eslint:standard"
     ],
     "rules": {
-      "indent": [1, 4]
+      "indent": [
+        1,
+        4
+      ]
     },
     "parserOptions": {
       "parser": "babel-eslint"
