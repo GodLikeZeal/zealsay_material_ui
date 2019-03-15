@@ -41,16 +41,12 @@
                 ></v-text-field>
             </v-flex>
             <v-flex
-                    xs6
-                    sm2
-                    md1
+                    
             >
                 <v-btn color="info" @click="search(searchData)">搜索</v-btn>
             </v-flex>
             <v-flex
-                    xs12
-                    sm6
-                    md1
+                    
             >
                 <v-btn color="error" title="禁用" @click="handleDisabledSelected(selected)"> 封禁 <br/>
                     <v-icon small>fa-ban</v-icon>
@@ -118,7 +114,7 @@
                     <td class="text-xs-right">{{ props.item.age }}</td>
                     <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
                     <td class="text-xs-right">{{ props.item.email }}</td>
-                    <td class="text-xs-right text-info" v-if="props.item.status == 'NORMAL'">正常
+                    <td class="text-xs-right text-info"  v-if="props.item.status == 'NORMAL'">正常
                         <v-icon color="success" small>fa-plug</v-icon>
                     </td>
                     <td class="text-xs-right text-error" v-if="props.item.status == 'DISABLED'">封禁
@@ -360,11 +356,13 @@
     .text-info {
         color: forestgreen;
         font-weight: bold;
+        padding: 0 12px!important;
     }
 
     .text-error {
         color: #dc6752;
         font-weight: bold;
+        padding: 0 12px!important;
     }
 
     .text-warning {

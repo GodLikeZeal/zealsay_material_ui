@@ -6,7 +6,8 @@
                     <a href="#" title="点击修改头像">
                         <vue-initials-img class="avator"  height="64" width="64" :name="row.username" :lazy-src="row.avatar" :src="row.avatar" />
                     </a>
-                    <p xs4 align="center">点击修改头像</p>
+                    <!-- <p xs4 align="center">点击修改头像</p> -->
+                    <UpImg></UpImg>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -66,9 +67,11 @@
 <script>
 import { addUser, editUser } from "@/api/user";
 import UploadButton from 'vuetify-upload-button'
+import UpImg from './upImg'
 export default {
     components: {
-        'upload-btn': UploadButton
+        'upload-btn': UploadButton,
+        UpImg
     },
     name:'edit',
     props: {
