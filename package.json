@@ -13,12 +13,14 @@
     "less": "^3.9.0",
     "nprogress": "^0.2.0",
     "qs": "^6.6.0",
-    "vue": "^2.6.6",
+    "vue": "^2.6.7",
+    "vue-initials-img": "^1.0.4",
     "vue-perfect-scrollbar": "^0.1.0",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.5.1",
+    "vuetify": "^1.5.3",
     "vuetify-dialog": "^0.3.3",
     "vuetify-message": "^0.2.1",
+    "vuetify-upload-button": "^1.2.2",
     "vuex": "^3.1.0"
   },
   "devDependencies": {
@@ -35,7 +37,7 @@
     "stylus-loader": "^3.0.1",
     "vue-cli-plugin-axios": "0.0.4",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.6.6",
+    "vue-template-compiler": "^2.6.7",
     "vuetify-loader": "^1.2.1"
   },
   "eslintConfig": {
@@ -45,9 +47,14 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:standard"
     ],
-    "rules": {},
+    "rules": {
+      "indent": [
+        1,
+        4
+      ]
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

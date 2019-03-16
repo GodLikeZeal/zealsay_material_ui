@@ -1,7 +1,8 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
 import zhHans from 'vuetify/es5/locale/zh-Hans'
+import { Ripple } from 'vuetify/lib/directives'
 
 Vue.use(Vuetify, {
   theme: {
@@ -14,8 +15,11 @@ Vue.use(Vuetify, {
     warning: '#FFC107'
   },
   iconfont: 'md',
+  directives: {
+    Ripple
+  },
   lang: {
     locales: { zhHans },
     current: 'zh-Hans'
-  },
-})
+  }
+});
