@@ -41,12 +41,25 @@
                 ></v-text-field>
             </v-flex>
             <v-flex
-                    
+                xs6
+                sm2
+                md1
             >
                 <v-btn color="info" @click="search(searchData)">搜索</v-btn>
             </v-flex>
             <v-flex
-                    
+                    xs6
+                    sm2
+                    md1
+            >
+                <v-btn color="success" title="解封" @click="handleUnsealingSelected(selected)"> 解封 <br/>
+                    <v-icon small>how_to_reg</v-icon>
+                </v-btn>
+            </v-flex>
+            <v-flex
+                xs6
+                sm2
+                md1
             >
                 <v-btn color="error" title="禁用" @click="handleDisabledSelected(selected)"> 封禁 <br/>
                     <v-icon small>fa-ban</v-icon>
@@ -134,7 +147,10 @@
                                 <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
                                     <v-icon >create</v-icon>
                                 </v-btn>
-                                <v-btn icon flat color="primary" title="禁用" @click="handleDisabled(props.item)">
+                                <v-btn icon flat color="primary" title="解封" @click="handleUnsealing(props.item)">
+                                    <v-icon >how_to_reg</v-icon>
+                                </v-btn>
+                                <v-btn icon flat color="primary" title="封禁" @click="handleDisabled(props.item)">
                                     <v-icon >remove_circle</v-icon>
                                 </v-btn>
                         </v-layout>
@@ -148,7 +164,7 @@
     </div>
 </template>
 <script>
-    import {getUserList, disabeledUser, disabeledUserBatch} from "@/api/user";
+    import {getUserList, disabeledUser, disabeledUserBatch,unsealingUserBatch,unsealingUser} from "@/api/user";
     import forms from './components/form'
     import info from './components/info'
     import Pagination from "../../components/table/Pagination";
@@ -223,10 +239,10 @@
                 }
             },
             handleEdit(row) {
-                this.$dialog.show(forms, {
+                let editDialog = this.$dialog.show(forms, {
                     row: row,
                     width: 600
-                })
+                });
             },
             handleInfo(row) {
                 this.$dialog.show(info, {row: row})
@@ -242,7 +258,7 @@
                             color: 'error',
                             handle: () => {
                                 disabeledUser(row.id).then(res => {
-                                    if (res.code === '200') {
+                                    if (res.code === '200' && res.data) {
                                         this.$dialog.warning({
                                             title: '操作提示',
                                             text: '操作成功！',
@@ -273,7 +289,36 @@
                         }
                     }
                 })
-
+            },
+            handleUnsealing(row) {
+                unsealingUser(row.id).then(res => {
+                    if (res.code === '200' && res.data) {
+                        this.$dialog.warning({
+                            title: '操作提示',
+                            text: '操作成功！',
+                            actions: {
+                                false: {
+                                    text: '取消',
+                                    handle: () => {
+                                        this.search('');
+                                    }
+                                },
+                                true: {
+                                    text: '确定',
+                                    color: 'warning',
+                                    handle: () => {
+                                        this.search('');
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        this.$dialog.error({
+                            title: '操作提示',
+                            text: res.message
+                        })
+                    }
+                });
             },
             handleDisabledSelected(selected) {
                 let param = selected.map(s => s.id);
@@ -288,7 +333,7 @@
                                 color: 'error',
                                 handle: () => {
                                     disabeledUserBatch(param).then(res => {
-                                        if (res.code === '200') {
+                                        if (res.code === '200' && res.data) {
                                             this.$dialog.warning({
                                                 title: '操作提示',
                                                 text: '操作成功！',
@@ -319,6 +364,44 @@
                             }
                         }
                     })
+                } else {
+                    this.$dialog.error({
+                        title: '操作提示',
+                        text: '请至少选择一条需要封禁的用户！'
+                    })
+                }
+            },
+            handleUnsealingSelected(selected) {
+                let param = selected.map(s => s.id);
+                if (param.length > 0) {
+                        unsealingUserBatch(param).then(res => {
+                            if (res.code === '200' && res.data) {
+                                this.$dialog.warning({
+                                    title: '操作提示',
+                                    text: '操作成功！',
+                                    actions: {
+                                        false: {
+                                            text: '取消',
+                                            handle: () => {
+                                                this.search('');
+                                            }
+                                        },
+                                        true: {
+                                            text: '确定',
+                                            color: 'warning',
+                                            handle: () => {
+                                                this.search('');
+                                            }
+                                        }
+                                    }
+                                });
+                            } else {
+                                this.$dialog.error({
+                                    title: '操作提示',
+                                    text: res.message
+                                })
+                            }
+                        })
                 } else {
                     this.$dialog.error({
                         title: '操作提示',
@@ -368,6 +451,7 @@
     .text-warning {
         color: #dca173;
         font-weight: bold;
+        padding: 0 12px!important;
     }
 
     .pagination {

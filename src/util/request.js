@@ -44,6 +44,9 @@ const fetch = (options) => {
       return axios.patch(url, cloneData, {
         headers: headers
       });
+    case 'upload':
+      headers['Content-Type'] = 'multipart/form-data';
+      return axios.create({ headers: headers }).post(url, data);
     default:
       return axios(options)
   }

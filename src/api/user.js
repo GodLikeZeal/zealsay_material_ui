@@ -11,7 +11,7 @@ export function getUserList (obj) {
   console.log(qs.stringify(obj));
   return request({
     url: '/api/v1/user/page',
-    method: 'get',
+    method: 'GET',
     data: obj
   })
 }
@@ -55,6 +55,19 @@ export function disabeledUserBatch (obj) {
   })
 }
 /**
+ * 批量解封用户.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function unsealingUserBatch (obj) {
+  return request({
+    url: '/api/v1/user/unsealing/batch',
+    method: 'PUT',
+    data: obj
+  })
+}
+/**
  * 根据id禁用用户.
  *
  * @author  zhanglei
@@ -64,5 +77,73 @@ export function disabeledUser (obj) {
   return request({
     url: '/api/v1/user/disable/' + obj,
     method: 'PUT'
+  })
+}
+/**
+ * 根据id解封用户.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function unsealingUser (obj) {
+  return request({
+    url: '/api/v1/user/unsealing/' + obj,
+    method: 'PUT'
+  })
+}
+
+/**
+ * 根据id查询用户名是否被使用.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function getIsInUseByUsername (obj) {
+  return request({
+    url: '/use/username/' + obj.username,
+    method: 'GET',
+    data: obj.id
+  })
+}
+
+/**
+ * 根据id查询手机号是否被使用.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function getIsInUseByPhone (obj) {
+  return request({
+    url: '/use/phone/' + obj.phoneNumber,
+    method: 'GET',
+    data: obj.id
+  })
+}
+
+/**
+ * 根据id查询邮箱是否被使用.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function getIsInUseByEmail (obj) {
+  return request({
+    url: '/use/email/' + obj.email,
+    method: 'GET',
+    data: obj.id
+  })
+}
+
+/**
+ * 图片上传.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function uploadImage (obj) {
+  return request({
+    url: '/api/v1/qiniu/upload',
+    method: 'upload',
+    data: obj
   })
 }
