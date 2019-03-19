@@ -45,7 +45,9 @@
                 sm2
                 md1
             >
-                <v-btn color="info" @click="search(searchData)">搜索</v-btn>
+                <v-btn color="info" @click="search(searchData)">搜索 <br/>
+                    <v-icon small>search</v-icon>
+                </v-btn>
             </v-flex>
             <v-flex
                     xs6
@@ -161,6 +163,9 @@
         <div class="right pagination">
             <Pagination :pagination="pagination"></Pagination>
         </div>
+        <div>
+            <forms :row="row" :dialog="formVisible"></forms>
+        </div>
     </div>
 </template>
 <script>
@@ -239,10 +244,11 @@
                 }
             },
             handleEdit(row) {
-                let editDialog = this.$dialog.show(forms, {
-                    row: row,
-                    width: 600
-                });
+                this.formVisible = true;
+                // let editDialog = this.$dialog.show(forms, {
+                //     row: row,
+                //     width: 600
+                // });
             },
             handleInfo(row) {
                 this.$dialog.show(info, {row: row})
