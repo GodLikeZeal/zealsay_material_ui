@@ -164,7 +164,7 @@
             <Pagination :pagination="pagination"></Pagination>
         </div>
         <div>
-            <forms :row="row" :dialog="formVisible"></forms>
+            <forms :row="row" :dialog="formVisible" @handleCancel='handleCancel'></forms>
         </div>
     </div>
 </template>
@@ -245,10 +245,14 @@
             },
             handleEdit(row) {
                 this.formVisible = true;
+                this.row={...row};
                 // let editDialog = this.$dialog.show(forms, {
                 //     row: row,
                 //     width: 600
                 // });
+            },
+            handleCancel(){
+                this.formVisible=false;
             },
             handleInfo(row) {
                 this.$dialog.show(info, {row: row})

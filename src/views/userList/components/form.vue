@@ -22,7 +22,7 @@
                             <v-text-field
                                     hint="用户名不能包含空格和特殊字符"
                                     label="用户名*"
-                                    v-model="form.username"
+                                    v-model="row.username"
                                     validate-on-blur
                                     :rules="usernameRules"
                                     required></v-text-field>
@@ -30,13 +30,13 @@
                         <v-flex xs12 sm6 md4>
                             <v-text-field
                                     label="姓名"
-                                    v-model="form.name"
+                                    v-model="row.name"
                                     hint="输入真实姓名"></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
                             <v-text-field
                                     label="年龄*"
-                                    v-model="form.age"
+                                    v-model="row.age"
                                     persistent-hint
                                     required
                             ></v-text-field>
@@ -44,21 +44,21 @@
                         <v-flex xs12>
                             <v-text-field
                                     label="Email*"
-                                    v-model="form.email"
+                                    v-model="row.email"
                                     type="email"
                                     required></v-text-field>
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field
                                     label="手机号*"
-                                    v-model="form.phoneNumber"
+                                    v-model="row.phoneNumber"
                                     type="phone"
                                     required></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-select
                                     :items="sexs"
-                                    :value="form.sex"
+                                    :value="row.sex"
                                     item-text="text"
                                     item-value="value"
                                     item-avatar="avatar"
@@ -69,7 +69,7 @@
                         <v-flex xs12 sm6>
                             <v-autocomplete
                                     :items="roles"
-                                    :value="form.role"
+                                    :value="row.role"
                                     item-text="text"
                                     item-value="value"
                                     label="角色"
@@ -80,7 +80,7 @@
             </v-card-title>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn outline color="darken-1" @click="dialog = false">取消</v-btn>
+                <v-btn outline color="darken-1" @click="handleCancel()">取消</v-btn>
                 <v-btn outline :loading="loading" color="primary darken-1" @click="handleSubmit(form)">提交</v-btn>
             </v-card-actions>
         </v-card>
@@ -99,10 +99,9 @@
     } from "@/api/user";
     import {getRoleList} from "@/api/role";
     import UploadButton from 'vuetify-upload-button'
-
     export default {
         components: {
-            'upload-btn': UploadButton
+            'upload-btn': UploadButton,
         },
         name: 'edit',
         props: {
@@ -158,7 +157,8 @@
             checkbox: false
         }),
         created() {
-            this.form = cloneDeep(this.row);
+            this.form = {...this.row};
+            // console.log(this.form)
             if (!this.roles.length) {
                 getRoleList().then(res => {
                     if (res.code === '200') {
@@ -176,7 +176,7 @@
         },
         methods: {
             checkUsername() {
-                getIsInUseByUsername({id: this.row.id, username: this.form.username}).then(res => {
+                getIsInUseByUsername({id: this.row.id, username: this.row.username}).then(res => {
                     if (res.code === '200') {
                         return true;
                     } else {
@@ -195,6 +195,9 @@
             resetValidation() {
                 this.$refs.form.resetValidation()
             },
+            handleCancel(){
+                this.$emit('handleCancel')
+            },
             handleSubmit(obj) {
                 this.loading = true;
                 //先上传头像
@@ -203,9 +206,9 @@
                     param.append('file', this.file);
                     uploadImage(param).then(res => {
                         if (res.code === '200') {
-                            this.form.avatar = res.data;
+                            this.row.avatar = res.data;
                             //开始提交
-                            editUser(this.form).then(res => {
+                            editUser(this.row).then(res => {
                                 if (res.code === '200' && res.data) {
                                     this.loading = false;
                                     this.$dialog.notify.info("修改成功!");
@@ -222,7 +225,7 @@
                         this.$dialog.notify.error(e.message);
                     })
                 }
-                //editUser(form)
+                // editUser(form)
             },
             fileChanged(file) {
                 // handle file here. File will be an object.
@@ -238,7 +241,7 @@
                     reader.readAsDataURL(file);
                     // 读取成功后的回调
                     reader.onloadend = function () {
-                        self.form.avatar = this.result;
+                        self.row.avatar = this.result;
                     };
                 }
             }
