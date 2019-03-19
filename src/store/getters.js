@@ -6,5 +6,5 @@ const getters = {
   status: state => state.user.status,
   roles: state => state.user.roles,
   setting: state => state.user.setting
-}
+};
 export default getters

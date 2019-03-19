@@ -60,8 +60,8 @@ router.beforeEach((to, from, next) => {
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }
-})
+});
 
 router.afterEach(() => {
   NProgress.done() // finish progress bar
-})
+});
