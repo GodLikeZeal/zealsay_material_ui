@@ -5,7 +5,7 @@
                 <v-layout fill-height class="center">
                     <v-flex xs12 align-center flexbox>
                         <a href="#" title="点击修改头像">
-                            <vue-initials-img class="avator" height="64" width="64" :name="row.username"
+                            <vue-initials-img class="avator" height="64" width="64"
                                               :lazy-src="form.avatar" :src="form.avatar"/>
                         </a>
                         <upload-btn outline title="点击修改头像"
@@ -22,7 +22,7 @@
                             <v-text-field
                                     hint="用户名不能包含空格和特殊字符"
                                     label="用户名*"
-                                    v-model="row.username"
+                                    v-model="form.username"
                                     validate-on-blur
                                     :rules="usernameRules"
                                     required></v-text-field>
@@ -30,13 +30,13 @@
                         <v-flex xs12 sm6 md4>
                             <v-text-field
                                     label="姓名"
-                                    v-model="row.name"
+                                    v-model="form.name"
                                     hint="输入真实姓名"></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
                             <v-text-field
                                     label="年龄*"
-                                    v-model="row.age"
+                                    v-model="form.age"
                                     persistent-hint
                                     required
                             ></v-text-field>
@@ -44,21 +44,21 @@
                         <v-flex xs12>
                             <v-text-field
                                     label="Email*"
-                                    v-model="row.email"
+                                    v-model="form.email"
                                     type="email"
                                     required></v-text-field>
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field
                                     label="手机号*"
-                                    v-model="row.phoneNumber"
+                                    v-model="form.phoneNumber"
                                     type="phone"
                                     required></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-select
                                     :items="sexs"
-                                    :value="row.sex"
+                                    :value="form.sex"
                                     item-text="text"
                                     item-value="value"
                                     item-avatar="avatar"
@@ -69,7 +69,7 @@
                         <v-flex xs12 sm6>
                             <v-autocomplete
                                     :items="roles"
-                                    :value="row.role"
+                                    :value="form.role"
                                     item-text="text"
                                     item-value="value"
                                     label="角色"
@@ -104,35 +104,13 @@
             'upload-btn': UploadButton,
         },
         name: 'edit',
-        props: {
-            row: {
-                type: Object,
-                default: function () {
-                    return {
-                        id: "",
-                        age: 23,
-                        avatar: "",
-                        email: "",
-                        name: "",
-                        phoneNumber: "",
-                        role: "",
-                        sex: 0,
-                        username: ""
-                    }
-                }
-            },
-            dialog: {
-                default: function () {
-                    return dialog;
-                }
-            }
-        },
+        props: ['row','alert'],
         data: () => ({
             valid: true,
             name: 'edit',
             loading: false,
             file: '',
-            form: {},
+            avatar: '',
             sexs: [
                 {value: 1, text: '男', avatar: '<img width="15px" src="../../../assets/sex/boy.png"/>'},
                 {value: 0, text: '女', avatar: '<img width="15px" src="../../../assets/sex/girl.png"/>'}
@@ -156,9 +134,30 @@
             ],
             checkbox: false
         }),
+        computed:{
+          form: function () {
+              return {
+                  id: this.row.id,
+                  age: this.row.age,
+                  avatar: this.row.avatar,
+                  email: this.row.email,
+                  name: this.row.name,
+                  phoneNumber: this.row.phoneNumber,
+                  role: this.row.role,
+                  sex: this.row.sex,
+                  username: this.row.username
+              }
+          },
+          dialog: {
+              get: function () {
+                  return this.alert;
+              },
+              set:function () {
+
+              }
+          }
+        },
         created() {
-            this.form = {...this.row};
-            // console.log(this.form)
             if (!this.roles.length) {
                 getRoleList().then(res => {
                     if (res.code === '200') {
@@ -201,14 +200,15 @@
             handleSubmit(obj) {
                 this.loading = true;
                 //先上传头像
-                if (!(this.row.avatar === this.form.avatar)) {
+                console.log(this.form);
+                if (!(this.file === '')) {
                     let param = new FormData();
                     param.append('file', this.file);
                     uploadImage(param).then(res => {
                         if (res.code === '200') {
-                            this.row.avatar = res.data;
+                            this.form.avatar = res.data;
                             //开始提交
-                            editUser(this.row).then(res => {
+                            editUser(this.form).then(res => {
                                 if (res.code === '200' && res.data) {
                                     this.loading = false;
                                     this.$dialog.notify.info("修改成功!");

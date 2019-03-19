@@ -164,7 +164,7 @@
             <Pagination :pagination="pagination"></Pagination>
         </div>
         <div>
-            <forms :row="row" :dialog="formVisible" @handleCancel='handleCancel'></forms>
+            <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
         </div>
     </div>
 </template>
