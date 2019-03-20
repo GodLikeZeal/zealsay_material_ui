@@ -58,12 +58,12 @@
           </v-flex>
           <v-flex xs12>
             <v-btn
-              href="https://www.creative-tim.com/product/vuetify-material-dashboard"
               target="_blank"
               color="success"
               block
+              @click.native="setImage('')"
             >
-              Free Download
+              No background
             </v-btn>
           </v-flex>
           <v-flex xs12>
@@ -130,10 +130,10 @@ export default {
       'danger'
     ],
     images: [
-      'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-1.23832d31.jpg',
-      'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg',
-      'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-3.3a54f533.jpg',
-      'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-4.3b7e38ed.jpg'
+      'https://pan.zealsay.com/340172-106.jpg',
+      'https://pan.zealsay.com/132407-106.jpg',
+      'https://pan.zealsay.com/318037-106.jpg',
+      'https://pan.zealsay.com/298125-106.jpg'
     ]
   }),
 
