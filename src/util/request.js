@@ -3,7 +3,7 @@ import store from '@/store'
 import cloneDeep from 'lodash.clonedeep'
 import { createRequestToken } from '@/util/auth'
 
-// const prifix = 'http://47.105.51.137:8090'
+// const prifix = 'https://api.zealsay.com'
 const prifix = 'http://localhost:8090';
 // console.log(prifix)
 const fetch = (options) => {
@@ -16,9 +16,8 @@ const fetch = (options) => {
   url = prifix + url;
 
   const cloneData = cloneDeep(data);
-  console.log(cloneData);
   let headers = {};
-  if (store.getters.token) {
+  if (store.state.user.token) {
     headers = { 'Authorization': createRequestToken() }
   }
   switch (method.toLowerCase()) {

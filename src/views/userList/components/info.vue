@@ -4,13 +4,13 @@
             <v-card>
                 <v-img
                         class="white--text"
-                        height="200px"
-                        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+                        height="400"
+                        src="https://pan.zealsay.com/info-1.jpg"
                 >
                     <v-container fill-height fluid>
                         <v-layout fill-height>
                             <v-flex xs12 align-end flexbox>
-                                <v-img class="avator" height="64" width="64"
+                                <v-img class="avator" height="100" width="100"
                                        :lazy-src="row.avatar" :src="row.avatar"></v-img>
                             </v-flex>
                         </v-layout>
@@ -43,8 +43,7 @@
                         <p class="grey--text"><span class="text-detail">地址 ：{{ row.address ? row.address : "无" }}</span>
                         </p>
                         <p v-if="row.label" class="grey--text"><span class="text-detail">TA的标签</span>
-                            <v-chip v-for="label in row.label.split(',')" :color="color[parseInt(Math.random()*6,10)]"
-                                    small>
+                            <v-chip v-for="label in row.label.split(',')" :color="color[parseInt(Math.random()*6,10)]" :key='label' small >
                                 <v-avatar>
                                     <v-img :src="icon[parseInt(Math.random()*20,10)]"
                                            :lazy-src="icon[parseInt(Math.random()*20,10)]" alt="label"/>
@@ -118,7 +117,7 @@
 
 <style lang="less" scoped>
     .avator {
-        margin: 60px auto auto;
+        margin: 200px auto auto;
         border-radius: 50%;
     }
 

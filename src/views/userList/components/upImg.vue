@@ -22,7 +22,9 @@
 
  <script>
 //  import myService from '@/services/myService'
- 
+ import {
+        uploadImage,
+    } from "@/api/user";
  export default {
      components: {
      },
@@ -38,8 +40,10 @@
          async changeimg (e) {
              let formData=new FormData()
              formData.append('file', e.target.files[0])
-            //  await myServiece.fun(formData)
-             console.log('send')
+             uploadImage(formData).then(res => {
+                console.log('send')
+             })
+            //  await uploadImage.fun(formData)
          }
      }
    }

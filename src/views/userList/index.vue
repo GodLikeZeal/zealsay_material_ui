@@ -41,11 +41,13 @@
                 ></v-text-field>
             </v-flex>
             <v-flex
-                xs6
-                sm2
-                md1
+                    xs6
+                    sm2
+                    md1
             >
-                <v-btn color="info" @click="search(searchData)">搜索</v-btn>
+                <v-btn color="info" @click="search(searchData)">搜索 <br/>
+                    <v-icon small>search</v-icon>
+                </v-btn>
             </v-flex>
             <v-flex
                     xs6
@@ -57,9 +59,9 @@
                 </v-btn>
             </v-flex>
             <v-flex
-                xs6
-                sm2
-                md1
+                    xs6
+                    sm2
+                    md1
             >
                 <v-btn color="error" title="禁用" @click="handleDisabledSelected(selected)"> 封禁 <br/>
                     <v-icon small>fa-ban</v-icon>
@@ -127,7 +129,7 @@
                     <td class="text-xs-right">{{ props.item.age }}</td>
                     <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
                     <td class="text-xs-right">{{ props.item.email }}</td>
-                    <td class="text-xs-right text-info"  v-if="props.item.status == 'NORMAL'">正常
+                    <td class="text-xs-right text-success"  v-if="props.item.status == 'NORMAL'">正常
                         <v-icon color="success" small>fa-plug</v-icon>
                     </td>
                     <td class="text-xs-right text-error" v-if="props.item.status == 'DISABLED'">封禁
@@ -141,18 +143,18 @@
                                 justify-center
                                 class="mb-2"
                         >
-                                <v-btn icon flat color="primary" title="详情" @click="handleInfo(props.item)">
-                                    <v-icon>portrait</v-icon>
-                                </v-btn>
-                                <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
-                                    <v-icon >create</v-icon>
-                                </v-btn>
-                                <v-btn icon flat color="primary" title="解封" @click="handleUnsealing(props.item)">
-                                    <v-icon >how_to_reg</v-icon>
-                                </v-btn>
-                                <v-btn icon flat color="primary" title="封禁" @click="handleDisabled(props.item)">
-                                    <v-icon >remove_circle</v-icon>
-                                </v-btn>
+                            <v-btn icon flat color="primary" title="详情" @click="handleInfo(props.item)">
+                                <v-icon>portrait</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
+                                <v-icon >create</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="解封" @click="handleUnsealing(props.item)">
+                                <v-icon >how_to_reg</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="封禁" @click="handleDisabled(props.item)">
+                                <v-icon >remove_circle</v-icon>
+                            </v-btn>
                         </v-layout>
                     </td>
                 </tr>
@@ -160,6 +162,9 @@
         </v-data-table>
         <div class="right pagination">
             <Pagination :pagination="pagination"></Pagination>
+        </div>
+        <div>
+            <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
         </div>
     </div>
 </template>
@@ -239,13 +244,18 @@
                 }
             },
             handleEdit(row) {
-                let editDialog = this.$dialog.show(forms, {
-                    row: row,
-                    width: 600
-                });
+                this.formVisible = true;
+                this.row={...row};
+                // let editDialog = this.$dialog.show(forms, {
+                //     row: row,
+                //     width: 600
+                // });
+            },
+            handleCancel(){
+                this.formVisible=false;
             },
             handleInfo(row) {
-                this.$dialog.show(info, {row: row})
+                this.$dialog.show(info, {row: row,width: 600})
             },
             handleDisabled(row) {
                 this.$dialog.error({
@@ -374,34 +384,34 @@
             handleUnsealingSelected(selected) {
                 let param = selected.map(s => s.id);
                 if (param.length > 0) {
-                        unsealingUserBatch(param).then(res => {
-                            if (res.code === '200' && res.data) {
-                                this.$dialog.warning({
-                                    title: '操作提示',
-                                    text: '操作成功！',
-                                    actions: {
-                                        false: {
-                                            text: '取消',
-                                            handle: () => {
-                                                this.search('');
-                                            }
-                                        },
-                                        true: {
-                                            text: '确定',
-                                            color: 'warning',
-                                            handle: () => {
-                                                this.search('');
-                                            }
+                    unsealingUserBatch(param).then(res => {
+                        if (res.code === '200' && res.data) {
+                            this.$dialog.warning({
+                                title: '操作提示',
+                                text: '操作成功！',
+                                actions: {
+                                    false: {
+                                        text: '取消',
+                                        handle: () => {
+                                            this.search('');
+                                        }
+                                    },
+                                    true: {
+                                        text: '确定',
+                                        color: 'warning',
+                                        handle: () => {
+                                            this.search('');
                                         }
                                     }
-                                });
-                            } else {
-                                this.$dialog.error({
-                                    title: '操作提示',
-                                    text: res.message
-                                })
-                            }
-                        })
+                                }
+                            });
+                        } else {
+                            this.$dialog.error({
+                                title: '操作提示',
+                                text: res.message
+                            })
+                        }
+                    })
                 } else {
                     this.$dialog.error({
                         title: '操作提示',
@@ -436,7 +446,7 @@
         height: 30px;
     }
 
-    .text-info {
+    .text-success {
         color: forestgreen;
         font-weight: bold;
         padding: 0 12px!important;
