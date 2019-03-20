@@ -85,7 +85,12 @@
           class="toolbar-items"
           to="/user-profile"
         >
-          <v-icon color="tertiary">mdi-account</v-icon>
+          <v-avatar size="30px">
+            <img
+                    :src="avatar"
+                    alt="Michael Wang"
+            />
+          </v-avatar>
         </router-link>
       </v-flex>
     </v-toolbar-items>
@@ -95,7 +100,8 @@
 <script>
 
 import {
-  mapMutations
+  mapMutations,
+  mapGetters
 } from 'vuex'
 
 export default {
@@ -117,7 +123,12 @@ export default {
       this.title = val.name
     }
   },
-
+  computed: {
+    toolbarColor () {
+      return this.$vuetify.options.extra.mainNav;
+    },
+    ...mapGetters('user',['name', 'avatar', 'roles'])
+  },
   mounted () {
     this.onResponsiveInverted()
     window.addEventListener('resize', this.onResponsiveInverted)

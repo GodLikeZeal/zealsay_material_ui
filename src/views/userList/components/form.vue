@@ -1,5 +1,5 @@
 <template>
-    <v-dialog width="700" v-model="dialog">
+    <v-dialog width="700" persistent  v-model="dialog">
         <v-card ref="row">
             <v-container fill-height fluid>
                 <v-layout fill-height class="center">
@@ -8,7 +8,7 @@
                             <vue-initials-img class="avator" height="64" width="64"
                                               :lazy-src="form.avatar" :src="form.avatar"/>
                         </a>
-                        <upload-btn outline title="点击修改头像"
+                        <upload-btn outline color="indigo" title="点击修改头像"
                                     :fileChangedCallback="fileChanged"
                         >
                         </upload-btn>

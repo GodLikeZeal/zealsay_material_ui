@@ -14,6 +14,9 @@
     border-radius: $btn-round-padding;
   }
 
+  &.v-btn--outline {
+    color: $gray-light !important;
+  }
   &.v-btn-facebook {
     @include social-buttons-color($social-facebook);
   }

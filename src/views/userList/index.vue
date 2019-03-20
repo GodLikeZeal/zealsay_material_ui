@@ -129,7 +129,7 @@
                     <td class="text-xs-right">{{ props.item.age }}</td>
                     <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
                     <td class="text-xs-right">{{ props.item.email }}</td>
-                    <td class="text-xs-right text-info"  v-if="props.item.status == 'NORMAL'">正常
+                    <td class="text-xs-right text-success"  v-if="props.item.status == 'NORMAL'">正常
                         <v-icon color="success" small>fa-plug</v-icon>
                     </td>
                     <td class="text-xs-right text-error" v-if="props.item.status == 'DISABLED'">封禁
@@ -255,7 +255,7 @@
                 this.formVisible=false;
             },
             handleInfo(row) {
-                this.$dialog.show(info, {row: row})
+                this.$dialog.show(info, {row: row,width: 600})
             },
             handleDisabled(row) {
                 this.$dialog.error({
@@ -446,7 +446,7 @@
         height: 30px;
     }
 
-    .text-info {
+    .text-success {
         color: forestgreen;
         font-weight: bold;
         padding: 0 12px!important;
