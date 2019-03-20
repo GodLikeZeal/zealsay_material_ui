@@ -10,6 +10,8 @@ import {
   removeToken
 } from '@/util/auth'
 
+import { SET_TOKEN, SET_ROLES, SET_NAME, SET_AVATAR, SET_INTRODUCTION } from './mutations'
+
 export default {
   // 用户名登录
   LoginByUsername({

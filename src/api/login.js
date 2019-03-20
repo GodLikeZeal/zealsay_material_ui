@@ -23,8 +23,7 @@ export function logout () {
 export function getUserInfo (token) {
   return request({
     url: '/api/v1/authentication/user',
-    method: 'get',
-    params: { token }
+    method: 'get'
   })
 }
 
