@@ -41,9 +41,9 @@
                 ></v-text-field>
             </v-flex>
             <v-flex
-                xs6
-                sm2
-                md1
+                    xs6
+                    sm2
+                    md1
             >
                 <v-btn color="info" @click="search(searchData)">搜索 <br/>
                     <v-icon small>search</v-icon>
@@ -59,9 +59,9 @@
                 </v-btn>
             </v-flex>
             <v-flex
-                xs6
-                sm2
-                md1
+                    xs6
+                    sm2
+                    md1
             >
                 <v-btn color="error" title="禁用" @click="handleDisabledSelected(selected)"> 封禁 <br/>
                     <v-icon small>fa-ban</v-icon>
@@ -143,18 +143,18 @@
                                 justify-center
                                 class="mb-2"
                         >
-                                <v-btn icon flat color="primary" title="详情" @click="handleInfo(props.item)">
-                                    <v-icon>portrait</v-icon>
-                                </v-btn>
-                                <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
-                                    <v-icon >create</v-icon>
-                                </v-btn>
-                                <v-btn icon flat color="primary" title="解封" @click="handleUnsealing(props.item)">
-                                    <v-icon >how_to_reg</v-icon>
-                                </v-btn>
-                                <v-btn icon flat color="primary" title="封禁" @click="handleDisabled(props.item)">
-                                    <v-icon >remove_circle</v-icon>
-                                </v-btn>
+                            <v-btn icon flat color="primary" title="详情" @click="handleInfo(props.item)">
+                                <v-icon>portrait</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
+                                <v-icon >create</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="解封" @click="handleUnsealing(props.item)">
+                                <v-icon >how_to_reg</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="封禁" @click="handleDisabled(props.item)">
+                                <v-icon >remove_circle</v-icon>
+                            </v-btn>
                         </v-layout>
                     </td>
                 </tr>
@@ -384,34 +384,34 @@
             handleUnsealingSelected(selected) {
                 let param = selected.map(s => s.id);
                 if (param.length > 0) {
-                        unsealingUserBatch(param).then(res => {
-                            if (res.code === '200' && res.data) {
-                                this.$dialog.warning({
-                                    title: '操作提示',
-                                    text: '操作成功！',
-                                    actions: {
-                                        false: {
-                                            text: '取消',
-                                            handle: () => {
-                                                this.search('');
-                                            }
-                                        },
-                                        true: {
-                                            text: '确定',
-                                            color: 'warning',
-                                            handle: () => {
-                                                this.search('');
-                                            }
+                    unsealingUserBatch(param).then(res => {
+                        if (res.code === '200' && res.data) {
+                            this.$dialog.warning({
+                                title: '操作提示',
+                                text: '操作成功！',
+                                actions: {
+                                    false: {
+                                        text: '取消',
+                                        handle: () => {
+                                            this.search('');
+                                        }
+                                    },
+                                    true: {
+                                        text: '确定',
+                                        color: 'warning',
+                                        handle: () => {
+                                            this.search('');
                                         }
                                     }
-                                });
-                            } else {
-                                this.$dialog.error({
-                                    title: '操作提示',
-                                    text: res.message
-                                })
-                            }
-                        })
+                                }
+                            });
+                        } else {
+                            this.$dialog.error({
+                                title: '操作提示',
+                                text: res.message
+                            })
+                        }
+                    })
                 } else {
                     this.$dialog.error({
                         title: '操作提示',

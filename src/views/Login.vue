@@ -115,7 +115,7 @@
                 this.loading = true;
                 // 登录接口待调试
                 this.$store
-                    .dispatch("LoginByUsername", this.model)
+                    .dispatch("user/LoginByUsername", this.model)
                     .then(() => {
                         this.loading = false;
                         this.$router.push({path: this.redirect || "/dashboard"});

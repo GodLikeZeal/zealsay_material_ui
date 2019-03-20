@@ -16,9 +16,8 @@ const fetch = (options) => {
   url = prifix + url;
 
   const cloneData = cloneDeep(data);
-  console.log(cloneData);
   let headers = {};
-  if (store.getters.token) {
+  if (store.state.user.token) {
     headers = { 'Authorization': createRequestToken() }
   }
   switch (method.toLowerCase()) {
