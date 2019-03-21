@@ -5,9 +5,9 @@
                 wrap
         >
             <v-flex
-                    xs12
-                    sm6
-                    md3
+                    xs8
+                    sm4
+                    md2
             >
                 <v-text-field
                         label="Solo"
@@ -17,9 +17,9 @@
                 ></v-text-field>
             </v-flex>
             <v-flex
-                    xs12
-                    sm6
-                    md3
+                    xs8
+                    sm4
+                    md2
             >
                 <v-text-field
                         label="Solo"
@@ -29,9 +29,9 @@
                 ></v-text-field>
             </v-flex>
             <v-flex
-                    xs12
-                    sm6
-                    md3
+                    xs8
+                    sm4
+                    md2
             >
                 <v-text-field
                         label="Solo"
@@ -44,29 +44,18 @@
                     xs6
                     sm2
                     md1
-            >
+            class="btn-con" >
                 <v-btn color="info" @click="search(searchData)">搜索 <br/>
                     <v-icon small>search</v-icon>
                 </v-btn>
-            </v-flex>
-            <v-flex
-                    xs6
-                    sm2
-                    md1
-            >
                 <v-btn color="success" title="解封" @click="handleUnsealingSelected(selected)"> 解封 <br/>
                     <v-icon small>how_to_reg</v-icon>
                 </v-btn>
-            </v-flex>
-            <v-flex
-                    xs6
-                    sm2
-                    md1
-            >
                 <v-btn color="error" title="禁用" @click="handleDisabledSelected(selected)"> 封禁 <br/>
                     <v-icon small>fa-ban</v-icon>
                 </v-btn>
             </v-flex>
+            
         </v-layout>
         <v-data-table
                 v-model="selected"
@@ -466,6 +455,9 @@
 
     .pagination {
         margin: 20px;
+    }
+    .btn-con{
+        display: flex;
     }
 </style>
 
