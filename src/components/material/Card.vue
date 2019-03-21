@@ -107,7 +107,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   .v-card--material {
     &__header {
       &.v-card {

@@ -158,7 +158,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #core-toolbar a {
     text-decoration: none;
   }

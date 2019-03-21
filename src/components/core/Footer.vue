@@ -41,7 +41,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #core-footer {
   z-index: 0;
 }

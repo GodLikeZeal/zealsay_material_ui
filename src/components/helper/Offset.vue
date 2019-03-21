@@ -37,7 +37,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .v-offset {
   margin: 0 auto;
   max-width: calc(100% - 32px);
