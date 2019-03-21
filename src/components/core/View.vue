@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #core-view {
   padding-bottom: 100px;
 }

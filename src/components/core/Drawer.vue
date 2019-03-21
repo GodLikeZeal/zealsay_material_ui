@@ -192,7 +192,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   #app-drawer {
     .v-list__tile {
       border-radius: 4px;

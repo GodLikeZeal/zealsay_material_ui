@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .mapouter {
   text-align:right;
   height:100%;
