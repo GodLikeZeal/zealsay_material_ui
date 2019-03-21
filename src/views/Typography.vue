@@ -91,7 +91,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   .tim-note {
     bottom: 10px;
     color: #c0c1c2;
