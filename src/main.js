@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import './plugins'
 import App from './App.vue'
-import router from './router'
+// Components
+import './components'
+
 import store from './store'
 import './permission' // permission control
 
-// Components
-import './components'
+import router from './router'
 
 Vue.config.productionTip = false;
 
