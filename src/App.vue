@@ -24,7 +24,7 @@
 <script>
 
 </script>
-<style lang="scss">
+<style scoped lang="scss">
     @import '@/styles/index.scss';
 
     /* Remove in 1.2 */
