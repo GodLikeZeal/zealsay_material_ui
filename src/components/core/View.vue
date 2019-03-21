@@ -13,7 +13,7 @@
 export default {
   metaInfo () {
     return {
-      title: 'Vuetify Material Dashboard by CreativeTim'
+      title: 'zealsay 后台管理系统'
     }
   }
 }
