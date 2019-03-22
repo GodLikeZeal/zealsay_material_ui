@@ -76,53 +76,23 @@ export default [
     )
   },
   {
-    path: '/userList',
+    path: '/user/list',
     meta: { breadcrumb: true },
-    name: 'userList',
+    name: 'userlist',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/userList/index.vue`
+      `@/views/user/list/index.vue`
     )
   },
   {
-    path: '/components/alert',
+    path: '/user/add',
     meta: { breadcrumb: true },
-    name: 'components/alerts',
+    name: 'useradd',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/ui/Alert.vue`
-    )
-  },
-  {
-    path: '/layout/bottomsheets',
-    meta: { breadcrumb: true },
-    name: 'components/bottom-sheets',
-    component: () => import(
-      /* webpackChunkName: "routes" */
-      /* webpackMode: "lazy-once" */
-      `@/views/layout/BottomSheets.vue`
-    )
-  },
-  {
-    path: '/forms/basic',
-    meta: { breadcrumb: true },
-    name: 'components/basic-forms',
-    component: () => import(
-      /* webpackChunkName: "routes" */
-      /* webpackMode: "lazy-once" */
-      `@/views/form/BasicForms.vue`
-    )
-  },
-  {
-    path: '/widgets/social',
-    meta: { breadcrumb: true },
-    name: 'components/social',
-    component: () => import(
-      /* webpackChunkName: "routes" */
-      /* webpackMode: "lazy-once" */
-      `@/views/widgets/Social.vue`
+      `@/views/user/add/index.vue`
     )
   }
 ];

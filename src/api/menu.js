@@ -12,8 +12,8 @@ const Menu = [
     group: 'user',
     icon: 'group',
     items: [
-      { name: 'list', title: '用户列表', component: 'userList' },
-      { name: 'add', title: '用户添加', component: 'components/social' }
+      { name: 'list', title: '用户列表', component: 'userlist' },
+      { name: 'add', title: '用户添加', component: 'useradd' }
     ]
   },
   {
@@ -21,8 +21,8 @@ const Menu = [
     group: 'role',
     icon: 'people_outline',
     items: [
-      { name: 'list', title: '角色列表', component: 'components/social' },
-      { name: 'add', title: '角色添加', component: 'components/social' }
+      { name: 'list', title: '角色列表', component: 'Dashboard' },
+      { name: 'add', title: '角色添加', component: 'Dashboard' }
     ]
   },
   { header: '站点资源' },
@@ -31,10 +31,10 @@ const Menu = [
     group: 'article',
     icon: 'book',
     items: [
-      { name: 'list', title: '文章列表', component: 'components/alerts' },
-      { name: 'write', title: '写文章', component: 'components/alerts' },
-      { name: 'menu', title: '分类目录', component: 'components/alerts' },
-      { name: 'label', title: '标签管理', component: 'components/alerts' }
+      { name: 'list', title: '文章列表', component: 'Dashboard' },
+      { name: 'write', title: '写文章', component: 'Dashboard' },
+      { name: 'menu', title: '分类目录', component: 'Dashboard' },
+      { name: 'label', title: '标签管理', component: 'Dashboard' }
     ]
   },
   {
@@ -42,8 +42,8 @@ const Menu = [
     group: 'media',
     icon: 'panorama',
     items: [
-      { name: 'list', title: '媒体库', component: 'components/alerts' },
-      { name: 'write', title: '添加', component: 'components/alerts' }
+      { name: 'list', title: '媒体库', component: 'Dashboard' },
+      { name: 'write', title: '添加', component: 'Dashboard' }
     ]
   }
 ];

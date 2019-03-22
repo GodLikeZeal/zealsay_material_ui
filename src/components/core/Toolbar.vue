@@ -54,7 +54,7 @@
             v-ripple
             slot="activator"
             class="toolbar-items"
-            to="/notifications"
+            to="/dashboard"
           >
             <v-badge
               color="error"
@@ -80,18 +80,50 @@
             </v-list>
           </v-card>
         </v-menu>
-        <router-link
-          v-ripple
-          class="toolbar-items"
-          to="/user-profile"
+        <mFilter></mFilter>
+        <v-menu
+                bottom
+                left
+                content-class="dropdown-menu"
+                offset-y
+                transition="slide-y-transition"
         >
-          <v-avatar size="30px">
-            <img
-                    :src="avatar"
-                    alt="Michael Wang"
-            />
-          </v-avatar>
-        </router-link>
+          <v-btn
+                  flat
+                  icon
+                  slot="activator"
+                  class="toolbar-items"
+          >
+            <v-avatar size="30px">
+              <v-img
+                      :src="avatar"
+                      alt="Michael Wang"
+              />
+            </v-avatar>
+          </v-btn>
+          <v-card>
+          <v-list dense>
+            <v-list-tile
+                    v-for="(item,index) in items"
+                    :to="!item.href ? { name: item.name } : null"
+                    :href="item.href"
+                    @click="item.click"
+                    ripple="ripple"
+                    :disabled="item.disabled"
+                    :target="item.target"
+                    rel="noopener"
+                    :key="index"
+            >
+              <v-list-tile-action v-if="item.icon">
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+          </v-card>
+        </v-menu>
       </v-flex>
     </v-toolbar-items>
   </v-toolbar>
@@ -102,10 +134,15 @@
 import {
   mapMutations,
   mapGetters
-} from 'vuex'
+} from 'vuex';
+import mFilter from '@/components/core/Filter';
+const vm=this;
 
 export default {
-  data: () => ({
+  components: {
+    mFilter
+  },
+  data: (vm) => ({
     notifications: [
       'Mike, John responded to your email',
       'You have 5 new tasks',
@@ -115,7 +152,34 @@ export default {
     ],
     title: null,
     responsive: false,
-    responsiveInput: false
+    responsiveInput: false,
+    items: [
+      {
+        icon: 'mdi-account',
+        href: '#',
+        title: 'Profile',
+        click: e => {
+          console.log(e);
+        }
+      },
+      {
+        icon: 'settings',
+        href: '#',
+        title: 'Settings',
+        click: e => {
+          console.log(e);
+        }
+      },
+      {
+        icon: 'fullscreen_exit',
+        href: '#',
+        title: 'Logout',
+        click: e => {
+          vm.logout()
+          // window.getApp.$emit('APP_LOGOUT');
+        }
+      }
+    ]
   }),
 
   watch: {
@@ -130,7 +194,7 @@ export default {
     ...mapGetters('user',['name', 'avatar', 'roles'])
   },
   mounted () {
-    this.onResponsiveInverted()
+    this.onResponsiveInverted();
     window.addEventListener('resize', this.onResponsiveInverted)
   },
   beforeDestroy () {
@@ -147,12 +211,17 @@ export default {
     },
     onResponsiveInverted () {
       if (window.innerWidth < 991) {
-        this.responsive = true
+        this.responsive = true;
         this.responsiveInput = false
       } else {
-        this.responsive = false
+        this.responsive = false;
         this.responsiveInput = true
       }
+    },
+    logout () {
+      this.$store.dispatch('user/LogOut').then(() => {
+        location.reload(); // In order to re-instantiate the vue-router object to avoid bugs
+      });
     }
   }
 }

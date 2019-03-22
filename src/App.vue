@@ -2,7 +2,7 @@
     <div id="appRoot">
         <template v-if="!$route.meta.public">
             <v-app>
-                <core-filter/>
+                <!--<core-filter/>-->
 
                 <core-toolbar/>
 
