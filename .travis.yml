@@ -29,8 +29,8 @@ addons:
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build  -t zealsay/zealsay_material_ui:$TRAVIS_BRANCH-$TRAVIS_BUILD_ID .
-  - docker push zealsay/zealsay_material_ui:$TRAVIS_BRANCH-$TRAVIS_BUILD_ID;
+  - docker build  -t zealsay/zealsay_material_ui:$TRAVIS_BRANCH .
+  - docker push zealsay/zealsay_material_ui:$TRAVIS_BRANCH;
   - sshpass -p $VPS_PASSWORD ssh -o stricthostkeychecking=no travis@$HOST "/home/travis/zealsay/travis-deploy-web.sh $TRAVIS_BRANCH"
 
 
