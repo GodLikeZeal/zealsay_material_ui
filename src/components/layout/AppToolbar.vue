@@ -57,19 +57,18 @@
       :nudge-bottom="10"
       transition="scale-transition"
     >
-      <v-btn
-        icon
-        large
-        flat
-        slot="activator"
+      <router-link
+              v-ripple
+              class="toolbar-items"
+              to="/user-profile"
       >
         <v-avatar size="30px">
           <img
-            :src="avatar"
-            alt="Michael Wang"
+                  :src="avatar"
+                  alt="Michael Wang"
           />
         </v-avatar>
-      </v-btn>
+      </router-link>
       <v-list class="pa-0">
         <v-list-tile
           v-for="(item,index) in items"
