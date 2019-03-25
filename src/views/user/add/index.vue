@@ -13,8 +13,8 @@
       >
         <material-card
           color="green"
-          title="Edit Profile"
-          text="Complete your profile"
+          title="添加用户"
+          text="完善用户信息后，点击提交"
         >
           <v-form>
             <v-container py-0>
@@ -24,8 +24,9 @@
                   md4
                 >
                   <v-text-field
-                    label="Company (disabled)"
-                    disabled/>
+                    class="purple-input"
+                    label="username"
+                    />
                 </v-flex>
                 <v-flex
                   xs12
@@ -33,7 +34,7 @@
                 >
                   <v-text-field
                     class="purple-input"
-                    label="User Name"
+                    label="初始password"
                   />
                 </v-flex>
                 <v-flex
@@ -41,7 +42,7 @@
                   md4
                 >
                   <v-text-field
-                    label="Email Address"
+                    label="真实姓名"
                     class="purple-input"/>
                 </v-flex>
                 <v-flex
@@ -49,7 +50,7 @@
                   md6
                 >
                   <v-text-field
-                    label="First Name"
+                    label="手机号"
                     class="purple-input"/>
                 </v-flex>
                 <v-flex
@@ -57,7 +58,7 @@
                   md6
                 >
                   <v-text-field
-                    label="Last Name"
+                    label="Email"
                     class="purple-input"/>
                 </v-flex>
                 <v-flex
@@ -87,14 +88,14 @@
                   md4>
                   <v-text-field
                     class="purple-input"
-                    label="Postal Code"
+                    label="Area"
                     type="number"/>
                 </v-flex>
                 <v-flex xs12>
                   <v-textarea
                     class="purple-input"
                     label="About Me"
-                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                    value="一个喜欢安静的程序员."
                   />
                 </v-flex>
                 <v-flex
@@ -105,7 +106,7 @@
                     class="mx-0 font-weight-light"
                     color="success"
                   >
-                    Update Profile
+                    提交
                   </v-btn>
                 </v-flex>
               </v-layout>
@@ -124,7 +125,7 @@
             size="130"
           >
             <img
-              src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
+              src="https://pan.zealsay.com/20190317010254129000000.jpg"
             >
           </v-avatar>
           <v-card-text class="text-xs-center">
