@@ -4,7 +4,7 @@
             <v-card>
                 <v-img
                         class="white--text"
-                        height="400"
+                        height="350"
                         src="https://pan.zealsay.com/info-1.jpg"
                 >
                     <v-container fill-height fluid>
@@ -117,7 +117,7 @@
 
 <style lang="less" scoped>
     .avator {
-        margin: 200px auto auto;
+        margin: 160px auto auto;
         border-radius: 50%;
     }
 

@@ -136,16 +136,10 @@ export default {
 
   computed: {
     ...mapState('app', ['image', 'color']),
-    color () {
-      return this.$store.state.app.color
-    }
   },
 
   methods: {
-    ...mapMutations('app', ['setImage']),
-    setColor (color) {
-      this.$store.state.app.color = color
-    }
+    ...mapMutations('app', ['setImage','setColor']),
   }
 }
 </script>

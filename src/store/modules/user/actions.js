@@ -27,7 +27,7 @@ export default {
           setToken(data.token);
           resolve()
         } else {
-          reject(response.message)
+          reject(response)
         }
       }).catch(error => {
         reject(error)
