@@ -25,7 +25,7 @@
                 >
                   <v-text-field
                     class="purple-input"
-                    label="username"
+                    label="用户名"
                     />
                 </v-flex>
                 <v-flex
@@ -34,7 +34,7 @@
                 >
                   <v-text-field
                     class="purple-input"
-                    label="初始password"
+                    label="初始密码"
                   />
                 </v-flex>
                 <v-flex
@@ -66,37 +66,52 @@
                   md12
                 >
                   <v-text-field
-                    label="Adress"
+                    label="住址"
                     class="purple-input"/>
                 </v-flex>
                 <v-flex
                   xs12
                   md4>
                   <v-select
+                          v-model="provinceCode"
                           :items="province"
-                          :value="provinceCode"
                           item-text="text"
                           item-value="value"
                           item-avatar="avatar"
                           label="省"
-                          :change="changeProvince(provinceCode)"
+                          @change="changeProvince"
                           required
+                          :loading="provinceLoading"
                   ></v-select>
                 </v-flex>
                 <v-flex
                   xs12
                   md4>
-                  <v-text-field
-                    label="Country"
-                    class="purple-input"/>
+                  <v-select
+                          v-model="cityCode"
+                          :items="city"
+                          item-text="text"
+                          item-value="value"
+                          item-avatar="avatar"
+                          label="市"
+                          @change="changeCity"
+                          required
+                          :loading="cityLoading"
+                  ></v-select>
                 </v-flex>
                 <v-flex
                   xs12
                   md4>
-                  <v-text-field
-                    class="purple-input"
-                    label="Area"
-                    type="number"/>
+                  <v-select
+                          v-model="areaCode"
+                          :items="area"
+                          item-text="text"
+                          item-value="value"
+                          item-avatar="avatar"
+                          label="区"
+                          required
+                          :loading="areaLoading"
+                  ></v-select>
                 </v-flex>
                 <v-flex xs12>
                   <v-textarea
@@ -152,33 +167,69 @@
 </template>
 
 <script>
-  import {getProvinceList} from '@/api/dict'
+  import {getProvinceList,getCityList,getAreaList} from '@/api/dict'
 export default {
   name: 'add',
   data: () => ({
     province: [],
     city: [],
     area: [],
-    provinceCode: '',
-    cityCode: ''
+    provinceCode: {},
+    cityCode: {},
+    areaCode: {},
+    provinceLoading: false,
+    cityLoading: false,
+    areaLoading: false,
   }),
   created() {
+    this.provinceLoading = true;
     getProvinceList().then(res => {
       if (res.code === '200') {
         this.province = res.data.map(r => {
           return {
             value: r.code, text: r.name
           }
-
         });
       } else {
-        this.$dialog.notify.error("拉取角色信息失败!")
+        this.$dialog.notify.error("拉取省市区信息失败!")
       }
+      this.provinceLoading = false;
     });
   },
   methods: {
-    changeProvince(value) {
-      console.log('value:' + value);
+    changeProvince() {
+      this.cityLoading = true;
+      let obj = {};
+      obj.code = this.provinceCode;
+      getCityList(obj).then(res => {
+        if (res.code === '200') {
+          this.city = res.data.map(r => {
+            return {
+              value: r.code, text: r.name
+            }
+          });
+        } else {
+          this.$dialog.notify.error("拉取省市区信息失败!")
+        }
+        this.cityLoading = false;
+      });
+    },
+    changeCity() {
+      this.areaLoading = true;
+      let obj = {};
+      obj.code = this.cityCode;
+      getAreaList(obj).then(res => {
+        if (res.code === '200') {
+          this.area = res.data.map(r => {
+            return {
+              value: r.code, text: r.name
+            }
+          });
+        } else {
+          this.$dialog.notify.error("拉取省市区信息失败!")
+        }
+        this.areaLoading = false;
+      });
     }
   }
 }

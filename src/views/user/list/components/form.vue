@@ -58,7 +58,7 @@
                         <v-flex xs12 sm6>
                             <v-select
                                     :items="sexs"
-                                    :value="form.sex"
+                                    v-model="form.sex"
                                     item-text="text"
                                     item-value="value"
                                     item-avatar="avatar"
@@ -68,8 +68,8 @@
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-autocomplete
+                                    v-model="form.role"
                                     :items="roles"
-                                    :value="form.role"
                                     item-text="text"
                                     item-value="value"
                                     label="角色"
@@ -224,7 +224,17 @@
                         this.$dialog.notify.error(e.message);
                     })
                 }
-                // editUser(form)
+                //开始提交
+                editUser(this.form).then(res => {
+                    if (res.code === '200' && res.data) {
+                        this.loading = false;
+                        this.$dialog.notify.info("修改成功!");
+                    } else {
+                        this.$dialog.notify.error(res.message);
+                    }
+                }).catch(e => {
+                    this.$dialog.notify.error(e.message);
+                })
             },
             fileChanged(file) {
                 // handle file here. File will be an object.
