@@ -88,7 +88,6 @@
 </template>
 
 <script>
-    import cloneDeep from 'lodash.clonedeep'
     import {
         addUser,
         editUser,

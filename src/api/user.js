@@ -8,7 +8,6 @@ import qs from 'qs';
  * @date 2019-03-13  16:13
  */
 export function getUserList (obj) {
-  console.log(qs.stringify(obj));
   return request({
     url: '/api/v1/user/page',
     method: 'GET',

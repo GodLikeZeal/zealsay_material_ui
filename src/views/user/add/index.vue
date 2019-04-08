@@ -72,9 +72,16 @@
                 <v-flex
                   xs12
                   md4>
-                  <v-text-field
-                    label="City"
-                    class="purple-input"/>
+                  <v-select
+                          :items="province"
+                          :value="provinceCode"
+                          item-text="text"
+                          item-value="value"
+                          item-avatar="avatar"
+                          label="省"
+                          :change="changeProvince(provinceCode)"
+                          required
+                  ></v-select>
                 </v-flex>
                 <v-flex
                   xs12
@@ -145,7 +152,34 @@
 </template>
 
 <script>
+  import {getProvinceList} from '@/api/dict'
 export default {
-  //
+  name: 'add',
+  data: () => ({
+    province: [],
+    city: [],
+    area: [],
+    provinceCode: '',
+    cityCode: ''
+  }),
+  created() {
+    getProvinceList().then(res => {
+      if (res.code === '200') {
+        this.province = res.data.map(r => {
+          return {
+            value: r.code, text: r.name
+          }
+
+        });
+      } else {
+        this.$dialog.notify.error("拉取角色信息失败!")
+      }
+    });
+  },
+  methods: {
+    changeProvince(value) {
+      console.log('value:' + value);
+    }
+  }
 }
 </script>
