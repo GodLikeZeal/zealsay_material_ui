@@ -259,47 +259,61 @@
                 this.$dialog.show(info, {row: row, width: 600})
             },
             handleDisabled(row) {
-                this.$dialog.error({
+                this.$swal({
                     title: '操作提示',
                     text: '确认要封禁吗？',
-                    actions: {
-                        false: '取消',
-                        true: {
-                            text: '确认',
-                            color: 'error',
-                            handle: () => {
-                                disabeledUser(row.id).then(res => {
-                                    if (res.code === '200' && res.data) {
-                                        this.$dialog.warning({
-                                            title: '操作提示',
-                                            text: '操作成功！',
-                                            actions: {
-                                                false: {
-                                                    text: '取消',
-                                                    handle: () => {
-                                                        this.search('');
-                                                    }
-                                                },
-                                                true: {
-                                                    text: '确定',
-                                                    color: 'warning',
-                                                    handle: () => {
-                                                        this.search('');
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        this.$dialog.error({
-                                            title: '操作提示',
-                                            text: res.message
-                                        })
-                                    }
-                                });
-                            }
-                        }
+                    type: 'warning',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.value) {
+                        this.$swal({
+                            title: '操作提示',
+                            text: 'ok',
+                            type: 'success'
+                        })
                     }
-                })
+                });
+                // this.$dialog.error({
+                //     title: '操作提示',
+                //     text: '确认要封禁吗？',
+                //     actions: {
+                //         false: '取消',
+                //         true: {
+                //             text: '确认',
+                //             color: 'error',
+                //             handle: () => {
+                //                 disabeledUser(row.id).then(res => {
+                //                     if (res.code === '200' && res.data) {
+                //                         this.$dialog.warning({
+                //                             title: '操作提示',
+                //                             text: '操作成功！',
+                //                             actions: {
+                //                                 false: {
+                //                                     text: '取消',
+                //                                     handle: () => {
+                //                                         this.search('');
+                //                                     }
+                //                                 },
+                //                                 true: {
+                //                                     text: '确定',
+                //                                     color: 'warning',
+                //                                     handle: () => {
+                //                                         this.search('');
+                //                                     }
+                //                                 }
+                //                             }
+                //                         });
+                //                     } else {
+                //                         this.$dialog.error({
+                //                             title: '操作提示',
+                //                             text: res.message
+                //                         })
+                //                     }
+                //                 });
+                //             }
+                //         }
+                //     }
+                // })
             },
             handleUnsealing(row) {
                 unsealingUser(row.id).then(res => {
