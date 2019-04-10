@@ -260,178 +260,128 @@
             },
             handleDisabled(row) {
                 this.$swal({
-                    title: '操作提示',
-                    text: '确认要封禁吗？',
+                    title: '确定要封禁吗？',
+                    text: '一旦封禁，该用户无法登录系统',
                     type: 'warning',
                     showCancelButton: true
                 }).then((result) => {
                     if (result.value) {
-                        this.$swal({
-                            title: '操作提示',
-                            text: 'ok',
-                            type: 'success'
-                        })
-                    }
-                });
-                // this.$dialog.error({
-                //     title: '操作提示',
-                //     text: '确认要封禁吗？',
-                //     actions: {
-                //         false: '取消',
-                //         true: {
-                //             text: '确认',
-                //             color: 'error',
-                //             handle: () => {
-                //                 disabeledUser(row.id).then(res => {
-                //                     if (res.code === '200' && res.data) {
-                //                         this.$dialog.warning({
-                //                             title: '操作提示',
-                //                             text: '操作成功！',
-                //                             actions: {
-                //                                 false: {
-                //                                     text: '取消',
-                //                                     handle: () => {
-                //                                         this.search('');
-                //                                     }
-                //                                 },
-                //                                 true: {
-                //                                     text: '确定',
-                //                                     color: 'warning',
-                //                                     handle: () => {
-                //                                         this.search('');
-                //                                     }
-                //                                 }
-                //                             }
-                //                         });
-                //                     } else {
-                //                         this.$dialog.error({
-                //                             title: '操作提示',
-                //                             text: res.message
-                //                         })
-                //                     }
-                //                 });
-                //             }
-                //         }
-                //     }
-                // })
-            },
-            handleUnsealing(row) {
-                unsealingUser(row.id).then(res => {
-                    if (res.code === '200' && res.data) {
-                        this.$dialog.warning({
-                            title: '操作提示',
-                            text: '操作成功！',
-                            actions: {
-                                false: {
-                                    text: '取消',
-                                    handle: () => {
-                                        this.search('');
-                                    }
-                                },
-                                true: {
-                                    text: '确定',
-                                    color: 'warning',
-                                    handle: () => {
-                                        this.search('');
-                                    }
-                                }
+                        disabeledUser(row.id).then(res => {
+                            if (res.code === '200' && res.data) {
+                                this.$swal({
+                                    title: '操作成功!',
+                                    text: '该用户已经被封禁',
+                                    type: 'success'
+                                });
+                                this.search('');
+                            } else {
+                                this.$swal({
+                                    title: '操作失败!',
+                                    text: res.message,
+                                    type: 'error'
+                                });
                             }
                         });
-                    } else {
-                        this.$dialog.error({
-                            title: '操作提示',
-                            text: res.message
-                        })
+                    }
+                });
+            },
+            handleUnsealing(row) {
+                this.$swal({
+                    title: '确定要解封吗？',
+                    text: '将该用户从封禁状态改成正常状态，该用户可正常使用系统',
+                    type: 'warning',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.value) {
+                        unsealingUser(row.id).then(res => {
+                            if (res.code === '200' && res.data) {
+                                this.$swal({
+                                    title: '操作成功!',
+                                    text: '该用户已经成功解封',
+                                    type: 'success'
+                                });
+                                this.search('');
+                            } else {
+                                this.$swal({
+                                    title: '操作失败!',
+                                    text: res.message,
+                                    type: 'error'
+                                });
+                            }
+                        });
                     }
                 });
             },
             handleDisabledSelected(selected) {
                 let param = selected.map(s => s.id);
                 if (param.length > 0) {
-                    this.$dialog.error({
-                        title: '操作提示',
-                        text: '确认要封禁吗？',
-                        actions: {
-                            false: '取消',
-                            true: {
-                                text: '确认',
-                                color: 'error',
-                                handle: () => {
-                                    disabeledUserBatch(param).then(res => {
-                                        if (res.code === '200' && res.data) {
-                                            this.$dialog.warning({
-                                                title: '操作提示',
-                                                text: '操作成功！',
-                                                actions: {
-                                                    false: {
-                                                        text: '取消',
-                                                        handle: () => {
-                                                            this.search('');
-                                                        }
-                                                    },
-                                                    true: {
-                                                        text: '确定',
-                                                        color: 'warning',
-                                                        handle: () => {
-                                                            this.search('');
-                                                        }
-                                                    }
-                                                }
-                                            });
-                                        } else {
-                                            this.$dialog.error({
-                                                title: '操作提示',
-                                                text: res.message
-                                            })
-                                        }
-                                    })
+                    this.$swal({
+                        title: '确定要封禁吗？',
+                        text: '一旦封禁，所选用户无法登录系统',
+                        type: 'warning',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            disabeledUserBatch(param).then(res => {
+                                if (res.code === '200' && res.data) {
+                                    this.$swal({
+                                        title: '操作成功!',
+                                        text: '所选用户已经被封禁',
+                                        type: 'success'
+                                    });
+                                    this.search('');
+                                } else {
+                                    this.$swal({
+                                        title: '操作失败!',
+                                        text: res.message,
+                                        type: 'error'
+                                    });
                                 }
-                            }
+                            });
                         }
-                    })
+                    });
                 } else {
-                    this.$dialog.error({
-                        title: '操作提示',
-                        text: '请至少选择一条需要封禁的用户！'
-                    })
+                    this.$swal({
+                        title: '无法封禁！',
+                        text: '请至少选择一条需要封禁的用户！',
+                        type: 'warning'
+                    });
                 }
             },
             handleUnsealingSelected(selected) {
                 let param = selected.map(s => s.id);
                 if (param.length > 0) {
-                    unsealingUserBatch(param).then(res => {
-                        if (res.code === '200' && res.data) {
-                            this.$dialog.warning({
-                                title: '操作提示',
-                                text: '操作成功！',
-                                actions: {
-                                    false: {
-                                        text: '取消',
-                                        handle: () => {
-                                            this.search('');
-                                        }
-                                    },
-                                    true: {
-                                        text: '确定',
-                                        color: 'warning',
-                                        handle: () => {
-                                            this.search('');
-                                        }
-                                    }
+                    this.$swal({
+                        title: '确定要解封吗？',
+                        text: '将所选用户从封禁状态改成正常状态，该用户可正常使用系统',
+                        type: 'warning',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            unsealingUserBatch(param).then(res => {
+                                if (res.code === '200' && res.data) {
+                                    this.$swal({
+                                        title: '操作成功!',
+                                        text: '所选用户已经成功解封',
+                                        type: 'success'
+                                    });
+                                    this.search('');
+                                } else {
+                                    this.$swal({
+                                        title: '操作失败!',
+                                        text: res.message,
+                                        type: 'error'
+                                    });
                                 }
                             });
-                        } else {
-                            this.$dialog.error({
-                                title: '操作提示',
-                                text: res.message
-                            })
                         }
-                    })
+                    });
                 } else {
-                    this.$dialog.error({
-                        title: '操作提示',
-                        text: '请至少选择一条需要封禁的用户！'
-                    })
+                    this.$swal({
+                        title: '无法封禁！',
+                        text: '请至少选择一条需要解封的用户！',
+                        type: 'warning'
+                    });
                 }
             }
         }

@@ -199,7 +199,6 @@
             handleSubmit(obj) {
                 this.loading = true;
                 //先上传头像
-                console.log(this.form);
                 if (!(this.file === '')) {
                     let param = new FormData();
                     param.append('file', this.file);
