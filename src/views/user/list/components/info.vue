@@ -1,4 +1,5 @@
 <template>
+    <v-dialog width="700"  v-model="dialog" content-class="vuedl-layout">
     <v-layout>
         <v-flex>
             <v-card>
@@ -56,36 +57,38 @@
             </v-card>
         </v-flex>
     </v-layout>
+    </v-dialog>
 </template>
 
 <script>
     export default {
         name: "info",
-        props: {
-            row: {
-                type: Object,
-                default: function () {
-                    return {
-                        address: "",
-                        age: 23,
-                        area: '',
-                        avatar: "",
-                        city: "",
-                        deptId: "",
-                        email: "",
-                        label: "",
-                        lastPasswordResetDate: "",
-                        name: "",
-                        phoneNumber: "",
-                        registerAt: "",
-                        roleId: "",
-                        sex: 0,
-                        status: "",
-                        username: ""
-                    }
-                }
-            }
-        },
+        props: ['row','alert'],
+        // props: {
+        //     row: {
+        //         type: Object,
+        //         default: function () {
+        //             return {
+        //                 address: "",
+        //                 age: 23,
+        //                 area: '',
+        //                 avatar: "",
+        //                 city: "",
+        //                 deptId: "",
+        //                 email: "",
+        //                 label: "",
+        //                 lastPasswordResetDate: "",
+        //                 name: "",
+        //                 phoneNumber: "",
+        //                 registerAt: "",
+        //                 roleId: "",
+        //                 sex: 0,
+        //                 status: "",
+        //                 username: ""
+        //             }
+        //         }
+        //     }
+        // },
         data() {
             return {
                 icon: [require("@/assets/food/南瓜.png"),
@@ -127,5 +130,21 @@
 
     .text-detail {
         margin: 0 15px;
+    }
+    .vuedl-layout {
+        position: relative;
+    }
+    .vuedl-layout__closeBtn {
+        position: absolute;
+        top: 0px;
+        font-family: -webkit-pictograph;
+        right: 14px;
+        font-size: 29px;
+        opacity: 0.5;
+        z-index: 1000;
+        cursor: pointer;
+    }
+    .vuedl-layout__closeBtn:hover {
+        opacity: 1;
     }
 </style>

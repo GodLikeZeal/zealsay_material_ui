@@ -167,6 +167,9 @@
         <div>
             <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
         </div>
+        <div>
+            <info :row="row" :alert="infoVisible"></info>
+        </div>
     </div>
 </template>
 <script>
@@ -211,6 +214,7 @@
                 row: {},
                 dialogVisible: false,
                 formVisible: false,
+                infoVisible: false,
                 title: ''
             };
         },
@@ -256,7 +260,9 @@
                 this.formVisible = false;
             },
             handleInfo(row) {
-                this.$dialog.show(info, {row: row, width: 600})
+                this.infoVisible = true;
+                this.row = {...row};
+                // this.$dialog.show(info, {row: row, width: 600})
             },
             handleDisabled(row) {
                 this.$swal({
