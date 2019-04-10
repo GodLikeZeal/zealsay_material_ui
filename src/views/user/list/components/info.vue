@@ -1,5 +1,5 @@
 <template>
-    <v-dialog width="700"  v-model="dialog" content-class="vuedl-layout">
+    <v-dialog width="700"  v-model="alert" content-class="vuedl-layout">
     <v-layout>
         <v-flex>
             <v-card>
