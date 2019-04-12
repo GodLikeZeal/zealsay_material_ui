@@ -21,7 +21,7 @@
       <v-container grid-list-xl>
         <v-layout wrap>
           <v-flex xs12>
-            <div class="text-xs-center body-2 text-uppercase sidebar-filter">Sidebar Filters</div>
+            <div class="text-xs-center body-2 text-uppercase sidebar-filter">主题样式设置</div>
 
             <v-layout justify-center>
               <v-avatar
@@ -29,8 +29,7 @@
                 :key="c"
                 :class="[c === color ? 'color-active color-' + c: 'color-' + c]"
                 size="23"
-
-                @click="setColor(c)"
+                @click="updateColor(c)"
               />
             </v-layout>
             <v-divider class="mt-3"/>
@@ -38,7 +37,7 @@
           <v-flex
             xs12
           >
-            <div class="text-xs-center body-2 text-uppercase sidebar-filter">Images</div>
+            <div class="text-xs-center body-2 text-uppercase sidebar-filter">侧边Images</div>
           </v-flex>
           <v-flex
             v-for="img in images"
@@ -133,13 +132,32 @@ export default {
       'https://pan.zealsay.com/298125-106.jpg'
     ]
   }),
-
   computed: {
     ...mapState('app', ['image', 'color']),
   },
 
   methods: {
     ...mapMutations('app', ['setImage','setColor']),
+    updateColor(val){
+      let color;
+      if (val === 'primary') {
+        color = '#9c27b0';
+      }
+      if (val === 'info') {
+        color = '#00bcd4';
+      }
+      if (val === 'success') {
+        color = '#4caf50';
+      }
+      if (val === 'warning') {
+        color = '#ff9800';
+      }
+      if (val === 'danger') {
+        color = '#f44336';
+      }
+      this.$vuetify.theme.primary = color;
+      this.setColor(val);
+    }
   }
 }
 </script>

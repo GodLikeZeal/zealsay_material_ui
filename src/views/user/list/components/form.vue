@@ -1,13 +1,12 @@
 <template>
-    <v-dialog width="700" persistent  v-model="dialog">
+    <v-dialog width="600" persistent v-model="dialog">
         <v-card ref="row">
             <v-container fill-height fluid>
                 <v-layout fill-height class="center">
                     <v-flex xs12 align-center flexbox>
-                        <a href="#" title="点击修改头像">
-                            <vue-initials-img class="avator" height="64" width="64"
-                                              :lazy-src="form.avatar" :src="form.avatar"/>
-                        </a>
+                        <vue-initials-img class="avator" height="64" width="64"
+                                          :lazy-src="form.avatar" :src="form.avatar"/>
+
                         <upload-btn outline color="indigo" title="点击修改头像"
                                     :fileChangedCallback="fileChanged"
                         >
@@ -67,13 +66,14 @@
                             ></v-select>
                         </v-flex>
                         <v-flex xs12 sm6>
-                            <v-autocomplete
+                            <v-select
                                     v-model="form.role"
                                     :items="roles"
                                     item-text="text"
                                     item-value="value"
                                     label="角色"
-                            ></v-autocomplete>
+                                    required
+                            ></v-select>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -98,12 +98,13 @@
     } from "@/api/user";
     import {getRoleList} from "@/api/role";
     import UploadButton from 'vuetify-upload-button'
+
     export default {
         components: {
             'upload-btn': UploadButton,
         },
         name: 'edit',
-        props: ['row','alert'],
+        props: ['row', 'alert'],
         data: () => ({
             valid: true,
             name: 'edit',
@@ -133,28 +134,28 @@
             ],
             checkbox: false
         }),
-        computed:{
-          form: function () {
-              return {
-                  id: this.row.id,
-                  age: this.row.age,
-                  avatar: this.row.avatar,
-                  email: this.row.email,
-                  name: this.row.name,
-                  phoneNumber: this.row.phoneNumber,
-                  role: this.row.role,
-                  sex: this.row.sex,
-                  username: this.row.username
-              }
-          },
-          dialog: {
-              get: function () {
-                  return this.alert;
-              },
-              set:function () {
+        computed: {
+            form: function () {
+                return {
+                    id: this.row.id,
+                    age: this.row.age,
+                    avatar: this.row.avatar,
+                    email: this.row.email,
+                    name: this.row.name,
+                    phoneNumber: this.row.phoneNumber,
+                    role: this.row.role,
+                    sex: this.row.sex,
+                    username: this.row.username
+                }
+            },
+            dialog: {
+                get: function () {
+                    return this.alert;
+                },
+                set: function () {
 
-              }
-          }
+                }
+            }
         },
         created() {
             if (!this.roles.length) {
@@ -193,7 +194,7 @@
             resetValidation() {
                 this.$refs.form.resetValidation()
             },
-            handleCancel(){
+            handleCancel() {
                 this.$emit('handleCancel')
             },
             handleSubmit(obj) {

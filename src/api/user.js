@@ -23,7 +23,7 @@ export function getUserList (obj) {
 export function addUser (obj) {
   return request({
     url: '/api/v1/user',
-    method: 'PUT',
+    method: 'POST',
     data: obj
   })
 }
