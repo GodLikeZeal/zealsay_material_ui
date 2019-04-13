@@ -1,4 +1,5 @@
 import './avator'
 import './chartist'
 import './vuetify'
+import './sweetalert2'
 import './dialog'

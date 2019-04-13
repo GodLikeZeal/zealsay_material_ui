@@ -1,13 +1,12 @@
 <template>
-    <v-dialog width="700" persistent  v-model="dialog">
+    <v-dialog width="600" persistent v-model="dialog">
         <v-card ref="row">
             <v-container fill-height fluid>
                 <v-layout fill-height class="center">
                     <v-flex xs12 align-center flexbox>
-                        <a href="#" title="点击修改头像">
-                            <vue-initials-img class="avator" height="64" width="64"
-                                              :lazy-src="form.avatar" :src="form.avatar"/>
-                        </a>
+                        <vue-initials-img class="avator" height="64" width="64"
+                                          :lazy-src="form.avatar" :src="form.avatar"/>
+
                         <upload-btn outline color="indigo" title="点击修改头像"
                                     :fileChangedCallback="fileChanged"
                         >
@@ -16,67 +15,70 @@
                 </v-layout>
             </v-container>
             <v-card-title>
-                <v-container grid-list-md>
-                    <v-layout wrap>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field
-                                    hint="用户名不能包含空格和特殊字符"
-                                    label="用户名*"
-                                    v-model="form.username"
-                                    validate-on-blur
-                                    :rules="usernameRules"
-                                    required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field
-                                    label="姓名"
-                                    v-model="form.name"
-                                    hint="输入真实姓名"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field
-                                    label="年龄*"
-                                    v-model="form.age"
-                                    persistent-hint
-                                    required
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-text-field
-                                    label="Email*"
-                                    v-model="form.email"
-                                    type="email"
-                                    required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-text-field
-                                    label="手机号*"
-                                    v-model="form.phoneNumber"
-                                    type="phone"
-                                    required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6>
-                            <v-select
-                                    :items="sexs"
-                                    :value="form.sex"
-                                    item-text="text"
-                                    item-value="value"
-                                    item-avatar="avatar"
-                                    label="性别*"
-                                    required
-                            ></v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6>
-                            <v-autocomplete
-                                    :items="roles"
-                                    :value="form.role"
-                                    item-text="text"
-                                    item-value="value"
-                                    label="角色"
-                            ></v-autocomplete>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
+                <v-form ref="form" lazy-validation>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field
+                                        hint="用户名不能包含空格和特殊字符"
+                                        label="用户名*"
+                                        v-model="form.username"
+                                        validate-on-blur
+                                        :rules="usernameRules"
+                                        required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field
+                                        label="姓名"
+                                        v-model="form.name"
+                                        hint="输入真实姓名"></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field
+                                        label="年龄"
+                                        v-model="form.age"
+                                        persistent-hint
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field
+                                        label="Email*"
+                                        v-model="form.email"
+                                        :rules="emailRules"
+                                        type="email"
+                                        required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field
+                                        label="手机号*"
+                                        v-model="form.phoneNumber"
+                                        :rules="phoneRules"
+                                        type="phone"
+                                        required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6>
+                                <v-select
+                                        :items="sexs"
+                                        v-model="form.sex"
+                                        item-text="text"
+                                        item-value="value"
+                                        item-avatar="avatar"
+                                        label="性别"
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6>
+                                <v-select
+                                        v-model="form.role"
+                                        :items="roles"
+                                        item-text="text"
+                                        item-value="value"
+                                        label="角色"
+                                        required
+                                ></v-select>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-form>
             </v-card-title>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -88,7 +90,6 @@
 </template>
 
 <script>
-    import cloneDeep from 'lodash.clonedeep'
     import {
         addUser,
         editUser,
@@ -97,14 +98,16 @@
         getIsInUseByPhone,
         getIsInUseByEmail
     } from "@/api/user";
+    import {validateUsername, validatePassword, validatePhone, validateEmail} from "@/util/validate";
     import {getRoleList} from "@/api/role";
     import UploadButton from 'vuetify-upload-button'
+
     export default {
         components: {
             'upload-btn': UploadButton,
         },
         name: 'edit',
-        props: ['row','alert'],
+        props: ['row', 'alert'],
         data: () => ({
             valid: true,
             name: 'edit',
@@ -118,44 +121,38 @@
             roles: [],
             usernameRules: [
                 v => !!v || '用户名不能为空!',
-                v => (v && v.length <= 10) || '用户名不能超过10个字符'
+                v => validateUsername(v) || '必须是中文、英文、数字包括下划线'
             ],
-            email: '',
+            phoneRules: [
+                v => !!v || '手机号不能为空!',
+                v => validatePhone(v) || '不是合法的手机号'
+            ],
             emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /.+@.+/.test(v) || 'E-mail must be valid'
-            ],
-            select: null,
-            items: [
-                'Item 1',
-                'Item 2',
-                'Item 3',
-                'Item 4'
-            ],
-            checkbox: false
+                v => (!v || validateEmail(v)) || '不是合法的邮箱'
+            ]
         }),
-        computed:{
-          form: function () {
-              return {
-                  id: this.row.id,
-                  age: this.row.age,
-                  avatar: this.row.avatar,
-                  email: this.row.email,
-                  name: this.row.name,
-                  phoneNumber: this.row.phoneNumber,
-                  role: this.row.role,
-                  sex: this.row.sex,
-                  username: this.row.username
-              }
-          },
-          dialog: {
-              get: function () {
-                  return this.alert;
-              },
-              set:function () {
+        computed: {
+            form: function () {
+                return {
+                    id: this.row.id,
+                    age: this.row.age,
+                    avatar: this.row.avatar,
+                    email: this.row.email,
+                    name: this.row.name,
+                    phoneNumber: this.row.phoneNumber,
+                    role: this.row.role,
+                    sex: this.row.sex,
+                    username: this.row.username
+                }
+            },
+            dialog: {
+                get: function () {
+                    return this.alert;
+                },
+                set: function () {
 
-              }
-          }
+                }
+            }
         },
         created() {
             if (!this.roles.length) {
@@ -174,58 +171,111 @@
             }
         },
         methods: {
-            checkUsername() {
-                getIsInUseByUsername({id: this.row.id, username: this.row.username}).then(res => {
-                    if (res.code === '200') {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                })
-            },
-            validate() {
-                if (this.$refs.form.validate()) {
-                    this.snackbar = true
-                }
-            },
-            reset() {
-                this.$refs.form.reset()
-            },
-            resetValidation() {
-                this.$refs.form.resetValidation()
-            },
-            handleCancel(){
+            handleCancel() {
                 this.$emit('handleCancel')
             },
             handleSubmit(obj) {
                 this.loading = true;
-                //先上传头像
-                console.log(this.form);
-                if (!(this.file === '')) {
-                    let param = new FormData();
-                    param.append('file', this.file);
-                    uploadImage(param).then(res => {
-                        if (res.code === '200') {
-                            this.form.avatar = res.data;
-                            //开始提交
-                            editUser(this.form).then(res => {
-                                if (res.code === '200' && res.data) {
+                if (this.$refs.form.validate()) {
+                    //先上传头像
+                    if (!(this.file === '')) {
+                        let param = new FormData();
+                        param.append('file', this.file);
+                        uploadImage(param).then(res => {
+                            if (res.code === '200') {
+                                this.form.avatar = res.data;
+                                //开始提交
+                                editUser(this.form).then(res => {
                                     this.loading = false;
-                                    this.$dialog.notify.info("修改成功!");
-                                } else {
-                                    this.$dialog.notify.error(res.message);
-                                }
-                            }).catch(e => {
-                                this.$dialog.notify.error(e.message);
-                            })
+                                    if (res.code === '200' && res.data) {
+                                        this.$swal({
+                                            text: '修改成功',
+                                            type: 'success',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    } else {
+                                        this.$swal({
+                                            text: res.message,
+                                            type: 'error',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    }
+                                }).catch(e => {
+                                    this.loading = false;
+                                    this.$swal({
+                                        text: e.message,
+                                        type: 'error',
+                                        toast: true,
+                                        position: 'top',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                })
+                            } else {
+                                this.loading = false;
+                                this.$swal({
+                                    text: res.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            }
+                        }).catch(e => {
+                            this.loading = false;
+                            this.$swal({
+                                text: e.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        })
+                    }
+                    //开始提交
+                    editUser(this.form).then(res => {
+                        if (res.code === '200' && res.data) {
+                            this.loading = false;
+                            this.$swal({
+                                text: '修改成功',
+                                type: 'success',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
                         } else {
-                            this.$dialog.notify.error(res.message);
+                            this.loading = false;
+                            this.$swal({
+                                text: res.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
                         }
                     }).catch(e => {
-                        this.$dialog.notify.error(e.message);
+                        this.loading = false;
+                        this.$swal({
+                            text: e.message,
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
                     })
                 }
-                // editUser(form)
+                this.loading = false;
             },
             fileChanged(file) {
                 // handle file here. File will be an object.

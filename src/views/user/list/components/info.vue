@@ -4,7 +4,7 @@
             <v-card>
                 <v-img
                         class="white--text"
-                        height="400"
+                        height="350"
                         src="https://pan.zealsay.com/info-1.jpg"
                 >
                     <v-container fill-height fluid>
@@ -43,7 +43,8 @@
                         <p class="grey--text"><span class="text-detail">地址 ：{{ row.address ? row.address : "无" }}</span>
                         </p>
                         <p v-if="row.label" class="grey--text"><span class="text-detail">TA的标签</span>
-                            <v-chip v-for="label in row.label.split(',')" :color="color[parseInt(Math.random()*6,10)]" :key='label' small >
+                            <v-chip v-for="label in row.label.split(',')" :color="color[parseInt(Math.random()*6,10)]"
+                                    :key='label' small>
                                 <v-avatar>
                                     <v-img :src="icon[parseInt(Math.random()*20,10)]"
                                            :lazy-src="icon[parseInt(Math.random()*20,10)]" alt="label"/>
@@ -61,63 +62,37 @@
 <script>
     export default {
         name: "info",
-        props: {
-            row: {
-                type: Object,
-                default: function () {
-                    return {
-                        address: "",
-                        age: 23,
-                        area: '',
-                        avatar: "",
-                        city: "",
-                        deptId: "",
-                        email: "",
-                        label: "",
-                        lastPasswordResetDate: "",
-                        name: "",
-                        phoneNumber: "",
-                        registerAt: "",
-                        roleId: "",
-                        sex: 0,
-                        status: "",
-                        username: ""
-                    }
-                }
-            }
-        },
-        data() {
-            return {
-                icon: [require("@/assets/food/南瓜.png"),
-                    require("@/assets/food/吐司.png"),
-                    require("@/assets/food/夏威夷果.png"),
-                    require("@/assets/food/山楂片.png"),
-                    require("@/assets/food/开心果.png"),
-                    require("@/assets/food/抹茶麻薯.png"),
-                    require("@/assets/food/杏仁.png"),
-                    require("@/assets/food/板栗.png"),
-                    require("@/assets/food/柠檬干.png"),
-                    require("@/assets/food/炭烤肠.png"),
-                    require("@/assets/food/猪肉铺.png"),
-                    require("@/assets/food/瓜子.png"),
-                    require("@/assets/food/芒果干.png"),
-                    require("@/assets/food/花生.png"),
-                    require("@/assets/food/草莓干.png"),
-                    require("@/assets/food/蒸蛋糕.png"),
-                    require("@/assets/food/蚕豆.png"),
-                    require("@/assets/food/蛋黄酥.png"),
-                    require("@/assets/food/辣条.png"),
-                    require("@/assets/food/鱿鱼仔.png")
-                ],
-                color: ["info", "success", "primary", "warning", "error", "default"]
-            }
-        }
+        props: ['row', 'alert'],
+        data: () => ({
+            icon: [require("@/assets/food/南瓜.png"),
+                require("@/assets/food/吐司.png"),
+                require("@/assets/food/夏威夷果.png"),
+                require("@/assets/food/山楂片.png"),
+                require("@/assets/food/开心果.png"),
+                require("@/assets/food/抹茶麻薯.png"),
+                require("@/assets/food/杏仁.png"),
+                require("@/assets/food/板栗.png"),
+                require("@/assets/food/柠檬干.png"),
+                require("@/assets/food/炭烤肠.png"),
+                require("@/assets/food/猪肉铺.png"),
+                require("@/assets/food/瓜子.png"),
+                require("@/assets/food/芒果干.png"),
+                require("@/assets/food/花生.png"),
+                require("@/assets/food/草莓干.png"),
+                require("@/assets/food/蒸蛋糕.png"),
+                require("@/assets/food/蚕豆.png"),
+                require("@/assets/food/蛋黄酥.png"),
+                require("@/assets/food/辣条.png"),
+                require("@/assets/food/鱿鱼仔.png")
+            ],
+            color: ["info", "success", "primary", "warning", "error", "default"]
+        })
     }
 </script>
 
 <style lang="less" scoped>
     .avator {
-        margin: 200px auto auto;
+        margin: 160px auto auto;
         border-radius: 50%;
     }
 
@@ -128,4 +103,5 @@
     .text-detail {
         margin: 0 15px;
     }
+
 </style>

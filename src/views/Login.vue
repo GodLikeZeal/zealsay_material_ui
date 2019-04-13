@@ -121,7 +121,6 @@
                         this.$router.push({path: this.redirect || "/dashboard"});
                     })
                     .catch((err) => {
-                        console.log(err);
                         this.loading = false;
                         this.visible = true;
                         this.errMsg = err.message;
