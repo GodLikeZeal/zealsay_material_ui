@@ -90,7 +90,8 @@
 }
 
 @mixin button-color($color) {
-  background-color: $color !important;
+  //background-color: $color !important;
+  background-color: $color ;
   @include shadow-2dp-color($color);
 
   &:focus,

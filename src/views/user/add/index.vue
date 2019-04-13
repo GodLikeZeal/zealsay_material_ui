@@ -24,17 +24,19 @@
                         />
                     </v-avatar>
                     <v-card-text class="text-xs-center">
-                        <h6 class="category text-gray font-weight-thin mb-3">{{form.username}} / {{form.role}}</h6>
-                        <h5 class="card-title font-weight-light">Some of us get dipped in flat, some in satin, some in
+                        <h6 class="category text-gray ffont-weight-light mb-3">{{form.username}} /
+                            {{form.role}}</h6>
+                        <h5 class="card-title font-weight-light">Some of us get dipped in flat, some in satin, some
+                            in
                             gloss.... But every once in a while you find someone who's iridescent, and when you do,
                             nothing will ever compare.</h5>
                         <p class="card-description font-weight-light">
                             有人住高楼，有人在深沟，有人光万丈，有人一身锈，世人万千种，浮云莫去求，斯人若彩虹，遇上方知有。</p>
                         <upload-btn
                                 class="font-weight-light"
-                                round
                                 color="primary"
                                 title="上传头像"
+                                round
                                 :fileChangedCallback="fileChanged"
                         >
                         </upload-btn>
@@ -50,7 +52,7 @@
                         title="用户详细信息"
                         text="完善用户信息后，点击提交"
                 >
-                    <v-form>
+                    <v-form ref="form" lazy-validation>
                         <v-container py-0>
                             <v-layout wrap>
                                 <v-flex
@@ -214,7 +216,7 @@
         },
         data: () => ({
             form: {
-                username: 'CEO',
+                username: '',
                 password: '',
                 name: '',
                 avatar: 'https://pan.zealsay.com/20190317010254129000000.jpg',
@@ -227,6 +229,7 @@
                 introduction: '',
                 role: '',
             },
+            valid: false,
             image: 'https://pan.zealsay.com/20190317010254129000000.jpg',
             roles: [],
             province: [],
@@ -250,7 +253,7 @@
                 v => validatePhone(v) || '不是合法的手机号'
             ],
             emailRules: [
-                v => validateEmail(v) || '不是合法的邮箱'
+                v => (!v || validateEmail(v)) || '不是合法的邮箱'
             ],
         }),
         created() {
@@ -298,9 +301,11 @@
                         this.$swal({
                             text: '拉取省市区信息失败!',
                             type: 'error',
-                            toast: true
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
                         });
-                        this.$dialog.notify.error("拉取省市区信息失败!")
                     }
                     this.cityLoading = false;
                 });
@@ -320,7 +325,10 @@
                         this.$swal({
                             text: '拉取省市区信息失败!',
                             type: 'error',
-                            toast: true
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                     this.areaLoading = false;
@@ -328,37 +336,66 @@
             },
             submit() {
                 this.loading = true;
-                //先上传头像
-                if (!(this.file === '') && !(this.image === 'https://pan.zealsay.com/20190317010254129000000.jpg')) {
-                    let param = new FormData();
-                    param.append('file', this.file);
-                    uploadImage(param).then(res => {
-                        if (res.code === '200') {
-                            this.form.avatar = res.data;
-                            //开始提交
-                            addUser(this.form).then(res => {
-                                this.loading = false;
-                                if (res.code === '200' && res.data) {
+                if (this.$refs.form.validate()) {
+                    //先上传头像
+                    if (!(this.file === '') && !(this.image === 'https://pan.zealsay.com/20190317010254129000000.jpg')) {
+                        let param = new FormData();
+                        param.append('file', this.file);
+                        uploadImage(param).then(res => {
+                            if (res.code === '200') {
+                                this.form.avatar = res.data;
+                                //开始提交
+                                addUser(this.form).then(res => {
+                                    this.loading = false;
+                                    if (res.code === '200' && res.data) {
+                                        this.$swal({
+                                            title: '添加成功!',
+                                            text: '您已经成功添加了一名用户',
+                                            type: 'success'
+                                        });
+                                    } else {
+                                        this.$swal({
+                                            title: '添加失败!',
+                                            text: res.message,
+                                            type: 'error'
+                                        });
+                                    }
+                                }).catch(e => {
+                                    this.loading = false;
                                     this.$swal({
-                                        title: '添加成功!',
-                                        text: '您已经成功添加了一名用户',
-                                        type: 'success'
+                                        text: e.message,
+                                        type: 'error',
+                                        toast: true,
+                                        position: 'top',
+                                        showConfirmButton: false,
+                                        timer: 3000
                                     });
-                                } else {
-                                    this.$swal({
-                                        title: '添加失败!',
-                                        text: res.message,
-                                        type: 'error'
-                                    });
-                                }
-                            }).catch(e => {
-                                this.loading = false;
+                                })
+                            } else {
                                 this.$swal({
-                                    text: e.message,
-                                    type: 'error',
-                                    toast: true
+                                    title: '添加失败!',
+                                    text: res.message,
+                                    type: 'error'
                                 });
-                            })
+                            }
+                        }).catch(e => {
+                            this.loading = false;
+                            this.$swal({
+                                text: e.message,
+                                type: 'error',
+                                toast: true
+                            });
+                        })
+                    }
+                    //开始提交
+                    addUser(this.form).then(res => {
+                        this.loading = false;
+                        if (res.code === '200' && res.data) {
+                            this.$swal({
+                                title: '添加成功!',
+                                text: '您已经成功添加了一名用户',
+                                type: 'success'
+                            });
                         } else {
                             this.$swal({
                                 title: '添加失败!',
@@ -371,34 +408,14 @@
                         this.$swal({
                             text: e.message,
                             type: 'error',
-                            toast: true
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     })
                 }
-                //开始提交
-                addUser(this.form).then(res => {
-                    this.loading = false;
-                    if (res.code === '200' && res.data) {
-                        this.$swal({
-                            title: '添加成功!',
-                            text: '您已经成功添加了一名用户',
-                            type: 'success'
-                        });
-                    } else {
-                        this.$swal({
-                            title: '添加失败!',
-                            text: res.message,
-                            type: 'error'
-                        });
-                    }
-                }).catch(e => {
-                    this.loading = false;
-                    this.$swal({
-                        text: e.message,
-                        type: 'error',
-                        toast: true
-                    });
-                })
+                this.loading = false;
             },
             fileChanged(file) {
                 // handle file here. File will be an object.

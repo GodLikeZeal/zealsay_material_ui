@@ -27,7 +27,7 @@
             v-text="title"
           />
           <p
-            class="category font-weight-thin"
+            class="category font-weight-light"
             v-text="text"
           />
         </span>

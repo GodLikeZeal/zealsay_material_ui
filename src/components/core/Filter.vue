@@ -66,7 +66,7 @@
               href="https://demos.creative-tim.com/vuetify-material-dashboard/documentation"
               target="_blank"
               class="white--text"
-              color="primary"
+              color="warning"
               block
             >
               Documentation

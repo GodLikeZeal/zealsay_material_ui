@@ -15,68 +15,70 @@
                 </v-layout>
             </v-container>
             <v-card-title>
-                <v-container grid-list-md>
-                    <v-layout wrap>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field
-                                    hint="用户名不能包含空格和特殊字符"
-                                    label="用户名*"
-                                    v-model="form.username"
-                                    validate-on-blur
-                                    :rules="usernameRules"
-                                    required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field
-                                    label="姓名"
-                                    v-model="form.name"
-                                    hint="输入真实姓名"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field
-                                    label="年龄*"
-                                    v-model="form.age"
-                                    persistent-hint
-                                    required
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-text-field
-                                    label="Email*"
-                                    v-model="form.email"
-                                    type="email"
-                                    required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-text-field
-                                    label="手机号*"
-                                    v-model="form.phoneNumber"
-                                    type="phone"
-                                    required></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6>
-                            <v-select
-                                    :items="sexs"
-                                    v-model="form.sex"
-                                    item-text="text"
-                                    item-value="value"
-                                    item-avatar="avatar"
-                                    label="性别*"
-                                    required
-                            ></v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6>
-                            <v-select
-                                    v-model="form.role"
-                                    :items="roles"
-                                    item-text="text"
-                                    item-value="value"
-                                    label="角色"
-                                    required
-                            ></v-select>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
+                <v-form ref="form" lazy-validation>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field
+                                        hint="用户名不能包含空格和特殊字符"
+                                        label="用户名*"
+                                        v-model="form.username"
+                                        validate-on-blur
+                                        :rules="usernameRules"
+                                        required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field
+                                        label="姓名"
+                                        v-model="form.name"
+                                        hint="输入真实姓名"></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field
+                                        label="年龄"
+                                        v-model="form.age"
+                                        persistent-hint
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field
+                                        label="Email*"
+                                        v-model="form.email"
+                                        :rules="emailRules"
+                                        type="email"
+                                        required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field
+                                        label="手机号*"
+                                        v-model="form.phoneNumber"
+                                        :rules="phoneRules"
+                                        type="phone"
+                                        required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6>
+                                <v-select
+                                        :items="sexs"
+                                        v-model="form.sex"
+                                        item-text="text"
+                                        item-value="value"
+                                        item-avatar="avatar"
+                                        label="性别"
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6>
+                                <v-select
+                                        v-model="form.role"
+                                        :items="roles"
+                                        item-text="text"
+                                        item-value="value"
+                                        label="角色"
+                                        required
+                                ></v-select>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-form>
             </v-card-title>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -96,6 +98,7 @@
         getIsInUseByPhone,
         getIsInUseByEmail
     } from "@/api/user";
+    import {validateUsername, validatePassword, validatePhone, validateEmail} from "@/util/validate";
     import {getRoleList} from "@/api/role";
     import UploadButton from 'vuetify-upload-button'
 
@@ -118,21 +121,15 @@
             roles: [],
             usernameRules: [
                 v => !!v || '用户名不能为空!',
-                v => (v && v.length <= 10) || '用户名不能超过10个字符'
+                v => validateUsername(v) || '必须是中文、英文、数字包括下划线'
             ],
-            email: '',
+            phoneRules: [
+                v => !!v || '手机号不能为空!',
+                v => validatePhone(v) || '不是合法的手机号'
+            ],
             emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /.+@.+/.test(v) || 'E-mail must be valid'
-            ],
-            select: null,
-            items: [
-                'Item 1',
-                'Item 2',
-                'Item 3',
-                'Item 4'
-            ],
-            checkbox: false
+                v => (!v || validateEmail(v)) || '不是合法的邮箱'
+            ]
         }),
         computed: {
             form: function () {
@@ -174,67 +171,111 @@
             }
         },
         methods: {
-            checkUsername() {
-                getIsInUseByUsername({id: this.row.id, username: this.row.username}).then(res => {
-                    if (res.code === '200') {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                })
-            },
-            validate() {
-                if (this.$refs.form.validate()) {
-                    this.snackbar = true
-                }
-            },
-            reset() {
-                this.$refs.form.reset()
-            },
-            resetValidation() {
-                this.$refs.form.resetValidation()
-            },
             handleCancel() {
                 this.$emit('handleCancel')
             },
             handleSubmit(obj) {
                 this.loading = true;
-                //先上传头像
-                if (!(this.file === '')) {
-                    let param = new FormData();
-                    param.append('file', this.file);
-                    uploadImage(param).then(res => {
-                        if (res.code === '200') {
-                            this.form.avatar = res.data;
-                            //开始提交
-                            editUser(this.form).then(res => {
-                                if (res.code === '200' && res.data) {
+                if (this.$refs.form.validate()) {
+                    //先上传头像
+                    if (!(this.file === '')) {
+                        let param = new FormData();
+                        param.append('file', this.file);
+                        uploadImage(param).then(res => {
+                            if (res.code === '200') {
+                                this.form.avatar = res.data;
+                                //开始提交
+                                editUser(this.form).then(res => {
                                     this.loading = false;
-                                    this.$dialog.notify.info("修改成功!");
-                                } else {
-                                    this.$dialog.notify.error(res.message);
-                                }
-                            }).catch(e => {
-                                this.$dialog.notify.error(e.message);
-                            })
+                                    if (res.code === '200' && res.data) {
+                                        this.$swal({
+                                            text: '修改成功',
+                                            type: 'success',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    } else {
+                                        this.$swal({
+                                            text: res.message,
+                                            type: 'error',
+                                            toast: true,
+                                            position: 'top',
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    }
+                                }).catch(e => {
+                                    this.loading = false;
+                                    this.$swal({
+                                        text: e.message,
+                                        type: 'error',
+                                        toast: true,
+                                        position: 'top',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                })
+                            } else {
+                                this.loading = false;
+                                this.$swal({
+                                    text: res.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            }
+                        }).catch(e => {
+                            this.loading = false;
+                            this.$swal({
+                                text: e.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        })
+                    }
+                    //开始提交
+                    editUser(this.form).then(res => {
+                        if (res.code === '200' && res.data) {
+                            this.loading = false;
+                            this.$swal({
+                                text: '修改成功',
+                                type: 'success',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
                         } else {
-                            this.$dialog.notify.error(res.message);
+                            this.loading = false;
+                            this.$swal({
+                                text: res.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
                         }
                     }).catch(e => {
-                        this.$dialog.notify.error(e.message);
+                        this.loading = false;
+                        this.$swal({
+                            text: e.message,
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
                     })
                 }
-                //开始提交
-                editUser(this.form).then(res => {
-                    if (res.code === '200' && res.data) {
-                        this.loading = false;
-                        this.$dialog.notify.info("修改成功!");
-                    } else {
-                        this.$dialog.notify.error(res.message);
-                    }
-                }).catch(e => {
-                    this.$dialog.notify.error(e.message);
-                })
+                this.loading = false;
             },
             fileChanged(file) {
                 // handle file here. File will be an object.
