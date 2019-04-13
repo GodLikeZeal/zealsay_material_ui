@@ -94,5 +94,15 @@ export default [
       /* webpackMode: "lazy-once" */
       `@/views/user/add/index.vue`
     )
+  },
+  {
+    path: '/role/list',
+    meta: { breadcrumb: true },
+    name: 'rolelist',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy-once" */
+      `@/views/role/list/index.vue`
+    )
   }
 ];

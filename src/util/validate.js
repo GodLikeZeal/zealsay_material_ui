@@ -10,6 +10,8 @@ const phone = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{
 const idcard = /^\d{15}|\d{18}$/;
 // email
 const email = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+// 大写字母、下划线
+const value = /^[A-Z_]+$/;
 
 /* 合法username*/
 export function validateUsername(textval) {
@@ -39,4 +41,9 @@ export function validateIdcard(textval) {
 /* 合法Email*/
 export function validateEmail(textval) {
   return email.test(textval)
+}
+
+/* 合法字典value*/
+export function validateValue(textval) {
+  return value.test(textval)
 }

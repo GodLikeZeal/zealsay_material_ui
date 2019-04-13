@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <div class="con">
         <v-layout
                 row
@@ -106,7 +106,7 @@
                     slot-scope="props"
             >
                 <tr :active="props.selected">
-                    <td @click="props.selected = !props.selected">
+                    <td class="text-xs-right" @click="props.selected = !props.selected">
                         <v-checkbox
                                 :input-value="props.selected"
                                 primary
@@ -123,21 +123,18 @@
                     </td>
                     <td class="text-xs-right">{{ props.item.username }}</td>
                     <td class="text-xs-right">{{ props.item.name }}</td>
-                    <td class="text-xs-right" v-if="props.item.sex==1"><img width="24px"
-                                                                            src="../../../assets/sex/boy.png"/></td>
-                    <td class="text-xs-right" v-if="props.item.sex==0"><img width="24px"
-                                                                            src="../../../assets/sex/girl.png"/></td>
+                    <td class="text-xs-right">
+                        <img width="24px" v-if="props.item.sex==1"
+                             src="../../../assets/sex/boy.png"/>
+                        <img width="24px" v-if="props.item.sex==0"
+                             src="../../../assets/sex/girl.png"/></td>
                     <td class="text-xs-right">{{ props.item.age }}</td>
                     <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
                     <td class="text-xs-right">{{ props.item.email }}</td>
-                    <td class="text-xs-right text-success" v-if="props.item.status == 'NORMAL'">正常
-                        <v-icon color="success" small>fa-plug</v-icon>
-                    </td>
-                    <td class="text-xs-right text-error" v-if="props.item.status == 'DISABLED'">封禁
-                        <v-icon color="error" small>fa-ban</v-icon>
-                    </td>
-                    <td class="text-xs-right text-warning" v-if="props.item.status == 'LOCK'">锁定
-                        <v-icon color="warning" small>fa-lock</v-icon>
+                    <td class="text-xs-right text-success">
+                        <span v-if="props.item.status == 'NORMAL'"> 正常<v-icon color="success" small>fa-plug</v-icon> </span>
+                        <span v-if="props.item.status == 'DISABLED'"> 封禁<v-icon color="error" small>fa-ban</v-icon> </span>
+                        <span v-if="props.item.status == 'LOCK'"> 锁定<v-icon color="warning" small>fa-lock</v-icon> </span>
                     </td>
                     <td class="text-xs-right">
                         <v-layout
@@ -184,14 +181,8 @@
                 selected: [],
                 loading: true,
                 headers: [
-                    {
-                        text: '头像',
-                        value: 'avatar'
-                    },
-                    {
-                        text: '用户名',
-                        value: 'username'
-                    },
+                    {text: '头像', value: 'avatar'},
+                    {text: '用户名', value: 'username'},
                     {text: '姓名', value: 'name'},
                     {text: '性别', value: 'sex'},
                     {text: '年龄', value: 'age'},
