@@ -21,8 +21,7 @@ const Menu = [
     group: 'role',
     icon: 'people_outline',
     items: [
-      { name: 'list', title: '角色列表', component: 'Dashboard' },
-      { name: 'add', title: '角色添加', component: 'Dashboard' }
+      { name: 'list', title: '角色列表', component: 'rolelist' }
     ]
   },
   { header: '站点资源' },

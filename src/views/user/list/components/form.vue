@@ -109,7 +109,6 @@
         name: 'edit',
         props: ['row', 'alert'],
         data: () => ({
-            valid: true,
             name: 'edit',
             loading: false,
             file: '',
