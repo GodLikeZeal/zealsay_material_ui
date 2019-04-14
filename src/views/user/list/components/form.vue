@@ -195,6 +195,8 @@
                                             showConfirmButton: false,
                                             timer: 3000
                                         });
+                                        this.$parent.search('');
+                                        this.$emit('handleCancel');
                                     } else {
                                         this.$swal({
                                             text: res.message,
@@ -251,6 +253,8 @@
                                 showConfirmButton: false,
                                 timer: 3000
                             });
+                            this.$parent.search('');
+                            this.$emit('handleCancel');
                         } else {
                             this.loading = false;
                             this.$swal({

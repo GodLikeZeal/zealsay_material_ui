@@ -24,8 +24,7 @@
                         />
                     </v-avatar>
                     <v-card-text class="text-xs-center">
-                        <h6 class="category text-gray ffont-weight-light mb-3">{{form.username}} /
-                            {{form.role}}</h6>
+                        <h6 class="category text-gray ffont-weight-light mb-3">用户头像</h6>
                         <h5 class="card-title font-weight-light">Some of us get dipped in flat, some in satin, some
                             in
                             gloss.... But every once in a while you find someone who's iridescent, and when you do,

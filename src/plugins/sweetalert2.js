@@ -5,8 +5,8 @@ Vue.use(VueSweetalert2, {
   buttonsStyling: false,
   heightAuto: false,
   grow: true,
-  confirmButtonClass: 'mx-4 v-btn v-btn--round theme--light primary',
+  confirmButtonClass: 'mx-4 v-btn v-btn--round primary',
   confirmButtonText: '确定',
-  cancelButtonClass: 'mx-4 v-btn v-btn--round theme--light default',
+  cancelButtonClass: 'mx-4 v-btn v-btn--round default',
   cancelButtonText: '取消'
 });
