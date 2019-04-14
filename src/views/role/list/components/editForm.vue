@@ -84,32 +84,43 @@
             handleSubmit() {
                 this.loading = true;
                 //开始提交
-                updateRole(this.form).then(res => {
-                    this.loading = false;
-                    if (res.code === '200' && res.data) {
+                if (this.$refs.form.validate()) {
+                    updateRole(this.form).then(res => {
+                        this.loading = false;
+                        if (res.code === '200' && res.data) {
+                            this.$swal({
+                                text: '修改成功',
+                                type: 'success',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                            this.$parent.refresh();
+                            this.$emit('handleCancel');
+                        } else {
+                            this.$swal({
+                                text: res.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }).catch(e => {
+                        this.loading = false;
                         this.$swal({
-                            title: '修改成功!',
-                            text: '您已经成功修改了当前角色信息',
-                            type: 'success'
+                            text: e.message,
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
                         });
-                    } else {
-                        this.$swal({
-                            title: '修改失败!',
-                            text: res.message,
-                            type: 'error'
-                        });
-                    }
-                }).catch(e => {
-                    this.loading = false;
-                    this.$swal({
-                        text: e.message,
-                        type: 'error',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                })
+                    })
+                }
+                this.loading = false;
             }
         }
     }

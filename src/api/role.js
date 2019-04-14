@@ -60,9 +60,8 @@ export function updateRole (obj) {
  */
 export function deleteRole (obj) {
   return request({
-    url: '/api/v1/role',
-    method: 'delete',
-    data: obj
+    url: '/api/v1/role/' + obj,
+    method: 'delete'
   })
 }
 /**

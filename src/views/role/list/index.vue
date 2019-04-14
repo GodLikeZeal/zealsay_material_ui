@@ -11,6 +11,15 @@
                     sm3
                     md1
             >
+                <v-btn color="primary" title="刷新" @click="refresh()"> 刷新 <br/>
+                    <v-icon small>refresh</v-icon>
+                </v-btn>
+            </v-flex>
+            <v-flex
+                    xs6
+                    sm3
+                    md1
+            >
                 <v-btn color="success" title="添加" @click="handleAdd()"> 添加 <br/>
                     <v-icon small>add_circle</v-icon>
                 </v-btn>
@@ -21,7 +30,7 @@
                     md1
             >
                 <v-btn color="error" title="删除" @click="handleDeleteSelected(selected)"> 删除 <br/>
-                    <v-icon small>fa-ban</v-icon>
+                    <v-icon small>remove_circle</v-icon>
                 </v-btn>
             </v-flex>
 
@@ -93,18 +102,22 @@
             <Pagination :pagination="pagination"></Pagination>
         </div>
         <div>
-            <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
+            <add-form :alert="addFormVisible" @handleCancel='handleCancelAdd'></add-form>
+        </div>
+        <div>
+            <edit-form :row="row" :alert="editFormVisible" @handleCancel='handleCancelEdit'></edit-form>
         </div>
     </div>
 </template>
 <script>
     import {getRolePageList,addRole,updateRole,deleteRole,deleteRoleBatch} from "@/api/role";
-    import forms from './components/form'
+    import addForm from './components/addForm';
+    import editForm from './components/editForm';
     import Pagination from "../../../components/table/Pagination";
 
     export default {
         name: 'User',
-        components: {Pagination, forms},
+        components: {Pagination, addForm, editForm},
         data() {
             return {
                 searchData: {},
@@ -126,7 +139,8 @@
                 },
                 row: {},
                 dialogVisible: false,
-                formVisible: false,
+                addFormVisible: false,
+                editFormVisible: false,
                 title: ''
             };
         },
@@ -160,33 +174,93 @@
                     this.pagination.descending = false
                 }
             },
-            handleCancel() {
-                this.formVisible = false;
+            handleCancelAdd() {
+                this.addFormVisible = false;
+            },
+            handleCancelEdit() {
+                this.editFormVisible = false;
             },
             handleAdd() {
-                this.$swal({
-                    title: '添加用户!',
-                    text: '该用户已经被封禁',
-                    type: 'success'
-                });
+                this.addFormVisible = true;
             },
             handleEdit(row) {
-                this.formVisible = true;
+                this.editFormVisible = true;
                 this.row = {...row};
             },
             handleDelete(row) {
-                this.$swal({
-                    title: '删除用户!',
-                    text: '该用户已经被封禁',
-                    type: 'success'
-                });
+                    this.$swal({
+                        title: '确定要删除吗？',
+                        text: '一旦删除，该角色下的用户都无法使用',
+                        type: 'warning',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            deleteRole(row.id).then(res => {
+                                this.loading = false;
+                                if (res.code === '200' && res.data) {
+                                    this.$swal({
+                                        title: '删除成功',
+                                        text: '该角色已经安全删除',
+                                        type: 'success'
+                                    });
+                                    this.refresh();
+                                } else {
+                                    this.$swal({
+                                        title: '删除失败',
+                                        text: res.message,
+                                        type: 'error'
+                                    });
+                                }
+                            }).catch(e => {
+                                this.loading = false;
+                                this.$swal({
+                                    text: e.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            })
+                        }
+                    });
+
             },
-            handleDeleteSelected() {
-                this.$swal({
-                    title: '批量删除用户!',
-                    text: '该用户已经被封禁',
-                    type: 'success'
-                });
+            handleDeleteSelected(selected) {
+                let param = selected.map(s => s.id);
+                if (param.length > 0) {
+                    this.$swal({
+                        title: '确定要删除吗？',
+                        text: '一旦删除，所选角色下的用户都无法使用',
+                        type: 'warning',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            deleteRoleBatch(param).then(res => {
+                                if (res.code === '200' && res.data) {
+                                    this.$swal({
+                                        title: '删除成功',
+                                        text: '所选用户已经被封禁',
+                                        type: 'success'
+                                    });
+                                    this.refresh();
+                                } else {
+                                    this.$swal({
+                                        title: '删除失败',
+                                        text: res.message,
+                                        type: 'error'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    this.$swal({
+                        title: '无法删除！',
+                        text: '请至少选择一条需要删除的角色！',
+                        type: 'warning'
+                    });
+                }
             }
         }
     };
