@@ -12,6 +12,8 @@ const idcard = /^\d{15}|\d{18}$/;
 const email = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 // 大写字母、下划线
 const value = /^[A-Z_]+$/;
+// 小写字母、中划线
+const alias = /^[a-z-]+$/;
 
 /* 合法username*/
 export function validateUsername(textval) {
@@ -46,4 +48,9 @@ export function validateEmail(textval) {
 /* 合法字典value*/
 export function validateValue(textval) {
   return value.test(textval)
+}
+
+/* 合法category alias*/
+export function validateAlias(textval) {
+  return alias.test(textval)
 }

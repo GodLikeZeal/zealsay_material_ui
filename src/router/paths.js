@@ -69,6 +69,7 @@ export default [
     path: '/dashboard',
     meta: { breadcrumb: true },
     name: 'Dashboard',
+    title: '桌面',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
@@ -79,6 +80,7 @@ export default [
     path: '/user/list',
     meta: { breadcrumb: true },
     name: 'userlist',
+    title: '用户列表',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
@@ -89,6 +91,7 @@ export default [
     path: '/user/add',
     meta: { breadcrumb: true },
     name: 'useradd',
+    title: '用户添加',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
@@ -99,10 +102,22 @@ export default [
     path: '/role/list',
     meta: { breadcrumb: true },
     name: 'rolelist',
+    title: '角色列表',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
       `@/views/role/list/index.vue`
+    )
+  },
+  {
+    path: '/article/category',
+    meta: { breadcrumb: true },
+    name: 'category',
+    title: '分类目录',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy-once" */
+      `@/views/article/category/index.vue`
     )
   }
 ];
