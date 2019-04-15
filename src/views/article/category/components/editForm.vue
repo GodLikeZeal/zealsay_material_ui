@@ -33,24 +33,23 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn outline color="darken-1" @click="handleCancel">取消</v-btn>
-                <v-btn outline :loading="loading" color="primary darken-1" @click="handleSubmit">提交</v-btn>
+                <v-btn outline color="darken-1" @click="handleCancel()">取消</v-btn>
+                <v-btn outline :loading="loading" color="primary darken-1" @click="handleSubmit()">提交</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
 <script>
-    import {validateValue, validateUsername} from "@/util/validate";
-    import {addRole} from "@/api/role";
+    import {validateValue,validateUsername} from "@/util/validate";
+    import {updateRole} from "@/api/role";
 
     export default {
-        name: 'add',
-        props: ['alert'],
+        name: 'edit',
+        props: ['row', 'alert'],
         data: () => ({
-            name: 'add',
+            name: 'edit',
             loading: false,
-            form: {},
             nameRules: [
                 v => !!v || '名称不能为空!',
                 v => validateUsername(v) || '必须是中文、英文、数字包括下划线'
@@ -61,6 +60,14 @@
             ]
         }),
         computed: {
+            form: function () {
+                return {
+                    id: this.row.id,
+                    name: this.row.name,
+                    value: this.row.value,
+                    description: this.row.description
+                }
+            },
             dialog: {
                 get: function () {
                     return this.alert;
@@ -78,11 +85,11 @@
                 this.loading = true;
                 //开始提交
                 if (this.$refs.form.validate()) {
-                    addRole(this.form).then(res => {
+                    updateRole(this.form).then(res => {
                         this.loading = false;
                         if (res.code === '200' && res.data) {
                             this.$swal({
-                                text: '添加成功',
+                                text: '修改成功',
                                 type: 'success',
                                 toast: true,
                                 position: 'top',
