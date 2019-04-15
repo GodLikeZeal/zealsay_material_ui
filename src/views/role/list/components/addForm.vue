@@ -78,7 +78,6 @@
                 this.loading = true;
                 //开始提交
                 if (this.$refs.form.validate()) {
-                    console.log("add");
                     addRole(this.form).then(res => {
                         this.loading = false;
                         if (res.code === '200' && res.data) {
