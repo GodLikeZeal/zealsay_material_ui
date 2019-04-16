@@ -7,25 +7,33 @@
                         <v-layout wrap>
                             <v-flex xs12>
                                 <v-text-field
-                                        label="名称*"
+                                        persistent-hint
+                                        :rules="usernameRules"
+                                        hint="用于区分博客的分类目录"
+                                        label="分类名称"
                                         v-model="form.name"
-                                        :rules="nameRules"
-                                        type="text"
-                                        required></v-text-field>
+                                        required
+                                        outline
+                                ></v-text-field>
                             </v-flex>
                             <v-flex xs12>
                                 <v-text-field
-                                        label="value*"
-                                        v-model="form.value"
-                                        :rules="valueRules"
-                                        type="text"
-                                        required></v-text-field>
+                                        persistent-hint
+                                        :rules="aliasRules"
+                                        hint="别名，用于URL上展示更优雅，可以为小写字母加上“-”"
+                                        label="alias"
+                                        v-model="form.alias"
+                                        required
+                                        outline
+                                ></v-text-field>
                             </v-flex>
                             <v-flex xs12>
                                 <v-text-field
+                                        persistent-hint
                                         label="描述"
                                         v-model="form.description"
-                                        type="text"></v-text-field>
+                                        outline
+                                ></v-text-field>
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -41,23 +49,25 @@
 </template>
 
 <script>
-    import {validateValue, validateUsername} from "@/util/validate";
+    import {validateAlias, validateUsername} from "@/util/validate";
+    import {addCategory} from "@/api/article";
     import {addRole} from "@/api/role";
 
     export default {
         name: 'add',
-        props: ['alert'],
+        props: ['alert','parentId'],
         data: () => ({
             name: 'add',
             loading: false,
             form: {},
-            nameRules: [
-                v => !!v || '名称不能为空!',
+            usernameRules: [
+                v => !!v || '分类名称不能为空!',
+                v => (v && v.length <= 8) || '分类名称不能超过8个字符',
                 v => validateUsername(v) || '必须是中文、英文、数字包括下划线'
             ],
-            valueRules: [
-                v => !!v || 'VAULE不能为空!',
-                v => validateValue(v) || '必须是大写英文、下划线'
+            aliasRules: [
+                v => !!v || '密码不能为空!',
+                v => validateAlias(v) || '必须是小写字母或者“-”'
             ]
         }),
         computed: {
@@ -78,8 +88,8 @@
                 this.loading = true;
                 //开始提交
                 if (this.$refs.form.validate()) {
-                    console.log("add");
-                    addRole(this.form).then(res => {
+                    this.form.parentId = this.parentId;
+                    addCategory(this.form).then(res => {
                         this.loading = false;
                         if (res.code === '200' && res.data) {
                             this.$swal({
