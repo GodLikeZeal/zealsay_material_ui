@@ -1,6 +1,9 @@
 <template>
     <v-dialog width="600" persistent v-model="dialog">
         <v-card ref="row">
+            <v-card-title>
+                <h5>在 {{ selected.name }} 下添加</h5>
+            </v-card-title>
             <v-card-text>
                 <v-form ref="form" lazy-validation>
                     <v-container grid-list-md>
@@ -55,7 +58,7 @@
 
     export default {
         name: 'add',
-        props: ['alert','parentId'],
+        props: ['alert','parentId','selected'],
         data: () => ({
             name: 'add',
             loading: false,

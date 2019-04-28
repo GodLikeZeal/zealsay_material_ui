@@ -119,5 +119,16 @@ export default [
       /* webpackMode: "lazy-once" */
       `@/views/article/category/index.vue`
     )
+  },
+  {
+    path: '/article/add',
+    meta: { breadcrumb: true },
+    name: 'articleadd',
+    title: '写文章',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy-once" */
+      `@/views/article/add/index.vue`
+    )
   }
 ];
