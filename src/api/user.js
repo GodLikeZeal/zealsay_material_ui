@@ -146,3 +146,16 @@ export function uploadImage (obj) {
     data: obj
   })
 }
+/**
+ * 图片批量上传.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:16
+ */
+export function uploadImageMultiple (obj) {
+  return request({
+    url: '/api/v1/qiniu/upload/multiple',
+    method: 'upload',
+    data: obj
+  })
+}

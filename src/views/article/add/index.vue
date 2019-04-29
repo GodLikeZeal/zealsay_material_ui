@@ -55,9 +55,9 @@
                                         md12
                                 >
                                     <v-text-field
-                                            v-model="form.username"
-                                            :rules="usernameRules"
-                                            hint="用户名不能包含空格和特殊字符"
+                                            v-model="form.title"
+                                            :rules="utitleRules"
+                                            hint="标题不能包含空格和特殊字符,不超过20个字符"
                                             class="purple-input"
                                             label="标题*"
                                             required
@@ -68,9 +68,9 @@
                                         md12
                                 >
                                     <v-text-field
-                                            v-model="form.password"
-                                            :rules="passwordRules"
-                                            hint="密码必须以字母开头，长度在6~18之间，只能包含字母、数字和下划线"
+                                            v-model="form.subheading"
+                                            :rules="subheadingRules"
+                                            hint="副标题不能超过30个字符"
                                             class="purple-input"
                                             label="副标题*"
                                             required
@@ -81,8 +81,8 @@
                                         md6
                                 >
                                     <v-select
-                                            v-model="form.role"
-                                            :items="roles"
+                                            v-model="form.categoryId"
+                                            :items="category"
                                             item-text="text"
                                             item-value="value"
                                             label="分类目录*"
@@ -97,9 +97,9 @@
                                             attach
                                             chips
                                             multiple
-                                            v-model="form.phoneNumber"
-                                            :rules="phoneRules"
-                                            label="标签*"
+                                            :items="labels"
+                                            v-model="form.label"
+                                            label="标签"
                                             class="purple-input">
                                     </v-select>
                                 </v-flex>
@@ -107,19 +107,17 @@
                                         xs12
                                         md12
                                 >
-                                    <v-radio-group v-model="form.email" row label="公开度">
+                                    <v-radio-group v-model="form.openness" row label="公开度">
                                         <v-radio label="仅自己可阅读" value="radio-1"></v-radio>
-                                        <v-radio label="关注可阅读" value="radio-2"></v-radio>
                                         <v-radio label="所有人可阅读" value="radio-3"></v-radio>
                                     </v-radio-group>
                                 </v-flex>
                                 <v-flex
                                         xs12
                                         md12>
-                                    <v-radio-group v-model="form.email" row label="状态">
+                                    <v-radio-group v-model="form.status" row label="状 态">
                                         <v-radio label="草稿" value="radio-1"></v-radio>
                                         <v-radio label="发布" value="radio-2"></v-radio>
-                                        <v-radio label="取消发布" value="radio-3"></v-radio>
                                     </v-radio-group>
                                 </v-flex>
 
@@ -150,7 +148,7 @@
                         title="编辑文章详细内容"
                         text="支持使用markdown语法"
                 >
-                    <mavon-editor :ishljs = "true" v-model="handbook"/>
+                    <mavon-editor ref=md :ishljs = "true" @change="changeData" @imgAdd="$imgAdd" @imgDel="$imgDel" v-model="form.contentMd"/>
                 </material-card>
             </v-flex>
         </v-layout>
@@ -158,8 +156,8 @@
 </template>
 
 <script>
-    import {addUser, uploadImage} from "@/api/user";
-    import {getProvinceList, getCityList, getAreaList} from '@/api/dict';
+    import {addUser, uploadImage,uploadImageMultiple} from "@/api/user";
+    import {getCategoryList} from '@/api/article';
     import {getRoleList} from "@/api/role";
     import {validateUsername, validatePassword, validatePhone, validateEmail} from "@/util/validate";
     import UploadButton from 'vuetify-upload-button';
@@ -171,206 +169,53 @@
         },
         data: () => ({
             form: {
-                username: '',
-                password: '',
-                name: '',
-                avatar: 'https://pan.zealsay.com/20190317010254129000000.jpg',
-                phoneNumber: '',
-                email: '',
-                province: '',
-                city: '',
-                area: '',
-                adrress: '',
-                introduction: '',
-                role: '',
+                title: '',
+                subheading: '',
+                status: '',
+                coverImage: 'https://pan.zealsay.com/20190317010254129000000.jpg',
+                label: '',
+                openness: '',
+                contentMd: '',
+                contentHtml: ''
             },
+            img_file: {},
             valid: false,
             image: 'https://pan.zealsay.com/20190317010254129000000.jpg',
-            roles: [],
-            province: [],
-            city: [],
-            area: [],
-            provinceLoading: false,
+            category: [],
+            labels: ['docker','java','vue','javascript','动漫','杂谈','评点'],
+            categoryLoading: false,
             cityLoading: false,
             areaLoading: false,
             file: '',
             loading: false,
-            usernameRules: [
-                v => !!v || '用户名不能为空!',
+            utitleRules: [
+                v => !!v || '标题不能为空!',
+                v => (v && v.length <= 20) || '标题不得超过20个字符',
                 v => validateUsername(v) || '必须是中文、英文、数字包括下划线'
             ],
-            passwordRules: [
-                v => !!v || '密码不能为空!',
-                v => validatePassword(v) || '必须以字母开头，长度在6~18之间，只能包含字母、数字和下划线'
-            ],
-            phoneRules: [
-                v => !!v || '手机号不能为空!',
-                v => validatePhone(v) || '不是合法的手机号'
-            ],
-            emailRules: [
-                v => (!v || validateEmail(v)) || '不是合法的邮箱'
-            ],
-            handbook: "#### how to use mavonEditor in nuxt.js"
+            subheadingRules: [
+                v => (v && v.length <= 30) || '副标题不得超过30个字符'
+            ]
         }),
         created() {
-            this.provinceLoading = true;
-            getProvinceList().then(res => {
+            this.categoryLoading = true;
+            getCategoryList().then(res => {
                 if (res.code === '200') {
-                    this.province = res.data.map(r => {
+                    this.category = res.data.map(r => {
                         return {
-                            value: r.code, text: r.name
+                            value: r.id, text: r.name
                         }
                     });
                 } else {
-                    this.$dialog.notify.error("拉取省市区信息失败!")
+                    this.$dialog.notify.error("拉取分类目录信息失败!")
                 }
-                this.provinceLoading = false;
+                this.categoryLoading = false;
             });
-            if (!this.roles.length) {
-                getRoleList().then(res => {
-                    if (res.code === '200') {
-                        this.roles = res.data.map(r => {
-                            return {
-                                value: r.value, text: r.name
-                            }
-
-                        });
-                    } else {
-                        this.$dialog.notify.error("拉取角色信息失败!")
-                    }
-                });
-            }
         },
         methods: {
-            changeProvince() {
-                this.cityLoading = true;
-                let obj = {};
-                obj.code = this.form.province;
-                getCityList(obj).then(res => {
-                    if (res.code === '200') {
-                        this.city = res.data.map(r => {
-                            return {
-                                value: r.code, text: r.name
-                            }
-                        });
-                    } else {
-                        this.$swal({
-                            text: '拉取省市区信息失败!',
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    }
-                    this.cityLoading = false;
-                });
-            },
-            changeCity() {
-                this.areaLoading = true;
-                let obj = {};
-                obj.code = this.form.city;
-                getAreaList(obj).then(res => {
-                    if (res.code === '200') {
-                        this.area = res.data.map(r => {
-                            return {
-                                value: r.code, text: r.name
-                            }
-                        });
-                    } else {
-                        this.$swal({
-                            text: '拉取省市区信息失败!',
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    }
-                    this.areaLoading = false;
-                });
-            },
             submit() {
                 this.loading = true;
-                if (this.$refs.form.validate()) {
-                    //先上传头像
-                    if (!(this.file === '') && !(this.image === 'https://pan.zealsay.com/20190317010254129000000.jpg')) {
-                        let param = new FormData();
-                        param.append('file', this.file);
-                        uploadImage(param).then(res => {
-                            if (res.code === '200') {
-                                this.form.avatar = res.data;
-                                //开始提交
-                                addUser(this.form).then(res => {
-                                    this.loading = false;
-                                    if (res.code === '200' && res.data) {
-                                        this.$swal({
-                                            title: '添加成功!',
-                                            text: '您已经成功添加了一名用户',
-                                            type: 'success'
-                                        });
-                                    } else {
-                                        this.$swal({
-                                            title: '添加失败!',
-                                            text: res.message,
-                                            type: 'error'
-                                        });
-                                    }
-                                }).catch(e => {
-                                    this.loading = false;
-                                    this.$swal({
-                                        text: e.message,
-                                        type: 'error',
-                                        toast: true,
-                                        position: 'top',
-                                        showConfirmButton: false,
-                                        timer: 3000
-                                    });
-                                })
-                            } else {
-                                this.$swal({
-                                    title: '添加失败!',
-                                    text: res.message,
-                                    type: 'error'
-                                });
-                            }
-                        }).catch(e => {
-                            this.loading = false;
-                            this.$swal({
-                                text: e.message,
-                                type: 'error',
-                                toast: true
-                            });
-                        })
-                    }
-                    //开始提交
-                    addUser(this.form).then(res => {
-                        this.loading = false;
-                        if (res.code === '200' && res.data) {
-                            this.$swal({
-                                title: '添加成功!',
-                                text: '您已经成功添加了一名用户',
-                                type: 'success'
-                            });
-                        } else {
-                            this.$swal({
-                                title: '添加失败!',
-                                text: res.message,
-                                type: 'error'
-                            });
-                        }
-                    }).catch(e => {
-                        this.loading = false;
-                        this.$swal({
-                            text: e.message,
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    })
-                }
+                this.uploadimg();
                 this.loading = false;
             },
             fileChanged(file) {
@@ -389,9 +234,60 @@
                     reader.onloadend = function () {
                         console.log(self.$refs.img);
                         self.$refs.img.src = this.result;
+                        self.form.coverImage = this.result;
                     };
                 }
 
+            },
+            changeData(value, render) {
+                this.form.contentHtml = render;
+            },
+            // 绑定@imgAdd event
+            $imgAdd(pos, $file){
+                // 缓存图片信息
+                this.img_file[pos] = $file;
+            },
+            $imgDel(pos){
+                delete this.img_file[pos];
+            },
+            uploadimg($e){
+                // 第一步.将图片上传到服务器.
+                var formdata = new FormData();
+                for(var _img in this.img_file){
+                    formdata.append('files', this.img_file[_img]);
+                }
+                console.log(formdata);
+                uploadImageMultiple(formdata).then(res => {
+                    if (res.code === '200') {
+                        for (var img in res.data) {
+                            // $vm.$img2Url 详情见本页末尾
+                            console.log(img);
+                            console.log(res.data);
+                            this.$refs.md.$img2Url(img, res.data[img]);
+                        }
+                    } else {
+                        this.loading = false;
+                        this.$swal({
+                            text: res.message,
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                }).catch(e => {
+                    console.log(e);
+                    this.loading = false;
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                });
             }
         },
     }

@@ -200,7 +200,6 @@
         </v-layout>
     </v-container>
 </template>
-
 <script>
     import {addUser, uploadImage} from "@/api/user";
     import {getProvinceList, getCityList, getAreaList} from '@/api/dict';
