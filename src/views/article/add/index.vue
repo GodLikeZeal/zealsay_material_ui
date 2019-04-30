@@ -251,42 +251,45 @@
             },
             uploadimg($e){
                 // 第一步.将图片上传到服务器.
-                var formdata = new FormData();
-                for(var _img in this.img_file){
-                    formdata.append('files' , this.img_file[_img] ,_img);
-                }
-                uploadImageMultiple(formdata).then(res => {
-                    if (res.code === '200') {
-                        for (var img in res.data) {
-                            // $vm.$img2Url 详情见本页末尾
-                            console.log(res.data);
-                            console.log(res.data[img].pos);
-                            console.log(res.data[img].url);
-                            this.$refs.md.$img2Url(res.data[img].pos, res.data[img].url);
-                        }
-                    } else {
-                        this.loading = false;
-                        this.$swal({
-                            text: res.message,
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
+                if (JSON.stringify(this.img_file) != '{}') {
+                    var formdata = new FormData();
+                    for(var _img in this.img_file){
+                        formdata.append('files' , this.img_file[_img] ,_img);
                     }
-                }).catch(e => {
-                    console.log(e);
-                    this.loading = false;
-                    // this.$swal({
-                    //     text: e.message,
-                    //     type: 'error',
-                    //     toast: true,
-                    //     position: 'top',
-                    //     showConfirmButton: false,
-                    //     timer: 3000
-                    // });
-                });
+                    uploadImageMultiple(formdata).then(res => {
+                        if (res.code === '200') {
+                            for (var img in res.data) {
+                                // $vm.$img2Url 详情见本页末尾
+                                this.$refs.md.$img2Url(res.data[img].pos, res.data[img].url);
+                            }
+                            console.log(this.form);
+                        } else {
+                            this.loading = false;
+                            this.$swal({
+                                text: res.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }).catch(e => {
+                        console.log(e);
+                        this.loading = false;
+                        // this.$swal({
+                        //     text: e.message,
+                        //     type: 'error',
+                        //     toast: true,
+                        //     position: 'top',
+                        //     showConfirmButton: false,
+                        //     timer: 3000
+                        // });
+                    });
+                } else {
+                    console.log( this.form);
+                }
+
             }
         },
     }
