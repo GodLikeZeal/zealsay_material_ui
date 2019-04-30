@@ -232,7 +232,6 @@
                     reader.readAsDataURL(file);
                     // 读取成功后的回调
                     reader.onloadend = function () {
-                        console.log(self.$refs.img);
                         self.$refs.img.src = this.result;
                         self.form.coverImage = this.result;
                     };
@@ -248,22 +247,22 @@
                 this.img_file[pos] = $file;
             },
             $imgDel(pos){
-                delete this.img_file[pos];
+                delete this.img_file[pos[1]];
             },
             uploadimg($e){
                 // 第一步.将图片上传到服务器.
                 var formdata = new FormData();
                 for(var _img in this.img_file){
-                    formdata.append('files', this.img_file[_img]);
+                    formdata.append('files' , this.img_file[_img] ,_img);
                 }
-                console.log(formdata);
                 uploadImageMultiple(formdata).then(res => {
                     if (res.code === '200') {
                         for (var img in res.data) {
                             // $vm.$img2Url 详情见本页末尾
-                            console.log(img);
                             console.log(res.data);
-                            this.$refs.md.$img2Url(img, res.data[img]);
+                            console.log(res.data[img].pos);
+                            console.log(res.data[img].url);
+                            this.$refs.md.$img2Url(res.data[img].pos, res.data[img].url);
                         }
                     } else {
                         this.loading = false;
@@ -279,14 +278,14 @@
                 }).catch(e => {
                     console.log(e);
                     this.loading = false;
-                    this.$swal({
-                        text: e.message,
-                        type: 'error',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
+                    // this.$swal({
+                    //     text: e.message,
+                    //     type: 'error',
+                    //     toast: true,
+                    //     position: 'top',
+                    //     showConfirmButton: false,
+                    //     timer: 3000
+                    // });
                 });
             }
         },
