@@ -10,7 +10,10 @@ branches:
   - master
   - stable
 
-cache: npm
+# Travis-CI Caching
+cache:
+  directories:
+    - node_modules
 
 
 before_install:
@@ -20,7 +23,8 @@ before_install:
 
 script:
 - npm install -g @vue/cli
-- npm i
+- npm i cnpm -g --registry=http://registry.npm.taobao.org
+- cnpm i
 - vue-cli-service build
 
 addons:
