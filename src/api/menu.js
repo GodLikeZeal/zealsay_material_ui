@@ -31,7 +31,7 @@ const Menu = [
     icon: 'book',
     items: [
       { name: 'list', title: '文章列表', component: 'Dashboard' },
-      { name: 'write', title: '写文章', component: 'Dashboard' },
+      { name: 'write', title: '写文章', component: 'articleadd' },
       { name: 'menu', title: '分类目录', component: 'category' },
       { name: 'label', title: '标签管理', component: 'Dashboard' }
     ]

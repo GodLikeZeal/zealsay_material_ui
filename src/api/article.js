@@ -41,3 +41,30 @@ export function updateCategory (obj) {
     data: obj
   })
 }
+
+/**
+ * 删除分类目录.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:13
+ */
+export function deleteCategory (id) {
+  return request({
+    url: '/api/v1/articleCategory/' + id,
+    method: 'delete'
+  })
+}
+
+/**
+ * 添加文章.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:13
+ */
+export function saveArticle (obj) {
+  return request({
+    url: '/api/v1/article',
+    method: 'post',
+    data: obj
+  })
+}

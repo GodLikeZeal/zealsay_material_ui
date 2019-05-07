@@ -80,7 +80,7 @@
                                                         sm6
                                                         md4
                                                 >
-                                                    <v-btn color="error">删除 <br/>
+                                                    <v-btn color="error" @click="handleDelete(selected)">删除 <br/>
                                                         <v-icon small>remove_circle</v-icon>
                                                     </v-btn>
                                                 </v-flex>
@@ -146,13 +146,13 @@
             </v-layout>
         </v-container>
         <div>
-            <add-form :alert="addFormVisible" :parentId="parentId" @handleCancel='handleCancelAdd'></add-form>
+            <add-form :alert="addFormVisible" :parentId="parentId" :selected="selected" @handleCancel='handleCancelAdd'></add-form>
         </div>
     </div>
 </template>
 
 <script>
-    import {getCategoryList, updateCategory} from "@/api/article";
+    import {getCategoryList, updateCategory, deleteCategory} from "@/api/article";
     import {validateAlias, validateUsername} from "@/util/validate";
     import addForm from './components/addForm';
 
@@ -188,6 +188,12 @@
             selected() {
                 if (!this.active.length) return {};
                 const id = this.active[0];
+                if (id === undefined) {
+                    return {
+                        name: '分类目录',
+                        alias: 'alias'
+                    }
+                }
                 return this.categorys.find(category => category.id === id)
             },
             parentId() {
@@ -258,18 +264,31 @@
                     })
                 }
             },
-            addSubmit(obj) {
+            handleDelete(obj) {
                 if (this.$refs.form.validate()) {
-                    addCategory(obj).then(res => {
+                    let id = obj.id;
+                    if (id === undefined) {
+                        this.$swal({
+                            text: '根目录无法删除',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        return;
+                    }
+                    deleteCategory(id).then(res => {
                         if (res.code === '200' && res.data) {
                             this.$swal({
-                                text: '修改成功',
+                                text: '删除成功',
                                 type: 'success',
                                 toast: true,
                                 position: 'top',
                                 showConfirmButton: false,
                                 timer: 3000
                             });
+                            this.refresh();
                         } else {
                             this.$swal({
                                 text: res.message,
@@ -289,6 +308,7 @@
                             showConfirmButton: false,
                             timer: 3000
                         });
+                        this.refresh();
                     })
                 }
             },
