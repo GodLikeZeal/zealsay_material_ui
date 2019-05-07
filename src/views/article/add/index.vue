@@ -30,7 +30,7 @@
                         <upload-btn
                                 class="font-weight-light"
                                 color="primary"
-                                title="上传封面"
+                                title="更换封面"
                                 round
                                 :fileChangedCallback="fileChanged"
                         >
@@ -56,7 +56,7 @@
                                 >
                                     <v-text-field
                                             v-model="form.title"
-                                            :rules="utitleRules"
+                                            :rules="titleRules"
                                             hint="标题不能包含空格和特殊字符,不超过20个字符"
                                             class="purple-input"
                                             label="标题*"
@@ -108,16 +108,16 @@
                                         md12
                                 >
                                     <v-radio-group v-model="form.openness" row label="公开度">
-                                        <v-radio label="仅自己可阅读" value="radio-1"></v-radio>
-                                        <v-radio label="所有人可阅读" value="radio-3"></v-radio>
+                                        <v-radio label="仅自己" value="SELFONLY"></v-radio>
+                                        <v-radio label="所有人" value="ALL"></v-radio>
                                     </v-radio-group>
                                 </v-flex>
                                 <v-flex
                                         xs12
                                         md12>
                                     <v-radio-group v-model="form.status" row label="状 态">
-                                        <v-radio label="草稿" value="radio-1"></v-radio>
-                                        <v-radio label="发布" value="radio-2"></v-radio>
+                                        <v-radio label="草稿" value="DRAFT"></v-radio>
+                                        <v-radio label="正式发布" value="FORMAL"></v-radio>
                                     </v-radio-group>
                                 </v-flex>
 
@@ -148,7 +148,10 @@
                         title="编辑文章详细内容"
                         text="支持使用markdown语法"
                 >
-                    <mavon-editor ref=md :ishljs = "true" @change="changeData" @imgAdd="$imgAdd" @imgDel="$imgDel" v-model="form.contentMd"/>
+                    <div id="editor">
+                        <mavon-editor style="z-index:0" ref=md :ishljs="true" @change="changeData" @imgAdd="$imgAdd"
+                                      @imgDel="$imgDel" v-model="form.contentMd"/>
+                    </div>
                 </material-card>
             </v-flex>
         </v-layout>
@@ -156,10 +159,8 @@
 </template>
 
 <script>
-    import {addUser, uploadImage,uploadImageMultiple} from "@/api/user";
-    import {getCategoryList} from '@/api/article';
-    import {getRoleList} from "@/api/role";
-    import {validateUsername, validatePassword, validatePhone, validateEmail} from "@/util/validate";
+    import {addUser, uploadImage, uploadImageMultiple} from "@/api/user";
+    import {getCategoryList, saveArticle} from '@/api/article';
     import UploadButton from 'vuetify-upload-button';
 
     export default {
@@ -171,10 +172,10 @@
             form: {
                 title: '',
                 subheading: '',
-                status: '',
+                status: 'DRAFT',
                 coverImage: 'https://pan.zealsay.com/20190317010254129000000.jpg',
                 label: '',
-                openness: '',
+                openness: 'ALL',
                 contentMd: '',
                 contentHtml: ''
             },
@@ -182,16 +183,15 @@
             valid: false,
             image: 'https://pan.zealsay.com/20190317010254129000000.jpg',
             category: [],
-            labels: ['docker','java','vue','javascript','动漫','杂谈','评点'],
+            labels: ['docker', 'java', 'vue', 'javascript', '动漫', '杂谈', '评点'],
             categoryLoading: false,
             cityLoading: false,
             areaLoading: false,
             file: '',
             loading: false,
-            utitleRules: [
+            titleRules: [
                 v => !!v || '标题不能为空!',
-                v => (v && v.length <= 20) || '标题不得超过20个字符',
-                v => validateUsername(v) || '必须是中文、英文、数字包括下划线'
+                v => (v && v.length <= 20) || '标题不得超过20个字符'
             ],
             subheadingRules: [
                 v => (v && v.length <= 30) || '副标题不得超过30个字符'
@@ -242,19 +242,58 @@
                 this.form.contentHtml = render;
             },
             // 绑定@imgAdd event
-            $imgAdd(pos, $file){
+            $imgAdd(pos, $file) {
                 // 缓存图片信息
                 this.img_file[pos] = $file;
             },
-            $imgDel(pos){
+            $imgDel(pos) {
                 delete this.img_file[pos[1]];
             },
-            uploadimg($e){
+            uploadimg($e) {
                 // 第一步.将图片上传到服务器.
+                this.loading = true;
+                //先上传头像
+                if (!(this.file === '')) {
+                    let param = new FormData();
+                    param.append('file', this.file);
+                    uploadImage(param).then(res => {
+                        if (res.code === '200') {
+                            this.form.coverImage = res.data;
+                            this.image = res.data;
+                            this.save();
+                        } else {
+                            this.loading = false;
+                            this.$swal({
+                                text: res.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }).catch(e => {
+                        this.loading = false;
+                        this.$swal({
+                            text: e.message,
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    })
+                } else {
+                    this.save();
+                }
+
+
+            },
+            save() {
                 if (JSON.stringify(this.img_file) != '{}') {
                     var formdata = new FormData();
-                    for(var _img in this.img_file){
-                        formdata.append('files' , this.img_file[_img] ,_img);
+                    for (var _img in this.img_file) {
+                        formdata.append('files', this.img_file[_img], _img);
                     }
                     uploadImageMultiple(formdata).then(res => {
                         if (res.code === '200') {
@@ -262,7 +301,38 @@
                                 // $vm.$img2Url 详情见本页末尾
                                 this.$refs.md.$img2Url(res.data[img].pos, res.data[img].url);
                             }
-                            console.log(this.form);
+                            //开始提交文章信息
+                            saveArticle(this.form).then(res => {
+                                if (res.code === '200') {
+                                    this.loading = true;
+                                    this.$swal({
+                                        title: '保存成功!',
+                                        text: '不错哟,您已经添加了一篇文章啦',
+                                        type: 'success'
+                                    });
+                                } else {
+                                    this.loading = false;
+                                    this.$swal({
+                                        text: res.message,
+                                        type: 'error',
+                                        toast: true,
+                                        position: 'top',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                }
+                            }).catch(e => {
+                                console.log(e);
+                                this.loading = false;
+                                this.$swal({
+                                    text: e.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            });
                         } else {
                             this.loading = false;
                             this.$swal({
@@ -287,9 +357,39 @@
                         // });
                     });
                 } else {
-                    console.log( this.form);
+                    //开始提交文章信息
+                    saveArticle(this.form).then(res => {
+                        if (res.code === '200') {
+                            this.loading = false;
+                            this.$swal({
+                                title: '保存成功!',
+                                text: '不错哟,您已经添加了一篇文章啦',
+                                type: 'success'
+                            });
+                        } else {
+                            this.loading = false;
+                            this.$swal({
+                                text: res.message,
+                                type: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }).catch(e => {
+                        console.log(e);
+                        this.loading = false;
+                        this.$swal({
+                            text: e.message,
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    });
                 }
-
             }
         },
     }
@@ -297,5 +397,11 @@
 <style lang="less" scoped>
     .avator {
         margin: 0px auto;
+    }
+
+    #editor {
+        .v-show-content {
+            background-color: #000;
+        }
     }
 </style>
