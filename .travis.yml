@@ -1,6 +1,6 @@
 language: node_js
 
-node_js: stable
+node_js: 8
 
 sudo: required
 
@@ -23,8 +23,7 @@ before_install:
 
 script:
 - npm install -g @vue/cli
-- npm i cnpm -g --registry=http://registry.npm.taobao.org
-- cnpm i
+- npm i
 - vue-cli-service build
 
 addons:
