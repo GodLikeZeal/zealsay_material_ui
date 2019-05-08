@@ -1,6 +1,7 @@
 <template>
     <v-container
             fill-height
+            align-space-around
             fluid
             grid-list-xl>
         <v-layout
@@ -22,8 +23,7 @@
                     <v-card-text class="text-xs-center">
                         <h6 class="category text-gray ffont-weight-light mb-3">封面图片</h6>
                         <h5 class="card-title font-weight-light">Some of us get dipped in flat, some in satin, some
-                            in
-                            gloss.... But every once in a while you find someone who's iridescent, and when you do,
+                            in gloss.... But every once in a while you find someone who's iridescent, and when you do,
                             nothing will ever compare.</h5>
                         <p class="card-description font-weight-light">
                             有人住高楼，有人在深沟，有人光万丈，有人一身锈，世人万千种，浮云莫去求，斯人若彩虹，遇上方知有。</p>
@@ -149,7 +149,7 @@
                         text="支持使用markdown语法"
                 >
                     <div id="editor">
-                        <mavon-editor style="z-index:0" ref=md :ishljs="true" @change="changeData" @imgAdd="$imgAdd"
+                        <mavon-editor style="z-index:0;height: 800px" ref=md :ishljs="true" @change="changeData" @imgAdd="$imgAdd"
                                       @imgDel="$imgDel" v-model="form.contentMd"/>
                     </div>
                 </material-card>
@@ -233,7 +233,7 @@
                     // 读取成功后的回调
                     reader.onloadend = function () {
                         self.$refs.img.src = this.result;
-                        self.form.coverImage = this.result;
+                        self.image = this.result;
                     };
                 }
 

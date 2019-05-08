@@ -30,8 +30,8 @@ const Menu = [
     group: 'article',
     icon: 'book',
     items: [
-      { name: 'list', title: '文章列表', component: 'Dashboard' },
       { name: 'write', title: '写文章', component: 'articleadd' },
+      { name: 'list', title: '文章列表', component: 'Dashboard' },
       { name: 'menu', title: '分类目录', component: 'category' },
       { name: 'label', title: '标签管理', component: 'Dashboard' }
     ]
@@ -49,11 +49,11 @@ const Menu = [
 // reorder menu
 Menu.forEach((item) => {
   if (item.items) {
-    item.items.sort((x, y) => {
-      const textA = x.title.toUpperCase();
-      const textB = y.title.toUpperCase();
-      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-    });
+    // item.items.sort((x, y) => {
+    //   const textA = x.name.toUpperCase();
+    //   const textB = y.name.toUpperCase();
+    //   return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    // });
   }
 });
 
