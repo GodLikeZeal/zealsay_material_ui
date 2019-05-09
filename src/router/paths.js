@@ -110,17 +110,6 @@ export default [
     )
   },
   {
-    path: '/article/category',
-    meta: { breadcrumb: true },
-    name: 'category',
-    title: '分类目录',
-    component: () => import(
-      /* webpackChunkName: "routes" */
-      /* webpackMode: "lazy-once" */
-      `@/views/article/category/index.vue`
-    )
-  },
-  {
     path: '/article/add',
     meta: { breadcrumb: true },
     name: 'articleadd',
@@ -130,5 +119,28 @@ export default [
       /* webpackMode: "lazy-once" */
       `@/views/article/add/index.vue`
     )
+  },
+  {
+    path: '/article/list',
+    meta: { breadcrumb: true },
+    name: 'articlelist',
+    title: '文章列表',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy-once" */
+      `@/views/article/list/index.vue`
+    )
+  },
+  {
+    path: '/article/category',
+    meta: { breadcrumb: true },
+    name: 'category',
+    title: '分类目录',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy-once" */
+      `@/views/article/category/index.vue`
+    )
   }
+
 ];

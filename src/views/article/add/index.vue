@@ -117,7 +117,7 @@
                                         md12>
                                     <v-radio-group v-model="form.status" row label="状 态">
                                         <v-radio label="草稿" value="DRAFT"></v-radio>
-                                        <v-radio label="正式发布" value="FORMAL"></v-radio>
+                                        <v-radio label="发布" value="FORMAL"></v-radio>
                                     </v-radio-group>
                                 </v-flex>
 
