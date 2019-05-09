@@ -1,0 +1,556 @@
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+    <div class="con">
+        <v-layout
+                row
+                wrap
+        >
+            <v-flex
+                    xs12
+                    sm6
+                    md4
+            >
+                <v-text-field
+                        label="Solo"
+                        v-model="searchData.title"
+                        placeholder="文章标题"
+                        solo
+                ></v-text-field>
+            </v-flex>
+            <v-flex
+                    xs12
+                    sm6
+                    md4
+            >
+                <v-text-field
+                        label="Solo"
+                        v-model="searchData.label"
+                        placeholder="标签关键字"
+                        solo
+                ></v-text-field>
+            </v-flex>
+            <v-flex
+                    xs12
+                    sm6
+                    md4
+            >
+                <v-text-field
+                        label="Solo"
+                        v-model="searchData.authorName"
+                        placeholder="作者名称"
+                        solo
+                ></v-text-field>
+            </v-flex>
+            <v-flex
+                    xs12
+                    sm6
+                    md3
+            >
+                <v-menu
+                        v-model="startmenu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                >
+                    <template v-slot:activator="{ on }">
+                        <v-text-field
+                                v-model="searchData.startDate"
+                                label="创建时间检索开始时间"
+                                prepend-icon="event"
+                                readonly
+                                solo
+                                v-on="on"
+                        ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="searchData.startDate" @input="startmenu = false"></v-date-picker>
+                </v-menu>
+            </v-flex>
+            <v-flex
+                    xs12
+                    sm6
+                    md3
+            >
+                <v-menu
+                        v-model="endmenu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                >
+                    <template v-slot:activator="{ on }">
+                        <v-text-field
+                                v-model="searchData.endDate"
+                                label="创建时间检索结束时间"
+                                prepend-icon="event"
+                                readonly
+                                solo
+                                v-on="on"
+                        ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="searchData.endDate" @input="endmenu = false"></v-date-picker>
+                </v-menu>
+            </v-flex>
+            <v-flex
+                    xs12
+                    sm6
+                    md3
+            >
+                <v-select
+                        solo
+                        v-model="searchData.categoryId"
+                        :items="category"
+                        item-text="text"
+                        item-value="value"
+                        label="请选择分类目录"
+                        required
+                ></v-select>
+            </v-flex>
+            <v-flex
+                    xs6
+                    sm2
+                    md1
+            >
+                <v-btn color="info" @click="search(searchData)">搜索 <br/>
+                    <v-icon small>search</v-icon>
+                </v-btn>
+            </v-flex>
+            <v-flex
+                    xs6
+                    sm2
+                    md1
+            >
+                <v-btn color="success" title="添加" @click="handleUnsealingSelected(selected)"> 添加 <br/>
+                    <v-icon small>create</v-icon>
+                </v-btn>
+            </v-flex>
+            <v-flex
+                    xs6
+                    sm2
+                    md1
+            >
+                <v-btn color="error" title="下架" @click="handleDisabledSelected(selected)"> 下架 <br/>
+                    <v-icon small>trending_down</v-icon>
+                </v-btn>
+            </v-flex>
+
+        </v-layout>
+        <v-data-table
+                v-model="selected"
+                :headers="headers"
+                :pagination.sync="pagination"
+                :items="desserts"
+                :loading="loading"
+                hide-actions
+                select-all
+                class="elevation-1"
+        >
+            <template v-slot:headers="props">
+                <tr>
+                    <th>
+                        <v-checkbox
+                                :input-value="props.all"
+                                :indeterminate="props.indeterminate"
+                                primary
+                                hide-details
+                                @click.stop="toggleAll"
+                        ></v-checkbox>
+                    </th>
+                    <th
+                            v-for="header in props.headers"
+                            :key="header.text"
+                            :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                            @click="changeSort(header.value)"
+                    >
+                        <v-icon small>arrow_upward</v-icon>
+                        {{ header.text }}
+                    </th>
+                </tr>
+            </template>
+            <template
+                    slot="items"
+                    slot-scope="props"
+            >
+                <tr :active="props.selected">
+                    <td class="text-xs-right" @click="props.selected = !props.selected">
+                        <v-checkbox
+                                :input-value="props.selected"
+                                primary
+                                hide-details
+                        ></v-checkbox>
+                    </td>
+                    <td class="text-xs-right">
+                        <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage" :src="props.item.coverImage" alt="avatar"></v-img>
+                    </td>
+                    <td class="text-xs-right text-truncate">{{ props.item.title }}</td>
+                    <td class="text-xs-right text-truncate">{{ props.item.subheading }}</td>
+                    <td class="text-xs-right col">
+                        <span v-if="props.item.status == 'FORMAL'" class="text-success"> 发布 <v-icon color="success"
+                                                                                                     small>important_devices</v-icon> </span>
+                        <span v-if="props.item.status == 'DRAFT'" class="text-warning"> 草稿 <v-icon color="warning"
+                                                                                                   small>speaker_notes</v-icon> </span>
+                        <span v-if="props.item.status == 'DOWN'" class="text-error"> 下架<v-icon color="error" small>trending_down</v-icon> </span>
+                    </td>
+                    <td class="text-xs-right col">
+                        <span v-if="props.item.openness == 'ALL'" class="text-success"> 所有人 <v-icon color="success"
+                                                                                                    small>visibility</v-icon> </span>
+                        <span v-if="props.item.openness == 'SELFONLY'" class="text-info"> 仅自己 <v-icon color="info"
+                                                                                                      small>visibility_off</v-icon> </span>
+                    </td>
+                    <td class="text-xs-right col">
+                        <v-chip v-for="label in props.item.label.split(',')"
+                                :color="color[parseInt(Math.random()*6,10)]"
+                                :key='label' small>
+                            {{ label }}
+                        </v-chip>
+                    </td>
+                    <td class="text-xs-right">{{ props.item.categoryName }}</td>
+                    <td class="text-xs-right"> {{ props.item.authorName}}</td>
+                    <td class="text-xs-right col"> {{ props.item.createDate}}</td>
+                    <td class="text-xs-right">
+                        <v-layout
+                                justify-center
+                                class="mb-2"
+                        >
+                            <v-btn icon flat color="primary" title="预览" @click="handleInfo(props.item)">
+                                <v-icon>portrait</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
+                                <v-icon>create</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="上架" @click="handleUnsealing(props.item)">
+                                <v-icon>how_to_reg</v-icon>
+                            </v-btn>
+                            <v-btn icon flat color="primary" title="下架" @click="handleDisabled(props.item)">
+                                <v-icon>remove_circle</v-icon>
+                            </v-btn>
+                        </v-layout>
+                    </td>
+                </tr>
+            </template>
+        </v-data-table>
+        <div class="right pagination">
+            <Pagination :pagination="pagination"></Pagination>
+        </div>
+        <div>
+            <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
+        </div>
+    </div>
+</template>
+<script>
+    import {getUserList, disabeledUser, disabeledUserBatch, unsealingUserBatch, unsealingUser} from "@/api/user";
+    import {getArticlePageList, getCategoryList} from "@/api/article";
+    import forms from './components/form'
+    import info from './components/info'
+    import Pagination from "../../../components/table/Pagination";
+
+    export default {
+        name: 'User',
+        components: {Pagination, forms, info},
+        data() {
+            return {
+                searchData: {},
+                selected: [],
+                loading: true,
+                headers: [
+                    {text: '文章封面', value: 'coverImage'},
+                    {text: '标题', value: 'title'},
+                    {text: '副标题', value: 'subheading'},
+                    {text: '状态', value: 'status'},
+                    {text: '公开度', value: 'openness'},
+                    {text: '标签', value: 'label'},
+                    {text: '分类目录', value: 'categoryName'},
+                    {text: '作者', value: 'authorName'},
+                    {text: '创建时间', value: 'createDate'},
+                    {text: '操作', value: ''}
+                ],
+                desserts: [],
+                pagination: {
+                    descending: true,
+                    page: 1,
+                    rowsPerPage: 10, // -1 for All
+                    sortBy: '',
+                    totalItems: 2
+                },
+                row: {},
+                dialogVisible: false,
+                formVisible: false,
+                categoryLoading: false,
+                title: '',
+                category: [],
+                startmenu: false,
+                endmenu: false,
+                color: ["info", "success", "primary", "warning", "error", "default"]
+            };
+        },
+        created() {
+            getArticlePageList().then(res => {
+                this.desserts = res.data.records;
+                this.pagination.page = res.data.currentPage;
+                this.pagination.rowsPerPage = res.data.pageSize;
+                this.pagination.totalItems = res.data.total;
+                this.loading = false;
+            }).catch(e => {
+                console.log(e);
+                this.loading = false;
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+            getCategoryList().then(res => {if (res.code === '200') {
+                let de = {};
+                de.text = "请选择分类目录";
+                de.value = "";
+                this.category.push(de);
+                for(var i = 0; i< res.data.length; i++) {
+                    let re = {};
+                    re.text = res.data[i].name;
+                    re.value = res.data[i].id;
+                    this.category.push(re);
+                }
+            } else {
+                this.$dialog.notify.error("拉取分类目录信息失败!")
+            }
+                this.categoryLoading = false;
+            }).catch(e => {
+                console.log(e);
+                this.loading = false;
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        },
+        methods: {
+            search(obj) {
+                getUserList(obj).then(res => {
+                    this.desserts = res.data.records;
+                    this.pagination.page = res.data.currentPage;
+                    this.pagination.rowsPerPage = res.data.pageSize;
+                    this.pagination.totalItems = res.data.total;
+                });
+            },
+            toggleAll() {
+                if (this.selected.length) this.selected = [];
+                else this.selected = this.desserts.slice()
+            },
+            changeSort(column) {
+                if (this.pagination.sortBy === column) {
+                    this.pagination.descending = !this.pagination.descending
+                } else {
+                    this.pagination.sortBy = column;
+                    this.pagination.descending = false
+                }
+            },
+            handleEdit(row) {
+                this.formVisible = true;
+                this.row = {...row};
+                // let editDialog = this.$dialog.show(forms, {
+                //     row: row,
+                //     width: 600
+                // });
+            },
+            handleCancel() {
+                this.formVisible = false;
+            },
+            handleInfo(row) {
+                this.row = {...row};
+                this.$dialog.show(info, {row: row, width: 600})
+            },
+            handleDisabled(row) {
+                this.$swal({
+                    title: '确定要封禁吗？',
+                    text: '一旦封禁，该用户无法登录系统',
+                    type: 'warning',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.value) {
+                        disabeledUser(row.id).then(res => {
+                            if (res.code === '200' && res.data) {
+                                this.$swal({
+                                    title: '操作成功!',
+                                    text: '该用户已经被封禁',
+                                    type: 'success'
+                                });
+                                this.search('');
+                            } else {
+                                this.$swal({
+                                    title: '操作失败!',
+                                    text: res.message,
+                                    type: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            handleUnsealing(row) {
+                this.$swal({
+                    title: '确定要解封吗？',
+                    text: '将该用户从封禁状态改成正常状态，该用户可正常使用系统',
+                    type: 'warning',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.value) {
+                        unsealingUser(row.id).then(res => {
+                            if (res.code === '200' && res.data) {
+                                this.$swal({
+                                    title: '操作成功!',
+                                    text: '该用户已经成功解封',
+                                    type: 'success'
+                                });
+                                this.search('');
+                            } else {
+                                this.$swal({
+                                    title: '操作失败!',
+                                    text: res.message,
+                                    type: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            handleDisabledSelected(selected) {
+                let param = selected.map(s => s.id);
+                if (param.length > 0) {
+                    this.$swal({
+                        title: '确定要封禁吗？',
+                        text: '一旦封禁，所选用户无法登录系统',
+                        type: 'warning',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            disabeledUserBatch(param).then(res => {
+                                if (res.code === '200' && res.data) {
+                                    this.$swal({
+                                        title: '操作成功!',
+                                        text: '所选用户已经被封禁',
+                                        type: 'success'
+                                    });
+                                    this.search('');
+                                } else {
+                                    this.$swal({
+                                        title: '操作失败!',
+                                        text: res.message,
+                                        type: 'error'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    this.$swal({
+                        title: '无法封禁！',
+                        text: '请至少选择一条需要封禁的用户！',
+                        type: 'warning'
+                    });
+                }
+            },
+            handleUnsealingSelected(selected) {
+                let param = selected.map(s => s.id);
+                if (param.length > 0) {
+                    this.$swal({
+                        title: '确定要解封吗？',
+                        text: '将所选用户从封禁状态改成正常状态，该用户可正常使用系统',
+                        type: 'warning',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            unsealingUserBatch(param).then(res => {
+                                if (res.code === '200' && res.data) {
+                                    this.$swal({
+                                        title: '操作成功!',
+                                        text: '所选用户已经成功解封',
+                                        type: 'success'
+                                    });
+                                    this.search('');
+                                } else {
+                                    this.$swal({
+                                        title: '操作失败!',
+                                        text: res.message,
+                                        type: 'error'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    this.$swal({
+                        title: '无法封禁！',
+                        text: '请至少选择一条需要解封的用户！',
+                        type: 'warning'
+                    });
+                }
+            }
+        }
+    };
+</script>
+<style lang="less" scoped>
+    .con {
+        padding: 0 20px;
+    }
+
+    .layout > .flex {
+        padding: 8px;
+    }
+
+    .v-icon {
+        color: #2196f3;
+        cursor: pointer;
+    }
+
+    .img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .v-image__image {
+        width: 30px;
+        height: 30px;
+    }
+
+    .text-success {
+        color: forestgreen;
+        font-weight: bold;
+    }
+
+    .text-info {
+        color: #00d3ee;
+        font-weight: bold;
+    }
+
+    .text-error {
+        color: #dc6752;
+        font-weight: bold;
+    }
+
+    .text-warning {
+        color: #dca173;
+        font-weight: bold;
+    }
+
+    .col {
+        padding: 0 12px !important;
+    }
+
+    .pagination {
+        margin: 20px;
+    }
+
+</style>
+
