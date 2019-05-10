@@ -207,7 +207,14 @@
                         }
                     });
                 } else {
-                    this.$dialog.notify.error("拉取分类目录信息失败!")
+                    this.$swal({
+                        text: '拉取分类目录信息失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
                 }
                 this.categoryLoading = false;
             });

@@ -126,7 +126,7 @@
                     md1
             >
                 <v-btn color="success" title="添加" @click="handleUnsealingSelected(selected)"> 添加 <br/>
-                    <v-icon small>create</v-icon>
+                    <v-icon small>add</v-icon>
                 </v-btn>
             </v-flex>
             <v-flex
@@ -171,6 +171,11 @@
                         {{ header.text }}
                     </th>
                 </tr>
+            </template>
+            <template v-slot:no-data>
+                <p class="text-md-center teal--text">
+                    已经找遍了，再怎么找也找不到啦！
+                </p>
             </template>
             <template
                     slot="items"
@@ -290,10 +295,21 @@
         },
         created() {
             getArticlePageList().then(res => {
-                this.desserts = res.data.records;
-                this.pagination.page = res.data.currentPage;
-                this.pagination.rowsPerPage = res.data.pageSize;
-                this.pagination.totalItems = res.data.total;
+                if (res.code === '200') {
+                    this.desserts = res.data.records;
+                    this.pagination.page = res.data.currentPage;
+                    this.pagination.rowsPerPage = res.data.pageSize;
+                    this.pagination.totalItems = res.data.total;
+                } else {
+                    this.$swal({
+                        text: '拉取文章列表失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
                 this.loading = false;
             }).catch(e => {
                 console.log(e);
@@ -307,7 +323,8 @@
                     timer: 3000
                 });
             });
-            getCategoryList().then(res => {if (res.code === '200') {
+            getCategoryList().then(res => {
+                if (res.code === '200') {
                 let de = {};
                 de.text = "请选择分类目录";
                 de.value = "";
@@ -319,12 +336,19 @@
                     this.category.push(re);
                 }
             } else {
-                this.$dialog.notify.error("拉取分类目录信息失败!")
+                    this.$swal({
+                        text: '拉取分类目录信息失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
             }
                 this.categoryLoading = false;
             }).catch(e => {
                 console.log(e);
-                this.loading = false;
+                this.categoryLoading = false;
                 this.$swal({
                     text: e.message,
                     type: 'error',
@@ -337,11 +361,22 @@
         },
         methods: {
             search(obj) {
-                getUserList(obj).then(res => {
-                    this.desserts = res.data.records;
-                    this.pagination.page = res.data.currentPage;
-                    this.pagination.rowsPerPage = res.data.pageSize;
-                    this.pagination.totalItems = res.data.total;
+                getArticlePageList(obj).then(res => {
+                    if (res.code === '200') {
+                        this.desserts = res.data.records;
+                        this.pagination.page = res.data.currentPage;
+                        this.pagination.rowsPerPage = res.data.pageSize;
+                        this.pagination.totalItems = res.data.total;
+                    } else {
+                        this.$swal({
+                            text: '拉取文章列表失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
                 });
             },
             toggleAll() {

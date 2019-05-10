@@ -45,6 +45,11 @@
                 select-all
                 class="elevation-1"
         >
+            <template v-slot:no-data>
+                <p class="text-md-center teal--text">
+                    已经找遍了，再怎么找也找不到啦！
+                </p>
+            </template>
             <template v-slot:headers="props">
                 <tr>
                     <th>
