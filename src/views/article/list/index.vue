@@ -125,17 +125,8 @@
                     sm2
                     md1
             >
-                <v-btn color="success" title="添加" @click="handleUnsealingSelected(selected)"> 添加 <br/>
+                <v-btn color="success" title="添加" @click="handleAdd"> 添加 <br/>
                     <v-icon small>add</v-icon>
-                </v-btn>
-            </v-flex>
-            <v-flex
-                    xs6
-                    sm2
-                    md1
-            >
-                <v-btn color="error" title="下架" @click="handleDisabledSelected(selected)"> 下架 <br/>
-                    <v-icon small>trending_down</v-icon>
                 </v-btn>
             </v-flex>
 
@@ -209,7 +200,7 @@
                     </td>
                     <td class="text-xs-right col">
                         <v-chip v-for="label in props.item.label.split(',')"
-                                :color="color[parseInt(Math.random()*6,10)]"
+                                :color="color[parseInt(label.length * 6 / 6)]"
                                 :key='label' small>
                             {{ label }}
                         </v-chip>
@@ -391,20 +382,25 @@
                     this.pagination.descending = false
                 }
             },
+            handleAdd() {
+                this.$router.push({path: '/article/add'})
+            },
             handleEdit(row) {
                 this.formVisible = true;
                 this.row = {...row};
-                // let editDialog = this.$dialog.show(forms, {
-                //     row: row,
-                //     width: 600
-                // });
+                this.$router.push({path: '/article/edit'})
             },
             handleCancel() {
                 this.formVisible = false;
             },
             handleInfo(row) {
                 this.row = {...row};
-                this.$dialog.show(info, {row: row, width: 600})
+                this.$swal({
+                    title: '操作成功!',
+                    text: '预览功能正在开发中，别急嘛',
+                    type: 'success'
+                });
+                // this.$dialog.show(info, {row: row, width: 600})
             },
             handleDisabled(row) {
                 this.$swal({
