@@ -56,6 +56,19 @@ export function deleteCategory (id) {
 }
 
 /**
+ * 根据id查询文章作品详情.
+ *
+ * @author  zhanglei
+ * @date 2019-05-15  14:53
+ */
+export function getArticle (id) {
+  return request({
+    url: '/api/v1/article/' + id,
+    method: 'get'
+  })
+}
+
+/**
  * 添加文章.
  *
  * @author  zhanglei
@@ -80,5 +93,31 @@ export function getArticlePageList (obj) {
     url: '/api/v1/article/page',
     method: 'get',
     data: obj
+  })
+}
+
+/**
+ * 下架文章作品.
+ *
+ * @author  zhanglei
+ * @date 2019-05-15  12:04
+ */
+export function markArticleDown (id) {
+  return request({
+    url: '/api/v1/article/down/' + id,
+    method: 'put'
+  })
+}
+
+/**
+ * 上架文章作品.
+ *
+ * @author  zhanglei
+ * @date 2019-05-15  12:05
+ */
+export function markArticleUp (id) {
+  return request({
+    url: '/api/v1/article/up/' + id,
+    method: 'put'
   })
 }

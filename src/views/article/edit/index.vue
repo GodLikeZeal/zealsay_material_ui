@@ -160,7 +160,7 @@
 
 <script>
     import {addUser, uploadImage, uploadImageMultiple} from "@/api/user";
-    import {getCategoryList, saveArticle} from '@/api/article';
+    import {getCategoryList, saveArticle, getArticle} from '@/api/article';
     import UploadButton from 'vuetify-upload-button';
 
     export default {
@@ -217,6 +217,44 @@
                     });
                 }
                 this.categoryLoading = false;
+            }).catch(e => {
+                console.log(e);
+                this.loading = false;
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+            getArticle(this.$route.query.id).then(res => {
+                if (res.code === '200') {
+                    this.form = res.data;
+                    this.form.label = res.data.label.split(',');
+                } else {
+                    this.$swal({
+                        text: '拉取文章信息失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                this.loading = false;
+            }).catch(e => {
+                console.log(e);
+                this.loading = false;
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
             });
         },
         methods: {
