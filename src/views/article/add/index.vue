@@ -27,14 +27,18 @@
                             nothing will ever compare.</h5>
                         <p class="card-description font-weight-light">
                             有人住高楼，有人在深沟，有人光万丈，有人一身锈，世人万千种，浮云莫去求，斯人若彩虹，遇上方知有。</p>
-                        <upload-btn
-                                class="font-weight-light"
-                                color="primary"
-                                title="更换封面"
-                                round
-                                :fileChangedCallback="fileChanged"
-                        >
-                        </upload-btn>
+                        <vue-cropper
+                                ref='cropper'
+                                :guides="true"
+                                :view-mode=2
+                                :auto-crop-area="0.5"
+                                :min-container-width=250
+                                :min-container-height=180
+                                :background=true
+                                :src="image"
+                                alt="Source Image"
+                                :cropmove="cropImage"
+                        ></vue-cropper>
                     </v-card-text>
                 </material-card>
             </v-flex>
@@ -161,12 +165,12 @@
 <script>
     import {addUser, uploadImage, uploadImageMultiple} from "@/api/user";
     import {getCategoryList, saveArticle} from '@/api/article';
-    import UploadButton from 'vuetify-upload-button';
+    import { VueCropper } from 'vue-cropper';
 
     export default {
         name: 'add',
         components: {
-            'upload-btn': UploadButton,
+            'vue-cropper': VueCropper
         },
         data: () => ({
             form: {
@@ -226,7 +230,18 @@
                 this.loading = false;
             },
             fileChanged(file) {
-                // handle file here. File will be an object.
+                if (!file.type.includes('image/')) {
+                    this.$swal({
+                        text: "请选择一张图片文件",
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+                    // handle file here. File will be an object.
                 // If multiple prop is true, it will return an object array of files.
                 let self = this;
                 // 看支持不支持FileReader
@@ -241,9 +256,14 @@
                     reader.onloadend = function () {
                         self.$refs.img.src = this.result;
                         self.image = this.result;
+                        self.$refs.cropper.replace(this.result)
                     };
                 }
 
+            },
+            cropImage () {
+                // get image data for post processing, e.g. upload or setting image src
+                this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
             },
             changeData(value, render) {
                 this.form.contentHtml = render;

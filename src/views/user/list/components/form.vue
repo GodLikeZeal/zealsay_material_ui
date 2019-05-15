@@ -288,6 +288,17 @@
                 this.loading = false;
             },
             fileChanged(file) {
+                if (!file.type.includes('image/')) {
+                    this.$swal({
+                        text: "请选择一张图片文件",
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
                 // handle file here. File will be an object.
                 // If multiple prop is true, it will return an object array of files.
                 let self = this;
