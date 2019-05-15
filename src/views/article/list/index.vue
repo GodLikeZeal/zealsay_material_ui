@@ -14,6 +14,7 @@
                         v-model="searchData.title"
                         placeholder="文章标题"
                         solo
+                        
                 ></v-text-field>
             </v-flex>
             <v-flex
@@ -155,7 +156,7 @@
                     <th
                             v-for="header in props.headers"
                             :key="header.text"
-                            :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                            :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '',header.class]"
                             @click="changeSort(header.value)"
                     >
                         <v-icon small>arrow_upward</v-icon>
@@ -183,8 +184,8 @@
                     <td class="text-xs-right">
                         <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage" :src="props.item.coverImage" alt="avatar"></v-img>
                     </td>
-                    <td class="text-xs-right text-truncate">{{ props.item.title }}</td>
-                    <td class="text-xs-right text-truncate">{{ props.item.subheading }}</td>
+                    <td class="text-xs-right text-truncate" ><div class="limit-width">{{ props.item.title }}</div></td>
+                    <td class="text-xs-right text-truncate"><div class="limit-width">{{ props.item.subheading }}</div></td>
                     <td class="text-xs-right col">
                         <span v-if="props.item.status == 'FORMAL'" class="text-success"> 发布 <v-icon color="success"
                                                                                                      small>important_devices</v-icon> </span>
@@ -199,11 +200,13 @@
                                                                                                       small>visibility_off</v-icon> </span>
                     </td>
                     <td class="text-xs-right col">
-                        <v-chip v-for="label in props.item.label.split(',')"
+                        <div class="limit-width">
+                        <v-chip v-for="label in props.item.label.split(',')" 
                                 :color="color[parseInt(label.length * 6 / 6)]"
                                 :key='label' small>
                             {{ label }}
                         </v-chip>
+                        </div>
                     </td>
                     <td class="text-xs-right">{{ props.item.categoryName }}</td>
                     <td class="text-xs-right"> {{ props.item.authorName}}</td>
@@ -504,6 +507,11 @@
     .pagination {
         margin: 20px;
     }
-
+    .limit-width{
+        width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: wrap;
+    }
 </style>
 
