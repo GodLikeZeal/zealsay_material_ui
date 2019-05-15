@@ -164,7 +164,14 @@
 
                         });
                     } else {
-                        this.$dialog.notify.error("拉取角色信息失败!")
+                        this.$swal({
+                            text: '拉取角色信息失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
                     }
                 });
             }

@@ -121,6 +121,17 @@ export default [
     )
   },
   {
+    path: '/article/edit',
+    meta: { breadcrumb: true },
+    name: 'articleedit',
+    title: '修改文章',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy-once" */
+      `@/views/article/edit/index.vue`
+    )
+  },
+  {
     path: '/article/list',
     meta: { breadcrumb: true },
     name: 'articlelist',

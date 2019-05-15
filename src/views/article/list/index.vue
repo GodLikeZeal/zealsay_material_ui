@@ -125,17 +125,8 @@
                     sm2
                     md1
             >
-                <v-btn color="success" title="添加" @click="handleUnsealingSelected(selected)"> 添加 <br/>
-                    <v-icon small>create</v-icon>
-                </v-btn>
-            </v-flex>
-            <v-flex
-                    xs6
-                    sm2
-                    md1
-            >
-                <v-btn color="error" title="下架" @click="handleDisabledSelected(selected)"> 下架 <br/>
-                    <v-icon small>trending_down</v-icon>
+                <v-btn color="success" title="添加" @click="handleAdd"> 添加 <br/>
+                    <v-icon small>add</v-icon>
                 </v-btn>
             </v-flex>
 
@@ -172,6 +163,11 @@
                     </th>
                 </tr>
             </template>
+            <template v-slot:no-data>
+                <p class="text-md-center teal--text">
+                    已经找遍了，再怎么找也找不到啦！
+                </p>
+            </template>
             <template
                     slot="items"
                     slot-scope="props"
@@ -204,7 +200,7 @@
                     </td>
                     <td class="text-xs-right col">
                         <v-chip v-for="label in props.item.label.split(',')"
-                                :color="color[parseInt(Math.random()*6,10)]"
+                                :color="color[parseInt(label.length * 6 / 6)]"
                                 :key='label' small>
                             {{ label }}
                         </v-chip>
@@ -223,11 +219,11 @@
                             <v-btn icon flat color="primary" title="编辑" @click="handleEdit(props.item)">
                                 <v-icon>create</v-icon>
                             </v-btn>
-                            <v-btn icon flat color="primary" title="上架" @click="handleUnsealing(props.item)">
-                                <v-icon>how_to_reg</v-icon>
+                            <v-btn icon flat color="primary" title="上架" @click="handleUp(props.item)">
+                                <v-icon>trending_up</v-icon>
                             </v-btn>
-                            <v-btn icon flat color="primary" title="下架" @click="handleDisabled(props.item)">
-                                <v-icon>remove_circle</v-icon>
+                            <v-btn icon flat color="primary" title="下架" @click="handleDown(props.item)">
+                                <v-icon>trending_down</v-icon>
                             </v-btn>
                         </v-layout>
                     </td>
@@ -237,21 +233,16 @@
         <div class="right pagination">
             <Pagination :pagination="pagination"></Pagination>
         </div>
-        <div>
-            <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
-        </div>
     </div>
 </template>
 <script>
     import {getUserList, disabeledUser, disabeledUserBatch, unsealingUserBatch, unsealingUser} from "@/api/user";
-    import {getArticlePageList, getCategoryList} from "@/api/article";
-    import forms from './components/form'
-    import info from './components/info'
+    import {getArticlePageList, getCategoryList, markArticleDown, markArticleUp} from "@/api/article";
     import Pagination from "../../../components/table/Pagination";
 
     export default {
         name: 'User',
-        components: {Pagination, forms, info},
+        components: {Pagination},
         data() {
             return {
                 searchData: {},
@@ -290,10 +281,21 @@
         },
         created() {
             getArticlePageList().then(res => {
-                this.desserts = res.data.records;
-                this.pagination.page = res.data.currentPage;
-                this.pagination.rowsPerPage = res.data.pageSize;
-                this.pagination.totalItems = res.data.total;
+                if (res.code === '200') {
+                    this.desserts = res.data.records;
+                    this.pagination.page = res.data.currentPage;
+                    this.pagination.rowsPerPage = res.data.pageSize;
+                    this.pagination.totalItems = res.data.total;
+                } else {
+                    this.$swal({
+                        text: '拉取文章列表失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
                 this.loading = false;
             }).catch(e => {
                 console.log(e);
@@ -307,7 +309,8 @@
                     timer: 3000
                 });
             });
-            getCategoryList().then(res => {if (res.code === '200') {
+            getCategoryList().then(res => {
+                if (res.code === '200') {
                 let de = {};
                 de.text = "请选择分类目录";
                 de.value = "";
@@ -319,12 +322,19 @@
                     this.category.push(re);
                 }
             } else {
-                this.$dialog.notify.error("拉取分类目录信息失败!")
+                    this.$swal({
+                        text: '拉取分类目录信息失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
             }
                 this.categoryLoading = false;
             }).catch(e => {
                 console.log(e);
-                this.loading = false;
+                this.categoryLoading = false;
                 this.$swal({
                     text: e.message,
                     type: 'error',
@@ -337,11 +347,22 @@
         },
         methods: {
             search(obj) {
-                getUserList(obj).then(res => {
-                    this.desserts = res.data.records;
-                    this.pagination.page = res.data.currentPage;
-                    this.pagination.rowsPerPage = res.data.pageSize;
-                    this.pagination.totalItems = res.data.total;
+                getArticlePageList(obj).then(res => {
+                    if (res.code === '200') {
+                        this.desserts = res.data.records;
+                        this.pagination.page = res.data.currentPage;
+                        this.pagination.rowsPerPage = res.data.pageSize;
+                        this.pagination.totalItems = res.data.total;
+                    } else {
+                        this.$swal({
+                            text: '拉取文章列表失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
                 });
             },
             toggleAll() {
@@ -356,34 +377,38 @@
                     this.pagination.descending = false
                 }
             },
+            handleAdd() {
+                this.$router.push({path: '/article/add'})
+            },
             handleEdit(row) {
                 this.formVisible = true;
-                this.row = {...row};
-                // let editDialog = this.$dialog.show(forms, {
-                //     row: row,
-                //     width: 600
-                // });
+                this.$router.push({path: '/article/edit',query: { id: row.id }})
             },
             handleCancel() {
                 this.formVisible = false;
             },
             handleInfo(row) {
                 this.row = {...row};
-                this.$dialog.show(info, {row: row, width: 600})
-            },
-            handleDisabled(row) {
                 this.$swal({
-                    title: '确定要封禁吗？',
-                    text: '一旦封禁，该用户无法登录系统',
+                    title: '操作成功!',
+                    text: '预览功能正在开发中，别急嘛',
+                    type: 'success'
+                });
+                // this.$dialog.show(info, {row: row, width: 600})
+            },
+            handleDown(row) {
+                this.$swal({
+                    title: '确定要下架吗？',
+                    text: '一旦下架，用户无法查看到当前文章作品',
                     type: 'warning',
                     showCancelButton: true
                 }).then((result) => {
                     if (result.value) {
-                        disabeledUser(row.id).then(res => {
+                        markArticleDown(row.id).then(res => {
                             if (res.code === '200' && res.data) {
                                 this.$swal({
                                     title: '操作成功!',
-                                    text: '该用户已经被封禁',
+                                    text: '该文章作品已经被下架',
                                     type: 'success'
                                 });
                                 this.search('');
@@ -398,19 +423,19 @@
                     }
                 });
             },
-            handleUnsealing(row) {
+            handleUp(row) {
                 this.$swal({
-                    title: '确定要解封吗？',
-                    text: '将该用户从封禁状态改成正常状态，该用户可正常使用系统',
+                    title: '确定要上架吗？',
+                    text: '将该资源从下架状态改成正常状态，用户可正常浏览该文章作品',
                     type: 'warning',
                     showCancelButton: true
                 }).then((result) => {
                     if (result.value) {
-                        unsealingUser(row.id).then(res => {
+                        markArticleUp(row.id).then(res => {
                             if (res.code === '200' && res.data) {
                                 this.$swal({
                                     title: '操作成功!',
-                                    text: '该用户已经成功解封',
+                                    text: '该文章作品已经成功上架',
                                     type: 'success'
                                 });
                                 this.search('');
@@ -424,78 +449,6 @@
                         });
                     }
                 });
-            },
-            handleDisabledSelected(selected) {
-                let param = selected.map(s => s.id);
-                if (param.length > 0) {
-                    this.$swal({
-                        title: '确定要封禁吗？',
-                        text: '一旦封禁，所选用户无法登录系统',
-                        type: 'warning',
-                        showCancelButton: true
-                    }).then((result) => {
-                        if (result.value) {
-                            disabeledUserBatch(param).then(res => {
-                                if (res.code === '200' && res.data) {
-                                    this.$swal({
-                                        title: '操作成功!',
-                                        text: '所选用户已经被封禁',
-                                        type: 'success'
-                                    });
-                                    this.search('');
-                                } else {
-                                    this.$swal({
-                                        title: '操作失败!',
-                                        text: res.message,
-                                        type: 'error'
-                                    });
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    this.$swal({
-                        title: '无法封禁！',
-                        text: '请至少选择一条需要封禁的用户！',
-                        type: 'warning'
-                    });
-                }
-            },
-            handleUnsealingSelected(selected) {
-                let param = selected.map(s => s.id);
-                if (param.length > 0) {
-                    this.$swal({
-                        title: '确定要解封吗？',
-                        text: '将所选用户从封禁状态改成正常状态，该用户可正常使用系统',
-                        type: 'warning',
-                        showCancelButton: true
-                    }).then((result) => {
-                        if (result.value) {
-                            unsealingUserBatch(param).then(res => {
-                                if (res.code === '200' && res.data) {
-                                    this.$swal({
-                                        title: '操作成功!',
-                                        text: '所选用户已经成功解封',
-                                        type: 'success'
-                                    });
-                                    this.search('');
-                                } else {
-                                    this.$swal({
-                                        title: '操作失败!',
-                                        text: res.message,
-                                        type: 'error'
-                                    });
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    this.$swal({
-                        title: '无法封禁！',
-                        text: '请至少选择一条需要解封的用户！',
-                        type: 'warning'
-                    });
-                }
             }
         }
     };
