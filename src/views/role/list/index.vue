@@ -315,6 +315,8 @@
     .pagination {
         margin: 20px;
     }
-
+    .toolbar-items {
+        min-height: 32px!important;
+    }
 </style>
 

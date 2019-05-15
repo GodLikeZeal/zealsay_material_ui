@@ -183,8 +183,8 @@
                     <td class="text-xs-right">
                         <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage" :src="props.item.coverImage" alt="avatar"></v-img>
                     </td>
-                    <td class="text-xs-right text-truncate">{{ props.item.title }}</td>
-                    <td class="text-xs-right text-truncate">{{ props.item.subheading }}</td>
+                    <td class="text-xs-right text-truncate" ><div class="limit-width">{{ props.item.title }}</div></td>
+                    <td class="text-xs-right text-truncate"><div class="limit-width">{{ props.item.subheading }}</div></td>
                     <td class="text-xs-right col">
                         <span v-if="props.item.status == 'FORMAL'" class="text-success"> 发布 <v-icon color="success"
                                                                                                      small>important_devices</v-icon> </span>
@@ -504,6 +504,11 @@
     .pagination {
         margin: 20px;
     }
-
+    .limit-width{
+        width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: wrap;
+    }
 </style>
 
