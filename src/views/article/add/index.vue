@@ -1,7 +1,5 @@
 <template>
     <v-container
-            fill-height
-            align-space-around
             fluid
             grid-list-xl>
         <v-layout
@@ -14,19 +12,38 @@
             >
                 <material-card class="v-card-profile">
                     <v-flex xs12 md12>
-                        <v-img
-                                class="avator"
-                                ref="img"
-                                :src="image"
-                        />
+                        <div class="show-preview" :style="{'width': preview_img.w + 'px', 'height': preview_img.h + 'px',  'overflow': 'hidden',
+    'margin': '5px auto'}">
+                            <div :style="preview_img.div">
+                                <v-img
+                                        class="avator"
+                                        ref="img"
+                                        :src="preview_img.url" :style="preview_img.img"
+                                />
+                            </div>
+                        </div>
                     </v-flex>
                     <v-card-text class="text-xs-center">
-                        <h6 class="category text-gray ffont-weight-light mb-3">封面图片</h6>
-                        <h5 class="card-title font-weight-light">Some of us get dipped in flat, some in satin, some
-                            in gloss.... But every once in a while you find someone who's iridescent, and when you do,
-                            nothing will ever compare.</h5>
+                        <h6 class="category text-gray ffont-weight-light mb-3">封面图片预览</h6>
                         <p class="card-description font-weight-light">
-                            有人住高楼，有人在深沟，有人光万丈，有人一身锈，世人万千种，浮云莫去求，斯人若彩虹，遇上方知有。</p>
+                            支持JPG、PNG格式图片，不超过5M。拖拽或缩放图中的虚线方格可调整头像，注意上方小头像预览效果</p>
+                        <div style="height: 200px;">
+                            <vueCropper ref="cropper"
+                                        style="background-repeat:repeat"
+                                        :img="option.img"
+                                        :outputSize="option.outputSize"
+                                        :outputType="option.outputType"
+                                        :info="option.info"
+                                        :canScale="option.canScale"
+                                        :canMoveBox="option.canMoveBox"
+                                        :centerBox="option.centerBox"
+                                        :autoCrop="option.autoCrop"
+                                        :autoCropWidth="option.autoCropWidth"
+                                        :autoCropHeight="option.autoCropHeight"
+                                        :fixed="option.fixed"
+                                        :fixedNumber="option.fixedNumber"
+                                        @realTime="realTime"></vueCropper>
+                        </div>
                         <upload-btn
                                 class="font-weight-light"
                                 color="primary"
@@ -149,7 +166,8 @@
                         text="支持使用markdown语法"
                 >
                     <div id="editor">
-                        <mavon-editor style="z-index:0;height: 800px" ref=md :ishljs="true" @change="changeData" @imgAdd="$imgAdd"
+                        <mavon-editor style="z-index:0;height: 800px" ref=md :ishljs="true" @change="changeData"
+                                      @imgAdd="$imgAdd"
                                       @imgDel="$imgDel" v-model="form.contentMd"/>
                     </div>
                 </material-card>
@@ -159,14 +177,16 @@
 </template>
 
 <script>
-    import {addUser, uploadImage, uploadImageMultiple} from "@/api/user";
+    import {uploadImage, uploadImageMultiple} from "@/api/user";
     import {getCategoryList, saveArticle} from '@/api/article';
     import UploadButton from 'vuetify-upload-button';
+    import VueCropper from 'vue-cropper';
 
     export default {
         name: 'add',
         components: {
             'upload-btn': UploadButton,
+            'vue-cropper': VueCropper
         },
         data: () => ({
             form: {
@@ -181,6 +201,21 @@
             },
             img_file: {},
             valid: false,
+            previews: {},
+            option: {
+                img: 'https://pan.zealsay.com/20190317010254129000000.jpg',                         //裁剪图片的地址
+                info: true,                      //裁剪框的大小信息
+                outputSize: 1,                   // 裁剪生成图片的质量
+                outputType: 'jpeg',              //裁剪生成图片的格式
+                canScale: true,                 // 图片是否允许滚轮缩放
+                autoCrop: true,                  // 是否默认生成截图框
+                canMoveBox: true,                  // 截图框能否拖动
+                centerBox: true,                  // 截图框能否拖动
+                autoCropWidth: 150,              // 默认生成截图框宽度
+                autoCropHeight: 150,             // 默认生成截图框高度
+                fixed: true,                    //是否开启截图框宽高固定比例
+                fixedNumber: [4, 4]              //截图框的宽高比例
+            },
             image: 'https://pan.zealsay.com/20190317010254129000000.jpg',
             category: [],
             labels: ['docker', 'java', 'vue', 'javascript', '动漫', '杂谈', '评点'],
@@ -219,6 +254,11 @@
                 this.categoryLoading = false;
             });
         },
+        computed: {
+            preview_img: function () {
+                return this.previews;
+            }
+        },
         methods: {
             submit() {
                 this.loading = true;
@@ -241,9 +281,27 @@
                     reader.onloadend = function () {
                         self.$refs.img.src = this.result;
                         self.image = this.result;
+                        self.option.img = this.result;
                     };
+                } else {
+                    this.$swal({
+                        text: "要选择一张图片文件才行呢！",
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
                 }
 
+            },
+            cropImage() {
+                // get image data for post processing, e.g. upload or setting image src
+                this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
+            },
+            // 实时预览函数
+            realTime(data) {
+                this.previews = data;
             },
             changeData(value, render) {
                 this.form.contentHtml = render;
@@ -262,34 +320,45 @@
                 //先上传头像
                 if (!(this.file === '')) {
                     let param = new FormData();
-                    param.append('file', this.file);
-                    uploadImage(param).then(res => {
-                        if (res.code === '200') {
-                            this.form.coverImage = res.data;
-                            this.image = res.data;
-                            this.save();
-                        } else {
+                    // 获取截图的base64 数据
+                    // this.$refs.cropper.getCropData((data) => {
+                    //     // do something
+                    //     console.log(data)
+                    // });
+                   // 获取截图的blob数据
+                    this.$refs.cropper.getCropBlob((data) => {
+                        // do something
+                        let file = data;
+                        param.append('file', file);
+                        uploadImage(param).then(res => {
+                            if (res.code === '200') {
+                                this.form.coverImage = res.data;
+                                this.image = res.data;
+                                this.save();
+                            } else {
+                                this.loading = false;
+                                this.$swal({
+                                    text: res.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            }
+                        }).catch(e => {
                             this.loading = false;
                             this.$swal({
-                                text: res.message,
+                                text: e.message,
                                 type: 'error',
                                 toast: true,
                                 position: 'top',
                                 showConfirmButton: false,
                                 timer: 3000
                             });
-                        }
-                    }).catch(e => {
-                        this.loading = false;
-                        this.$swal({
-                            text: e.message,
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    })
+                        })
+                    });
+
                 } else {
                     this.save();
                 }
