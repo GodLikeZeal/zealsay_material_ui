@@ -1,7 +1,5 @@
 <template>
     <v-container
-            fill-height
-            align-space-around
             fluid
             grid-list-xl>
         <v-layout
@@ -14,13 +12,13 @@
             >
                 <material-card class="v-card-profile">
                     <v-flex xs12 md12>
-                        <div class="show-preview" :style="{'width': previews.w + 'px', 'height': previews.h + 'px',  'overflow': 'hidden',
+                        <div class="show-preview" :style="{'width': preview_img.w + 'px', 'height': preview_img.h + 'px',  'overflow': 'hidden',
     'margin': '5px auto'}">
-                            <div :style="previews.div">
+                            <div :style="preview_img.div">
                                 <v-img
                                         class="avator"
                                         ref="img"
-                                        :src="previews.url" :style="previews.img"
+                                        :src="preview_img.url" :style="preview_img.img"
                                 />
                             </div>
                         </div>
@@ -28,9 +26,10 @@
                     <v-card-text class="text-xs-center">
                         <h6 class="category text-gray ffont-weight-light mb-3">封面图片预览</h6>
                         <p class="card-description font-weight-light">
-                            支持JPG、PNG格式图片，不超过5M。拖拽或缩放图中的虚线方格可调整头像，注意右侧小头像预览效果</p>
+                            支持JPG、PNG格式图片，不超过5M。拖拽或缩放图中的虚线方格可调整头像，注意上方小头像预览效果</p>
                         <div style="height: 200px;">
                             <vueCropper ref="cropper"
+                                        style="background-repeat:repeat"
                                         :img="option.img"
                                         :outputSize="option.outputSize"
                                         :outputType="option.outputType"
@@ -178,10 +177,10 @@
 </template>
 
 <script>
-    import {addUser, uploadImage, uploadImageMultiple} from "@/api/user";
+    import {uploadImage, uploadImageMultiple} from "@/api/user";
     import {getCategoryList, saveArticle} from '@/api/article';
     import UploadButton from 'vuetify-upload-button';
-    import {VueCropper} from 'vue-cropper';
+    import VueCropper from 'vue-cropper';
 
     export default {
         name: 'add',
@@ -255,6 +254,11 @@
                 this.categoryLoading = false;
             });
         },
+        computed: {
+            preview_img: function () {
+                return this.previews;
+            }
+        },
         methods: {
             submit() {
                 this.loading = true;
@@ -262,17 +266,6 @@
                 this.loading = false;
             },
             fileChanged(file) {
-                if (!file.type.includes('image/')) {
-                    this.$swal({
-                        text: "请选择一张图片文件",
-                        type: 'error',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                    return;
-                }
                 // handle file here. File will be an object.
                 // If multiple prop is true, it will return an object array of files.
                 let self = this;
@@ -290,6 +283,15 @@
                         self.image = this.result;
                         self.option.img = this.result;
                     };
+                } else {
+                    this.$swal({
+                        text: "要选择一张图片文件才行呢！",
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
                 }
 
             },
@@ -299,7 +301,6 @@
             },
             // 实时预览函数
             realTime(data) {
-                console.log('realTime');
                 this.previews = data;
             },
             changeData(value, render) {
@@ -319,34 +320,45 @@
                 //先上传头像
                 if (!(this.file === '')) {
                     let param = new FormData();
-                    param.append('file', this.file);
-                    uploadImage(param).then(res => {
-                        if (res.code === '200') {
-                            this.form.coverImage = res.data;
-                            this.image = res.data;
-                            this.save();
-                        } else {
+                    // 获取截图的base64 数据
+                    // this.$refs.cropper.getCropData((data) => {
+                    //     // do something
+                    //     console.log(data)
+                    // });
+                   // 获取截图的blob数据
+                    this.$refs.cropper.getCropBlob((data) => {
+                        // do something
+                        let file = data;
+                        param.append('file', file);
+                        uploadImage(param).then(res => {
+                            if (res.code === '200') {
+                                this.form.coverImage = res.data;
+                                this.image = res.data;
+                                this.save();
+                            } else {
+                                this.loading = false;
+                                this.$swal({
+                                    text: res.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            }
+                        }).catch(e => {
                             this.loading = false;
                             this.$swal({
-                                text: res.message,
+                                text: e.message,
                                 type: 'error',
                                 toast: true,
                                 position: 'top',
                                 showConfirmButton: false,
                                 timer: 3000
                             });
-                        }
-                    }).catch(e => {
-                        this.loading = false;
-                        this.$swal({
-                            text: e.message,
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    })
+                        })
+                    });
+
                 } else {
                     this.save();
                 }
