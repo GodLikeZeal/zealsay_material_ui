@@ -3,7 +3,7 @@
   padding: $padding-small $padding-general;
   min-width: $tooltip-min-width;
   max-width: $tooltip-max-width;
-  color: $gray !important;
+  color: $gray;
   font-size: $font-size-small;
   font-weight: $font-weight-base;
   @include shadow-8dp();
