@@ -79,6 +79,8 @@
 </template>
 
 <script>
+    import {getArticleLabelList, addArticleLabel, updateArticleLabel, deleteArticleLabel} from '@/api/article';
+
     export default {
         name: "articleLabel",
         data: () => ({
@@ -127,6 +129,9 @@
                 avatarColor: 'brown'
             }]
         }),
+        created: {
+
+        },
         methods: {
             search() {
                 console.log(this.search_text);

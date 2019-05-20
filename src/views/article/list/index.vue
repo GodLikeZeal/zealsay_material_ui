@@ -137,6 +137,7 @@
                 :headers="headers"
                 :pagination.sync="pagination"
                 :items="desserts"
+                :total-items="pagination.totalItems"
                 :loading="loading"
                 hide-actions
                 select-all
@@ -233,13 +234,12 @@
                 </tr>
             </template>
         </v-data-table>
-        <div class="right pagination">
-            <Pagination :pagination="pagination"></Pagination>
+        <div class="pagination text-md-right">
+            <v-pagination circle color="primary" v-model="pagination.page" :length="pagination.length"></v-pagination>
         </div>
     </div>
 </template>
 <script>
-    import {getUserList, disabeledUser, disabeledUserBatch, unsealingUserBatch, unsealingUser} from "@/api/user";
     import {getArticlePageList, getCategoryList, markArticleDown, markArticleUp} from "@/api/article";
     import Pagination from "../../../components/table/Pagination";
 
@@ -263,13 +263,15 @@
                     {text: '创建时间', value: 'createDate'},
                     {text: '操作', value: ''}
                 ],
+                totalDesserts:2,
                 desserts: [],
                 pagination: {
                     descending: true,
                     page: 1,
                     rowsPerPage: 10, // -1 for All
                     sortBy: '',
-                    totalItems: 2
+                    totalItems: 2,
+                    length: 1
                 },
                 row: {},
                 dialogVisible: false,
@@ -282,36 +284,16 @@
                 color: ["info", "success", "primary", "warning", "error", "default"]
             };
         },
-        created() {
-            getArticlePageList().then(res => {
-                if (res.code === '200') {
-                    this.desserts = res.data.records;
-                    this.pagination.page = res.data.currentPage;
-                    this.pagination.rowsPerPage = res.data.pageSize;
-                    this.pagination.totalItems = res.data.total;
-                } else {
-                    this.$swal({
-                        text: '拉取文章列表失败',
-                        type: 'error',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
+        watch: {
+            pagination:{
+                deep: true,//深度監控
+                handler(){
+                    this.search(this.searchData);
                 }
-                this.loading = false;
-            }).catch(e => {
-                console.log(e);
-                this.loading = false;
-                this.$swal({
-                    text: e.message,
-                    type: 'error',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-            });
+            }
+        },
+        created() {
+            // this.search(this.searchData);
             getCategoryList().then(res => {
                 if (res.code === '200') {
                 let de = {};
@@ -350,12 +332,15 @@
         },
         methods: {
             search(obj) {
+                obj.pageSize = this.pagination.rowsPerPage;
+                obj.pageNumber = this.pagination.page;
                 getArticlePageList(obj).then(res => {
                     if (res.code === '200') {
                         this.desserts = res.data.records;
                         this.pagination.page = res.data.currentPage;
                         this.pagination.rowsPerPage = res.data.pageSize;
                         this.pagination.totalItems = res.data.total;
+                        this.pagination.length = Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
                     } else {
                         this.$swal({
                             text: '拉取文章列表失败',
@@ -366,7 +351,18 @@
                             timer: 3000
                         });
                     }
-                });
+                }).catch(e => {
+                    console.log(e);
+                    this.categoryLoading = false;
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                })
             },
             toggleAll() {
                 if (this.selected.length) this.selected = [];

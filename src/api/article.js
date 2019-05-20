@@ -121,3 +121,58 @@ export function markArticleUp (id) {
     method: 'put'
   })
 }
+
+/**
+* 获取标签列表.
+*
+* @author  zeal
+* @date 2019/5/20 21:32
+*/
+export function getArticleLabelList (obj) {
+  return request({
+    url: '/api/v1/articleLabel/page',
+    method: 'get',
+    data: obj
+  })
+}
+
+/**
+* 添加标签.
+*
+* @author  zeal
+* @date 2019/5/20 21:33
+*/
+export function addArticleLabel (obj) {
+  return request({
+    url: '/api/v1/articleLabel',
+    method: 'post',
+    data: obj
+  })
+}
+
+/**
+* 修改标签.
+*
+* @author  zeal
+* @date 2019/5/20 21:33
+*/
+export function updateArticleLabel (obj) {
+  return request({
+    url: '/api/v1/articleLabel',
+    method: 'put',
+    data: obj
+  })
+}
+
+/**
+* 删除标签.
+*
+* @author  zeal
+* @date 2019/5/20 21:34
+*/
+export function deleteArticleLabel (id) {
+  return request({
+    url: '/api/v1/articleLabel/' + id,
+    method: 'delete'
+  })
+}
