@@ -14,7 +14,7 @@
                         v-model="searchData.title"
                         placeholder="文章标题"
                         solo
-                        
+
                 ></v-text-field>
             </v-flex>
             <v-flex
@@ -137,7 +137,7 @@
                 :headers="headers"
                 :pagination.sync="pagination"
                 :items="desserts"
-                :total-items="pagination.totalItems"
+                :total-items="totalDesserts"
                 :loading="loading"
                 hide-actions
                 select-all
@@ -183,13 +183,18 @@
                         ></v-checkbox>
                     </td>
                     <td class="text-xs-right">
-                        <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage" :src="props.item.coverImage" alt="avatar"></v-img>
+                        <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage"
+                               :src="props.item.coverImage" alt="avatar"></v-img>
                     </td>
-                    <td class="text-xs-right text-truncate" ><div class="limit-width">{{ props.item.title }}</div></td>
-                    <td class="text-xs-right text-truncate"><div class="limit-width">{{ props.item.subheading }}</div></td>
+                    <td class="text-xs-right text-truncate">
+                        <div class="limit-width">{{ props.item.title }}</div>
+                    </td>
+                    <td class="text-xs-right text-truncate">
+                        <div class="limit-width">{{ props.item.subheading }}</div>
+                    </td>
                     <td class="text-xs-right col">
                         <span v-if="props.item.status == 'FORMAL'" class="text-success"> 发布 <v-icon color="success"
-                                                                                                     small>important_devices</v-icon> </span>
+                                                                                                    small>important_devices</v-icon> </span>
                         <span v-if="props.item.status == 'DRAFT'" class="text-warning"> 草稿 <v-icon color="warning"
                                                                                                    small>speaker_notes</v-icon> </span>
                         <span v-if="props.item.status == 'DOWN'" class="text-error"> 下架<v-icon color="error" small>trending_down</v-icon> </span>
@@ -202,11 +207,11 @@
                     </td>
                     <td class="text-xs-right col">
                         <div class="limit-width">
-                        <v-chip v-for="label in props.item.label.split(',')" 
-                                :color="color[parseInt(label.length * 6 / 6)]"
-                                :key='label' small>
-                            {{ label }}
-                        </v-chip>
+                            <v-chip v-for="label in props.item.label.split(',')"
+                                    :color="color[parseInt(label.length * 6 / 6)]"
+                                    :key='label' small>
+                                {{ label }}
+                            </v-chip>
                         </div>
                     </td>
                     <td class="text-xs-right">{{ props.item.categoryName }}</td>
@@ -263,7 +268,8 @@
                     {text: '创建时间', value: 'createDate'},
                     {text: '操作', value: ''}
                 ],
-                totalDesserts:2,
+                totalDesserts: 2,
+                length: 1,
                 desserts: [],
                 pagination: {
                     descending: true,
@@ -285,28 +291,29 @@
             };
         },
         watch: {
-            pagination:{
+            pagination: {
                 deep: true,//深度監控
-                handler(){
+                handler() {
                     this.search(this.searchData);
                 }
             }
         },
         created() {
-            // this.search(this.searchData);
+            //加载数据
+            this.loadData();
             getCategoryList().then(res => {
                 if (res.code === '200') {
-                let de = {};
-                de.text = "请选择分类目录";
-                de.value = "";
-                this.category.push(de);
-                for(var i = 0; i< res.data.length; i++) {
-                    let re = {};
-                    re.text = res.data[i].name;
-                    re.value = res.data[i].id;
-                    this.category.push(re);
-                }
-            } else {
+                    let de = {};
+                    de.text = "请选择分类目录";
+                    de.value = "";
+                    this.category.push(de);
+                    for (var i = 0; i < res.data.length; i++) {
+                        let re = {};
+                        re.text = res.data[i].name;
+                        re.value = res.data[i].id;
+                        this.category.push(re);
+                    }
+                } else {
                     this.$swal({
                         text: '拉取分类目录信息失败',
                         type: 'error',
@@ -315,7 +322,7 @@
                         showConfirmButton: false,
                         timer: 3000
                     });
-            }
+                }
                 this.categoryLoading = false;
             }).catch(e => {
                 console.log(e);
@@ -331,16 +338,48 @@
             });
         },
         methods: {
+            loadData() {
+                let searchData = this.searchData;
+                searchData.pageSize = this.pagination.rowsPerPage;
+                searchData.pageNumber = this.pagination.page;
+                getArticlePageList(searchData).then(res => {
+                    if (res.code === '200') {
+                        this.desserts = res.data.records;
+                        this.totalDesserts = res.data.total;
+                        this.length = Math.ceil(res.data.total / this.pagination.rowsPerPage)
+                    } else {
+                        this.$swal({
+                            text: '拉取文章列表失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                }).catch(e => {
+                    console.log(e);
+                    this.categoryLoading = false;
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                })
+            },
             search(obj) {
                 obj.pageSize = this.pagination.rowsPerPage;
                 obj.pageNumber = this.pagination.page;
                 getArticlePageList(obj).then(res => {
                     if (res.code === '200') {
                         this.desserts = res.data.records;
-                        this.pagination.page = res.data.currentPage;
-                        this.pagination.rowsPerPage = res.data.pageSize;
-                        this.pagination.totalItems = res.data.total;
-                        this.pagination.length = Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+                        // this.pagination.page = res.data.currentPage;
+                        // this.pagination.rowsPerPage = res.data.pageSize;
+                        // this.pagination.totalItems = res.data.total;
+                        // this.pagination.length = Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
                     } else {
                         this.$swal({
                             text: '拉取文章列表失败',
@@ -381,7 +420,7 @@
             },
             handleEdit(row) {
                 this.formVisible = true;
-                this.$router.push({path: '/article/edit',query: { id: row.id }})
+                this.$router.push({path: '/article/edit', query: {id: row.id}})
             },
             handleCancel() {
                 this.formVisible = false;
@@ -503,7 +542,8 @@
     .pagination {
         margin: 20px;
     }
-    .limit-width{
+
+    .limit-width {
         width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
