@@ -137,7 +137,7 @@
                 :headers="headers"
                 :pagination.sync="pagination"
                 :items="desserts"
-                :total-items="totalDesserts"
+                :total-items="pagination.totalItems"
                 :loading="loading"
                 hide-actions
                 select-all
@@ -240,7 +240,7 @@
             </template>
         </v-data-table>
         <div class="pagination text-md-right">
-            <v-pagination circle color="primary" v-model="pagination.page" :length="pagination.length"></v-pagination>
+            <v-pagination circle color="primary" v-model="pagination.page" :length="length"></v-pagination>
         </div>
     </div>
 </template>
@@ -268,16 +268,13 @@
                     {text: '创建时间', value: 'createDate'},
                     {text: '操作', value: ''}
                 ],
-                totalDesserts: 2,
-                length: 1,
                 desserts: [],
                 pagination: {
                     descending: true,
                     page: 1,
                     rowsPerPage: 10, // -1 for All
                     sortBy: '',
-                    totalItems: 2,
-                    length: 1
+                    totalItems: 2
                 },
                 row: {},
                 dialogVisible: false,
@@ -289,6 +286,16 @@
                 endmenu: false,
                 color: ["info", "success", "primary", "warning", "error", "default"]
             };
+        },
+        computed: {
+            length:{
+                get: function () {
+                    return this.pagination.totalItems ? Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage) : 0;
+                },
+                set: function () {
+
+                }
+            }
         },
         watch: {
             pagination: {
@@ -345,8 +352,9 @@
                 getArticlePageList(searchData).then(res => {
                     if (res.code === '200') {
                         this.desserts = res.data.records;
-                        this.totalDesserts = res.data.total;
-                        this.length = Math.ceil(res.data.total / this.pagination.rowsPerPage)
+                        // this.pagination.page = res.data.currentPage;
+                        // this.pagination.rowsPerPage = res.data.pageSize;
+                        this.pagination.totalItems = res.data.total;
                     } else {
                         this.$swal({
                             text: '拉取文章列表失败',
@@ -378,8 +386,7 @@
                         this.desserts = res.data.records;
                         // this.pagination.page = res.data.currentPage;
                         // this.pagination.rowsPerPage = res.data.pageSize;
-                        // this.pagination.totalItems = res.data.total;
-                        // this.pagination.length = Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+                        this.pagination.totalItems = res.data.total;
                     } else {
                         this.$swal({
                             text: '拉取文章列表失败',
