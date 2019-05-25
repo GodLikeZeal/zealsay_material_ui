@@ -83,6 +83,21 @@ export function saveArticle (obj) {
 }
 
 /**
+ * 修改文章.
+ *
+ * @author  zhanglei
+ * @date 2019-03-13  16:13
+ */
+export function updateArticle (obj) {
+  return request({
+    url: '/api/v1/article',
+    method: 'put',
+    data: obj
+  })
+}
+
+
+/**
  * 分页查询文章列表.
  *
  * @author  zhanglei
