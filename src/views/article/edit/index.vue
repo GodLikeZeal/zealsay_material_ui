@@ -30,7 +30,7 @@
                         <div style="height: 200px;">
                             <vueCropper ref="cropper"
                                         style="background-repeat:repeat"
-                                        :img="option.img"
+                                        :img="form.coverImage"
                                         :outputSize="option.outputSize"
                                         :outputType="option.outputType"
                                         :info="option.info"
@@ -177,7 +177,7 @@
 
 <script>
     import {uploadImage, uploadImageMultiple} from "@/api/user";
-    import {getCategoryList, saveArticle, getArticle} from '@/api/article';
+    import {getCategoryList, updateArticle, getArticle} from '@/api/article';
     import UploadButton from 'vuetify-upload-button';
     import VueCropper from 'vue-cropper';
 
@@ -319,6 +319,7 @@
                         self.$refs.img.src = this.result;
                         self.image = this.result;
                         self.option.img = this.result;
+                        self.form.coverImage = this.result;
                     };
                 } else {
                     this.$swal({
@@ -415,12 +416,12 @@
                                 this.$refs.md.$img2Url(res.data[img].pos, res.data[img].url);
                             }
                             //开始提交文章信息
-                            saveArticle(this.form).then(res => {
+                            updateArticle(this.form).then(res => {
                                 if (res.code === '200') {
                                     this.loading = true;
                                     this.$swal({
                                         title: '保存成功!',
-                                        text: '不错哟,您已经添加了一篇文章啦',
+                                        text: '文章已更新',
                                         type: 'success'
                                     });
                                 } else {
@@ -471,12 +472,12 @@
                     });
                 } else {
                     //开始提交文章信息
-                    saveArticle(this.form).then(res => {
+                    updateArticle(this.form).then(res => {
                         if (res.code === '200') {
                             this.loading = false;
                             this.$swal({
                                 title: '保存成功!',
-                                text: '不错哟,您已经添加了一篇文章啦',
+                                text: '文章已更新',
                                 type: 'success'
                             });
                         } else {
