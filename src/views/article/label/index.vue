@@ -25,12 +25,14 @@
                                 clearable
                                 type="text"
                                 color="purple"
-                                @click:append-outer="search"
+                                @keyup.enter="search"
                         >
                             <template v-slot:prepend>
                                 <v-tooltip
                                         bottom
                                 >
+
+
                                     <template v-slot:activator="{ on }">
                                         <v-btn flat icon color="primary" @click="add">
                                             <v-icon v-on="on">add</v-icon>
@@ -48,7 +50,7 @@
                                             <v-icon v-on="on">search</v-icon>
                                         </v-btn>
                                     </template>
-                                    点击搜索按钮检索一下试试!
+                                    点击检索一下试试!
                                 </v-tooltip>
                             </template>
                         </v-text-field>
@@ -70,6 +72,9 @@
                     </v-card-text>
                 </material-card>
 
+                <div>
+                    <add-form :alert="addFormVisible" @handleCancelAdd='handleCancelAdd'></add-form>
+                </div>
             </v-flex>
 
         </v-layout>
@@ -79,68 +84,84 @@
 </template>
 
 <script>
-    import {getArticleLabelList, addArticleLabel, updateArticleLabel, deleteArticleLabel} from '@/api/article';
+    import {getArticleLabelPage, deleteArticleLabel} from '@/api/article';
+    import addForm from './components/addForm';
 
     export default {
         name: "articleLabel",
+        components: { addForm},
         data: () => ({
             search_text: '',
-            labels: [{
-                id: '1',
-                icon: 'book',
-                name: 'docker',
-                hot: '1231',
-                outColor: 'teal',
-                avatarColor: 'brown'
-            }, {
-                id: '3',
-                icon: '',
-                name: 'vue',
-                hot: '123',
-                outColor: 'teal',
-                avatarColor: 'brown'
-            }, {
-                id: '4',
-                icon: '',
-                name: 'java',
-                hot: '123',
-                outColor: 'teal',
-                avatarColor: 'brown'
-            }, {
-                id: '5',
-                icon: '',
-                name: 'javascript',
-                hot: '123',
-                outColor: 'teal',
-                avatarColor: 'brown'
-            }, {
-                id: '2',
-                icon: '',
-                name: 'html',
-                hot: '123',
-                outColor: 'teal',
-                avatarColor: 'brown'
-            }, {
-                id: '6',
-                icon: '',
-                name: 'react',
-                hot: '123',
-                outColor: 'teal',
-                avatarColor: 'brown'
-            }]
+            total:'',
+            labels: [],
+            addFormVisible: false
         }),
-        created: {
-
+        created() {
+            this.search();
         },
         methods: {
             search() {
-                console.log(this.search_text);
+                let serachData = {};
+                serachData.name = this.search_text;
+                getArticleLabelPage(serachData).then(res => {
+                    if (res.code === '200') {
+                        this.labels = res.data.records;
+                        this.total = res.data.total;
+                    } else {
+                        this.$swal({
+                            text: '拉取标签失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                }).catch(e => {
+                    console.log(e);
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }).finally(() => {
+                })
             },
             add() {
-                console.log(this.search_text);
+                this.addFormVisible = true;
+            },
+            handleCancelAdd() {
+                this.addFormVisible = false;
             },
             remove(id) {
-                console.log('remove' + id);
+                deleteArticleLabel(id).then(res => {
+                    if (res.code === '200') {
+                        this.search();
+                    } else {
+                        this.$swal({
+                            text: '删除标签失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                }).catch(e => {
+                    console.log(e);
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }).finally(() => {
+                })
             }
         }
     }

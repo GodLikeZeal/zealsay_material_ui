@@ -103,8 +103,8 @@
                 </tr>
             </template>
         </v-data-table>
-        <div class="right pagination">
-            <Pagination :pagination="pagination"></Pagination>
+        <div class="pagination text-md-right">
+            <v-pagination  @input="search" circle color="primary" v-model="pagination.page" :length="length"></v-pagination>
         </div>
         <div>
             <add-form :alert="addFormVisible" @handleCancel='handleCancelAdd'></add-form>
@@ -115,14 +115,13 @@
     </div>
 </template>
 <script>
-    import {getRolePageList,addRole,updateRole,deleteRole,deleteRoleBatch} from "@/api/role";
+    import {getRolePageList,deleteRole,deleteRoleBatch} from "@/api/role";
     import addForm from './components/addForm';
     import editForm from './components/editForm';
-    import Pagination from "../../../components/table/Pagination";
 
     export default {
         name: 'User',
-        components: {Pagination, addForm, editForm},
+        components: { addForm, editForm},
         data() {
             return {
                 searchData: {},
@@ -149,14 +148,49 @@
                 title: ''
             };
         },
+        computed: {
+            length:{
+                get: function () {
+                    return this.pagination.totalItems ? Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage) : 0;
+                },
+                set: function () {
+
+                }
+            }
+        },
         created() {
+            let searchData = this.searchData;
+            searchData.pageSize = this.pagination.rowsPerPage;
+            searchData.pageNumber = this.pagination.page;
             getRolePageList().then(res => {
-                this.desserts = res.data.records;
-                this.pagination.page = res.data.currentPage;
-                this.pagination.rowsPerPage = res.data.pageSize;
-                this.pagination.totalItems = res.data.total;
+                if (res.code === '200') {
+                    this.desserts = res.data.records;
+                    this.pagination.page = res.data.currentPage;
+                    this.pagination.rowsPerPage = res.data.pageSize;
+                    this.pagination.totalItems = res.data.total;
+                } else {
+                    this.$swal({
+                        text: '拉取角色列表失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            }).catch(e => {
+                console.log(e);
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }).finally(() => {
                 this.loading = false;
-            });
+            })
         },
         methods: {
             refresh(obj) {

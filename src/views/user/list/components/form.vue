@@ -198,7 +198,7 @@
                             timer: 3000
                         });
                     }
-                });
+                })
             }
         },
         methods: {
@@ -220,14 +220,12 @@
                         this.$refs.cropper.getCropBlob((data) => {
                             // do something
                             let file = data;
-                            param.append('file', file);
+                            param.append('file', file, this.file.name);
                             uploadImage(param).then(res => {
                                 if (res.code === '200') {
-                                    console.log("上传了");
                                     this.form.avatar = res.data;
                                     this.save();
                                 } else {
-                                    this.loading = false;
                                     this.$swal({
                                         text: res.message,
                                         type: 'error',
@@ -238,7 +236,6 @@
                                     });
                                 }
                             }).catch(e => {
-                                this.loading = false;
                                 this.$swal({
                                     text: e.message,
                                     type: 'error',
@@ -248,12 +245,13 @@
                                     timer: 3000
                                 });
                             })
+                        }).finally(() => {
+                            this.loading = false;
                         });
                     } else {
                         this.save();
                     }
                 }
-                this.loading = false;
             },
             save() {
                 //开始提交
@@ -292,7 +290,9 @@
                         showConfirmButton: false,
                         timer: 3000
                     });
-                })
+                }).finally(() => {
+                    this.loading = false;
+                });
             },
             fileChanged(file) {
                 if (!file.type.includes('image/')) {
@@ -320,6 +320,7 @@
                     // 读取成功后的回调
                     reader.onloadend = function () {
                         self.row.avatar = this.result;
+                        self.form.avatar = this.result;
                     };
                 } else {
                     this.$swal({

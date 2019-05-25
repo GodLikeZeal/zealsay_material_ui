@@ -3,6 +3,7 @@
         <v-layout
                 row
                 wrap
+                @keyup.enter="search"
         >
             <v-flex
                     xs12
@@ -117,7 +118,7 @@
                     sm2
                     md1
             >
-                <v-btn color="info" @click="search(searchData)">搜索 <br/>
+                <v-btn color="info" @click="search">搜索 <br/>
                     <v-icon small>search</v-icon>
                 </v-btn>
             </v-flex>
@@ -167,6 +168,7 @@
             </template>
             <template v-slot:no-data>
                 <p class="text-md-center teal--text">
+                    <v-icon>sentiment_satisfied_alt</v-icon>
                     已经找遍了，再怎么找也找不到啦！
                 </p>
             </template>
@@ -187,10 +189,24 @@
                                :src="props.item.coverImage" alt="avatar"></v-img>
                     </td>
                     <td class="text-xs-right text-truncate">
-                        <div class="limit-width">{{ props.item.title }}</div>
+                        <v-tooltip
+                                bottom
+                        >
+                            <template v-slot:activator="{ on }">
+                                <div v-on="on" class="limit-width">{{ props.item.title }}</div>
+                            </template>
+                            {{ props.item.title }}
+                        </v-tooltip>
                     </td>
                     <td class="text-xs-right text-truncate">
-                        <div class="limit-width">{{ props.item.subheading }}</div>
+                        <v-tooltip
+                                bottom
+                        >
+                            <template v-slot:activator="{ on }">
+                                <div v-on="on" class="limit-width">{{ props.item.subheading }}</div>
+                            </template>
+                            {{ props.item.subheading }}
+                        </v-tooltip>
                     </td>
                     <td class="text-xs-right col">
                         <span v-if="props.item.status == 'FORMAL'" class="text-success"> 发布 <v-icon color="success"
@@ -240,17 +256,16 @@
             </template>
         </v-data-table>
         <div class="pagination text-md-right">
-            <v-pagination circle color="primary" v-model="pagination.page" :length="length"></v-pagination>
+            <v-pagination @input="search" circle color="primary" v-model="pagination.page"
+                          :length="length"></v-pagination>
         </div>
     </div>
 </template>
 <script>
     import {getArticlePageList, getCategoryList, markArticleDown, markArticleUp} from "@/api/article";
-    import Pagination from "../../../components/table/Pagination";
 
     export default {
         name: 'User',
-        components: {Pagination},
         data() {
             return {
                 searchData: {},
@@ -288,7 +303,7 @@
             };
         },
         computed: {
-            length:{
+            length: {
                 get: function () {
                     return this.pagination.totalItems ? Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage) : 0;
                 },
@@ -297,17 +312,11 @@
                 }
             }
         },
-        watch: {
-            pagination: {
-                deep: true,//深度監控
-                handler() {
-                    this.search(this.searchData);
-                }
-            }
-        },
         created() {
             //加载数据
-            this.loadData();
+            this.loading = true;
+            this.categoryLoading = true;
+            this.search();
             getCategoryList().then(res => {
                 if (res.code === '200') {
                     let de = {};
@@ -330,10 +339,8 @@
                         timer: 3000
                     });
                 }
-                this.categoryLoading = false;
             }).catch(e => {
                 console.log(e);
-                this.categoryLoading = false;
                 this.$swal({
                     text: e.message,
                     type: 'error',
@@ -342,10 +349,13 @@
                     showConfirmButton: false,
                     timer: 3000
                 });
+            }).finally(() => {
+                this.categoryLoading = false;
             });
         },
         methods: {
-            loadData() {
+            search() {
+                this.loading = true;
                 let searchData = this.searchData;
                 searchData.pageSize = this.pagination.rowsPerPage;
                 searchData.pageNumber = this.pagination.page;
@@ -376,38 +386,8 @@
                         showConfirmButton: false,
                         timer: 3000
                     });
-                })
-            },
-            search(obj) {
-                obj.pageSize = this.pagination.rowsPerPage;
-                obj.pageNumber = this.pagination.page;
-                getArticlePageList(obj).then(res => {
-                    if (res.code === '200') {
-                        this.desserts = res.data.records;
-                        // this.pagination.page = res.data.currentPage;
-                        // this.pagination.rowsPerPage = res.data.pageSize;
-                        this.pagination.totalItems = res.data.total;
-                    } else {
-                        this.$swal({
-                            text: '拉取文章列表失败',
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    }
-                }).catch(e => {
-                    console.log(e);
-                    this.categoryLoading = false;
-                    this.$swal({
-                        text: e.message,
-                        type: 'error',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
+                }).finally(() => {
+                    this.loading = false;
                 })
             },
             toggleAll() {
