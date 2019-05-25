@@ -8,7 +8,7 @@ import request from '@/util/request'
  */
 export function getCategoryList (obj) {
   return request({
-    url: '/api/v1/articleCategory',
+    url: '/api/v1/article/category',
     method: 'get',
     data: obj
   })
@@ -22,7 +22,7 @@ export function getCategoryList (obj) {
  */
 export function addCategory (obj) {
   return request({
-    url: '/api/v1/articleCategory',
+    url: '/api/v1/article/category',
     method: 'post',
     data: obj
   })
@@ -36,7 +36,7 @@ export function addCategory (obj) {
  */
 export function updateCategory (obj) {
   return request({
-    url: '/api/v1/articleCategory',
+    url: '/api/v1/article/category',
     method: 'put',
     data: obj
   })
@@ -50,7 +50,7 @@ export function updateCategory (obj) {
  */
 export function deleteCategory (id) {
   return request({
-    url: '/api/v1/articleCategory/' + id,
+    url: '/api/v1/article/category/' + id,
     method: 'delete'
   })
 }
@@ -119,5 +119,73 @@ export function markArticleUp (id) {
   return request({
     url: '/api/v1/article/up/' + id,
     method: 'put'
+  })
+}
+
+/**
+* 分页获取标签列表.
+*
+* @author  zeal
+* @date 2019/5/20 21:32
+*/
+export function getArticleLabelPage (obj) {
+  return request({
+    url: '/api/v1/article/label/page',
+    method: 'get',
+    data: obj
+  })
+}
+
+/**
+ * 获取标签列表.
+ *
+ * @author  zeal
+ * @date 2019/5/20 21:32
+ */
+export function getArticleLabelList (obj) {
+  return request({
+    url: '/api/v1/article/label',
+    method: 'get'
+  })
+}
+
+/**
+* 添加标签.
+*
+* @author  zeal
+* @date 2019/5/20 21:33
+*/
+export function addArticleLabel (obj) {
+  return request({
+    url: '/api/v1/article/label',
+    method: 'post',
+    data: obj
+  })
+}
+
+/**
+* 修改标签.
+*
+* @author  zeal
+* @date 2019/5/20 21:33
+*/
+export function updateArticleLabel (obj) {
+  return request({
+    url: '/api/v1/article/label',
+    method: 'put',
+    data: obj
+  })
+}
+
+/**
+* 删除标签.
+*
+* @author  zeal
+* @date 2019/5/20 21:34
+*/
+export function deleteArticleLabel (id) {
+  return request({
+    url: '/api/v1/article/label/' + id,
+    method: 'delete'
   })
 }

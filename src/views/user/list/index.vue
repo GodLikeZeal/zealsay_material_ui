@@ -81,7 +81,7 @@
         >
             <template v-slot:no-data>
                 <p class="text-md-center teal--text">
-                    已经找遍了，再怎么找也找不到啦！
+                    <v-icon>sentiment_satisfied_alt</v-icon> 已经找遍了，再怎么找也找不到啦！
                 </p>
             </template>
             <template v-slot:headers="props">
@@ -163,8 +163,8 @@
                 </tr>
             </template>
         </v-data-table>
-        <div class="right pagination">
-            <Pagination :pagination="pagination"></Pagination>
+        <div class="pagination text-md-right">
+            <v-pagination  @input="search" circle color="primary" v-model="pagination.page" :length="length"></v-pagination>
         </div>
         <div>
             <forms :row="row" :alert="formVisible" @handleCancel='handleCancel'></forms>
@@ -175,11 +175,9 @@
     import {getUserList, disabeledUser, disabeledUserBatch, unsealingUserBatch, unsealingUser} from "@/api/user";
     import forms from './components/form'
     import info from './components/info'
-    import Pagination from "../../../components/table/Pagination";
-
     export default {
         name: 'User',
-        components: {Pagination, forms, info},
+        components: {forms, info},
         data() {
             return {
                 searchData: {},
@@ -210,23 +208,53 @@
                 title: ''
             };
         },
+        computed: {
+            length:{
+                get: function () {
+                    return this.pagination.totalItems ? Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage) : 0;
+                },
+                set: function () {
+
+                }
+            }
+        },
         created() {
-            getUserList().then(res => {
-                this.desserts = res.data.records;
-                this.pagination.page = res.data.currentPage;
-                this.pagination.rowsPerPage = res.data.pageSize;
-                this.pagination.totalItems = res.data.total;
-                this.loading = false;
-            });
+            this.search();
         },
         methods: {
-            search(obj) {
-                getUserList(obj).then(res => {
-                    this.desserts = res.data.records;
-                    this.pagination.page = res.data.currentPage;
-                    this.pagination.rowsPerPage = res.data.pageSize;
-                    this.pagination.totalItems = res.data.total;
-                });
+            search() {
+                let searchData = this.searchData;
+                searchData.pageSize = this.pagination.rowsPerPage;
+                searchData.pageNumber = this.pagination.page;
+                getUserList(searchData).then(res => {
+                    if (res.code === '200') {
+                        this.desserts = res.data.records;
+                        this.pagination.page = res.data.currentPage;
+                        this.pagination.rowsPerPage = res.data.pageSize;
+                        this.pagination.totalItems = res.data.total;
+                    } else {
+                        this.$swal({
+                            text: '拉取用户列表失败',
+                            type: 'error',
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                }).catch(e => {
+                    console.log(e);
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }).finally(() => {
+                    this.loading = false;
+                })
             },
             toggleAll() {
                 if (this.selected.length) this.selected = [];

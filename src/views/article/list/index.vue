@@ -3,6 +3,7 @@
         <v-layout
                 row
                 wrap
+                @keyup.enter="search"
         >
             <v-flex
                     xs12
@@ -14,7 +15,7 @@
                         v-model="searchData.title"
                         placeholder="文章标题"
                         solo
-                        
+
                 ></v-text-field>
             </v-flex>
             <v-flex
@@ -117,7 +118,7 @@
                     sm2
                     md1
             >
-                <v-btn color="info" @click="search(searchData)">搜索 <br/>
+                <v-btn color="info" @click="search">搜索 <br/>
                     <v-icon small>search</v-icon>
                 </v-btn>
             </v-flex>
@@ -137,6 +138,7 @@
                 :headers="headers"
                 :pagination.sync="pagination"
                 :items="desserts"
+                :total-items="pagination.totalItems"
                 :loading="loading"
                 hide-actions
                 select-all
@@ -166,6 +168,7 @@
             </template>
             <template v-slot:no-data>
                 <p class="text-md-center teal--text">
+                    <v-icon>sentiment_satisfied_alt</v-icon>
                     已经找遍了，再怎么找也找不到啦！
                 </p>
             </template>
@@ -182,13 +185,32 @@
                         ></v-checkbox>
                     </td>
                     <td class="text-xs-right">
-                        <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage" :src="props.item.coverImage" alt="avatar"></v-img>
+                        <v-img height="32px" width="32px" aspect-ratio="1.0" :lazy-src="props.item.coverImage"
+                               :src="props.item.coverImage" alt="avatar"></v-img>
                     </td>
-                    <td class="text-xs-right text-truncate" ><div class="limit-width">{{ props.item.title }}</div></td>
-                    <td class="text-xs-right text-truncate"><div class="limit-width">{{ props.item.subheading }}</div></td>
+                    <td class="text-xs-right text-truncate">
+                        <v-tooltip
+                                bottom
+                        >
+                            <template v-slot:activator="{ on }">
+                                <div v-on="on" class="limit-width">{{ props.item.title }}</div>
+                            </template>
+                            {{ props.item.title }}
+                        </v-tooltip>
+                    </td>
+                    <td class="text-xs-right text-truncate">
+                        <v-tooltip
+                                bottom
+                        >
+                            <template v-slot:activator="{ on }">
+                                <div v-on="on" class="limit-width">{{ props.item.subheading }}</div>
+                            </template>
+                            {{ props.item.subheading }}
+                        </v-tooltip>
+                    </td>
                     <td class="text-xs-right col">
                         <span v-if="props.item.status == 'FORMAL'" class="text-success"> 发布 <v-icon color="success"
-                                                                                                     small>important_devices</v-icon> </span>
+                                                                                                    small>important_devices</v-icon> </span>
                         <span v-if="props.item.status == 'DRAFT'" class="text-warning"> 草稿 <v-icon color="warning"
                                                                                                    small>speaker_notes</v-icon> </span>
                         <span v-if="props.item.status == 'DOWN'" class="text-error"> 下架<v-icon color="error" small>trending_down</v-icon> </span>
@@ -201,11 +223,11 @@
                     </td>
                     <td class="text-xs-right col">
                         <div class="limit-width">
-                        <v-chip v-for="label in props.item.label.split(',')" 
-                                :color="color[parseInt(label.length * 6 / 6)]"
-                                :key='label' small>
-                            {{ label }}
-                        </v-chip>
+                            <v-chip v-for="label in props.item.label.split(',')"
+                                    :color="color[parseInt(label.length * 6 / 6)]"
+                                    :key='label' small>
+                                {{ label }}
+                            </v-chip>
                         </div>
                     </td>
                     <td class="text-xs-right">{{ props.item.categoryName }}</td>
@@ -233,19 +255,17 @@
                 </tr>
             </template>
         </v-data-table>
-        <div class="right pagination">
-            <Pagination :pagination="pagination"></Pagination>
+        <div class="pagination text-md-right">
+            <v-pagination @input="search" circle color="primary" v-model="pagination.page"
+                          :length="length"></v-pagination>
         </div>
     </div>
 </template>
 <script>
-    import {getUserList, disabeledUser, disabeledUserBatch, unsealingUserBatch, unsealingUser} from "@/api/user";
     import {getArticlePageList, getCategoryList, markArticleDown, markArticleUp} from "@/api/article";
-    import Pagination from "../../../components/table/Pagination";
 
     export default {
         name: 'User',
-        components: {Pagination},
         data() {
             return {
                 searchData: {},
@@ -282,49 +302,34 @@
                 color: ["info", "success", "primary", "warning", "error", "default"]
             };
         },
-        created() {
-            getArticlePageList().then(res => {
-                if (res.code === '200') {
-                    this.desserts = res.data.records;
-                    this.pagination.page = res.data.currentPage;
-                    this.pagination.rowsPerPage = res.data.pageSize;
-                    this.pagination.totalItems = res.data.total;
-                } else {
-                    this.$swal({
-                        text: '拉取文章列表失败',
-                        type: 'error',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
+        computed: {
+            length: {
+                get: function () {
+                    return this.pagination.totalItems ? Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage) : 0;
+                },
+                set: function () {
+
                 }
-                this.loading = false;
-            }).catch(e => {
-                console.log(e);
-                this.loading = false;
-                this.$swal({
-                    text: e.message,
-                    type: 'error',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-            });
+            }
+        },
+        created() {
+            //加载数据
+            this.loading = true;
+            this.categoryLoading = true;
+            this.search();
             getCategoryList().then(res => {
                 if (res.code === '200') {
-                let de = {};
-                de.text = "请选择分类目录";
-                de.value = "";
-                this.category.push(de);
-                for(var i = 0; i< res.data.length; i++) {
-                    let re = {};
-                    re.text = res.data[i].name;
-                    re.value = res.data[i].id;
-                    this.category.push(re);
-                }
-            } else {
+                    let de = {};
+                    de.text = "请选择分类目录";
+                    de.value = "";
+                    this.category.push(de);
+                    for (var i = 0; i < res.data.length; i++) {
+                        let re = {};
+                        re.text = res.data[i].name;
+                        re.value = res.data[i].id;
+                        this.category.push(re);
+                    }
+                } else {
                     this.$swal({
                         text: '拉取分类目录信息失败',
                         type: 'error',
@@ -333,11 +338,9 @@
                         showConfirmButton: false,
                         timer: 3000
                     });
-            }
-                this.categoryLoading = false;
+                }
             }).catch(e => {
                 console.log(e);
-                this.categoryLoading = false;
                 this.$swal({
                     text: e.message,
                     type: 'error',
@@ -346,15 +349,21 @@
                     showConfirmButton: false,
                     timer: 3000
                 });
+            }).finally(() => {
+                this.categoryLoading = false;
             });
         },
         methods: {
-            search(obj) {
-                getArticlePageList(obj).then(res => {
+            search() {
+                this.loading = true;
+                let searchData = this.searchData;
+                searchData.pageSize = this.pagination.rowsPerPage;
+                searchData.pageNumber = this.pagination.page;
+                getArticlePageList(searchData).then(res => {
                     if (res.code === '200') {
                         this.desserts = res.data.records;
-                        this.pagination.page = res.data.currentPage;
-                        this.pagination.rowsPerPage = res.data.pageSize;
+                        // this.pagination.page = res.data.currentPage;
+                        // this.pagination.rowsPerPage = res.data.pageSize;
                         this.pagination.totalItems = res.data.total;
                     } else {
                         this.$swal({
@@ -366,7 +375,20 @@
                             timer: 3000
                         });
                     }
-                });
+                }).catch(e => {
+                    console.log(e);
+                    this.categoryLoading = false;
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }).finally(() => {
+                    this.loading = false;
+                })
             },
             toggleAll() {
                 if (this.selected.length) this.selected = [];
@@ -385,7 +407,7 @@
             },
             handleEdit(row) {
                 this.formVisible = true;
-                this.$router.push({path: '/article/edit',query: { id: row.id }})
+                this.$router.push({path: '/article/edit', query: {id: row.id}})
             },
             handleCancel() {
                 this.formVisible = false;
@@ -507,7 +529,8 @@
     .pagination {
         margin: 20px;
     }
-    .limit-width{
+
+    .limit-width {
         width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;

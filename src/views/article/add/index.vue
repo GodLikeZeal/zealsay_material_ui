@@ -178,7 +178,7 @@
 
 <script>
     import {uploadImage, uploadImageMultiple} from "@/api/user";
-    import {getCategoryList, saveArticle} from '@/api/article';
+    import {getCategoryList, saveArticle, getArticleLabelList} from '@/api/article';
     import UploadButton from 'vuetify-upload-button';
     import VueCropper from 'vue-cropper';
 
@@ -218,7 +218,7 @@
             },
             image: 'https://pan.zealsay.com/20190317010254129000000.jpg',
             category: [],
-            labels: ['docker', 'java', 'vue', 'javascript', '动漫', '杂谈', '评点'],
+            labels: [],
             categoryLoading: false,
             cityLoading: false,
             areaLoading: false,
@@ -251,8 +251,44 @@
                         timer: 3000
                     });
                 }
+            }).catch(e => {
+                console.log(e);
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }).finally(() => {
                 this.categoryLoading = false;
             });
+            getArticleLabelList().then(res => {
+                if (res.code === '200') {
+                    this.labels = res.data.map(r => r.name);
+                } else {
+                    this.$swal({
+                        text: '拉取分类目录信息失败',
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            }).catch(e => {
+                console.log(e);
+                this.$swal({
+                    text: e.message,
+                    type: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }).finally(() => {
+            })
         },
         computed: {
             preview_img: function () {
@@ -329,7 +365,7 @@
                     this.$refs.cropper.getCropBlob((data) => {
                         // do something
                         let file = data;
-                        param.append('file', file);
+                        param.append('file', file, this.file.name);
                         uploadImage(param).then(res => {
                             if (res.code === '200') {
                                 this.form.coverImage = res.data;

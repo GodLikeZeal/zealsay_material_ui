@@ -12,22 +12,27 @@
                     md8
             >
                 <material-card class="v-card-profile">
-                    <v-avatar
-                            slot="offset"
-                            class="mx-auto d-block"
-                            size="140"
-                    >
-                        <img
-                                class="avator"
-                                ref="img"
-                                :src="image"
-                        />
-                    </v-avatar>
+                    <div style="height: 100px;width: 100px;margin: 10px auto;">
+                        <vueCropper ref="cropper"
+                                    style="background-repeat:repeat"
+                                    :img="form.avatar"
+                                    :outputSize="option.outputSize"
+                                    :outputType="option.outputType"
+                                    :info="option.info"
+                                    :canScale="option.canScale"
+                                    :canMoveBox="option.canMoveBox"
+                                    :centerBox="option.centerBox"
+                                    :autoCrop="option.autoCrop"
+                                    :autoCropWidth="option.autoCropWidth"
+                                    :autoCropHeight="option.autoCropHeight"
+                                    :fixed="option.fixed"
+                                    :fixedNumber="option.fixedNumber"
+                        ></vueCropper>
+                    </div>
                     <v-card-text class="text-xs-center">
                         <h6 class="category text-gray ffont-weight-light mb-3">用户头像</h6>
                         <h5 class="card-title font-weight-light">Some of us get dipped in flat, some in satin, some
-                            in
-                            gloss.... But every once in a while you find someone who's iridescent, and when you do,
+                            in gloss.... But every once in a while you find someone who's iridescent, and when you do,
                             nothing will ever compare.</h5>
                         <p class="card-description font-weight-light">
                             有人住高楼，有人在深沟，有人光万丈，有人一身锈，世人万千种，浮云莫去求，斯人若彩虹，遇上方知有。</p>
@@ -227,6 +232,20 @@
                 introduction: '',
                 role: '',
             },
+            option: {
+                img: 'https://pan.zealsay.com/20190317010254129000000.jpg',                         //裁剪图片的地址
+                info: true,                      //裁剪框的大小信息
+                outputSize: 1,                   // 裁剪生成图片的质量
+                outputType: 'jpeg',              //裁剪生成图片的格式
+                canScale: true,                 // 图片是否允许滚轮缩放
+                autoCrop: true,                  // 是否默认生成截图框
+                canMoveBox: true,                  // 截图框能否拖动
+                centerBox: true,                  // 截图框能否拖动
+                autoCropWidth: 150,              // 默认生成截图框宽度
+                autoCropHeight: 150,             // 默认生成截图框高度
+                fixed: true,                    //是否开启截图框宽高固定比例
+                fixedNumber: [4, 4]              //截图框的宽高比例
+            },
             valid: false,
             image: 'https://pan.zealsay.com/20190317010254129000000.jpg',
             roles: [],
@@ -350,84 +369,81 @@
                 this.loading = true;
                 if (this.$refs.form.validate()) {
                     //先上传头像
-                    if (!(this.file === '') && !(this.image === 'https://pan.zealsay.com/20190317010254129000000.jpg')) {
+                    if (!(this.file === '')) {
                         let param = new FormData();
-                        param.append('file', this.file);
-                        uploadImage(param).then(res => {
-                            if (res.code === '200') {
-                                this.form.avatar = res.data;
-                                //开始提交
-                                addUser(this.form).then(res => {
-                                    this.loading = false;
-                                    if (res.code === '200' && res.data) {
-                                        this.$swal({
-                                            title: '添加成功!',
-                                            text: '您已经成功添加了一名用户',
-                                            type: 'success'
-                                        });
-                                    } else {
-                                        this.$swal({
-                                            title: '添加失败!',
-                                            text: res.message,
-                                            type: 'error'
-                                        });
-                                    }
-                                }).catch(e => {
+                        // 获取截图的base64 数据
+                        // this.$refs.cropper.getCropData((data) => {
+                        //     // do something
+                        //     console.log(data)
+                        // });
+                        // 获取截图的blob数据
+                        this.$refs.cropper.getCropBlob((data) => {
+                            // do something
+                            let file = data;
+                            param.append('file', file, this.file.name);
+                            uploadImage(param).then(res => {
+                                if (res.code === '200') {
+                                    this.form.avatar = res.data;
+                                    this.save();
+                                } else {
                                     this.loading = false;
                                     this.$swal({
-                                        text: e.message,
+                                        text: res.message,
                                         type: 'error',
                                         toast: true,
                                         position: 'top',
                                         showConfirmButton: false,
                                         timer: 3000
                                     });
-                                })
-                            } else {
+                                }
+                            }).catch(e => {
                                 this.$swal({
-                                    title: '添加失败!',
-                                    text: res.message,
-                                    type: 'error'
+                                    text: e.message,
+                                    type: 'error',
+                                    toast: true,
+                                    position: 'top',
+                                    showConfirmButton: false,
+                                    timer: 3000
                                 });
-                            }
-                        }).catch(e => {
-                            this.loading = false;
-                            this.$swal({
-                                text: e.message,
-                                type: 'error',
-                                toast: true
+                            }).finally(() => {
+                                this.loading = false;
                             });
-                        })
-                    }
-                    //开始提交
-                    addUser(this.form).then(res => {
-                        this.loading = false;
-                        if (res.code === '200' && res.data) {
-                            this.$swal({
-                                title: '添加成功!',
-                                text: '您已经成功添加了一名用户',
-                                type: 'success'
-                            });
-                        } else {
-                            this.$swal({
-                                title: '添加失败!',
-                                text: res.message,
-                                type: 'error'
-                            });
-                        }
-                    }).catch(e => {
-                        this.loading = false;
-                        this.$swal({
-                            text: e.message,
-                            type: 'error',
-                            toast: true,
-                            position: 'top',
-                            showConfirmButton: false,
-                            timer: 3000
                         });
-                    })
+                    } else {
+                        this.save()
+                    }
                 }
-                this.loading = false;
+            },
+            save() {
+                //开始提交
+                addUser(this.form).then(res => {
+                    this.loading = false;
+                    if (res.code === '200' && res.data) {
+                        this.$swal({
+                            title: '添加成功!',
+                            text: '您已经成功添加了一名用户',
+                            type: 'success'
+                        });
+                    } else {
+                        this.$swal({
+                            title: '添加失败!',
+                            text: res.message,
+                            type: 'error'
+                        });
+                    }
+                }).catch(e => {
+                    this.loading = false;
+                    this.$swal({
+                        text: e.message,
+                        type: 'error',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }).finally(() => {
+                    this.loading = false;
+                });
             },
             fileChanged(file) {
                 // handle file here. File will be an object.
@@ -443,8 +459,7 @@
                     reader.readAsDataURL(file);
                     // 读取成功后的回调
                     reader.onloadend = function () {
-                        console.log(self.$refs.img);
-                        self.$refs.img.src = this.result;
+                        self.form.avatar = this.result;
                     };
                 }
 

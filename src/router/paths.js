@@ -152,6 +152,17 @@ export default [
       /* webpackMode: "lazy-once" */
       `@/views/article/category/index.vue`
     )
-  }
+  },
+    {
+        path: '/article/label',
+        meta: {breadcrumb: true},
+        name: 'label',
+        title: '标签云管理',
+        component: () => import(
+            /* webpackChunkName: "routes" */
+            /* webpackMode: "lazy-once" */
+            `@/views/article/label/index.vue`
+            )
+    }
 
 ];
