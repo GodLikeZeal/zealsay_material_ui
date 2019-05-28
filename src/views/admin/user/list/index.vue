@@ -130,9 +130,9 @@
                     <td class="text-xs-right">{{ props.item.name }}</td>
                     <td class="text-xs-right">
                         <img width="24px" v-if="props.item.sex==1"
-                             src="../../../assets/sex/boy.png"/>
+                             src="../../../../assets/sex/boy.png"/>
                         <img width="24px" v-if="props.item.sex==0"
-                             src="../../../assets/sex/girl.png"/></td>
+                             src="../../../../assets/sex/girl.png"/></td>
                     <td class="text-xs-right">{{ props.item.age }}</td>
                     <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
                     <td class="text-xs-right">{{ props.item.email }}</td>

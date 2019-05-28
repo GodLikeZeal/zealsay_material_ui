@@ -1,6 +1,5 @@
 import router from './router'
 import store from './store'
-// import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
 import { getToken } from '@/util/auth'
@@ -22,11 +21,13 @@ router.beforeEach((to, from, next) => {
   if (getToken()) { // determine if there has token
     /* has token */
     if (to.path === '/login') {
-      next({ path: '/dashboard' });
+      console.log('login啊');
+      next({path: '/admin/dashboard'});
       // if current page is dashboard will not trigger	afterEach hook, so manually handle it
       NProgress.done()
     } else {
       if (store.state.user.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
+        console.log('拉取角色信息');
         store.dispatch('user/GetUserInfo').then(res => { // 拉取user_info
           const roles = res.data.roles; // note: roles must be a array! such as: ['editor','develop']
           // store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
@@ -42,12 +43,13 @@ router.beforeEach((to, from, next) => {
       } else {
         // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
         if (hasPermission(store.state.user.roles, to.meta.roles)) {
+          console.log('判断角色信息');
           next()
           // NProgress.done()
         } else {
-          next({ path: '/401', replace: true, query: { noGoBack: true }})
+          console.log('没有权限403');
+          next({path: '/403', replace: true, query: {noGoBack: true}})
         }
-        // 可删 ↑
       }
     }
   } else {

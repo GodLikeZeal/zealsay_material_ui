@@ -20,9 +20,9 @@
                     <div class="row center">
                         <span class="indigo--text text-detail">{{ row.age }} 岁</span>
                         <span class="text-detail" v-if="row.sex==1" title="男"><img width="15px"
-                                                                                   src="../../../../assets/sex/boy.png"/></span>
+                                                                                   src="../../../../../assets/sex/boy.png"/></span>
                         <span class="text-detail" v-if="row.sex==0" title="女"><img width="15px"
-                                                                                   src="../../../../assets/sex/girl.png"/></span>
+                                                                                   src="../../../../../assets/sex/girl.png"/></span>
                         <span class="indigo--text text-detail">{{ row.username }}</span>
                     </div>
                     <v-card-text>

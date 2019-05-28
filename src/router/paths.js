@@ -66,8 +66,8 @@ export default [
     }
   },
   {
-    path: '/dashboard',
-    meta: { breadcrumb: true },
+      path: '/admin/dashboard',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'Dashboard',
     title: '桌面',
     component: () => import(
@@ -77,91 +77,91 @@ export default [
     )
   },
   {
-    path: '/user/list',
-    meta: { breadcrumb: true },
+      path: '/admin/user/list',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'userlist',
     title: '用户列表',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/user/list/index.vue`
+        `@/views/admin/user/list/index.vue`
     )
   },
   {
-    path: '/user/add',
-    meta: { breadcrumb: true },
+      path: '/admin/user/add',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'useradd',
     title: '用户添加',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/user/add/index.vue`
+        `@/views/admin/user/add/index.vue`
     )
   },
   {
-    path: '/role/list',
-    meta: { breadcrumb: true },
+      path: '/admin/role/list',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'rolelist',
     title: '角色列表',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/role/list/index.vue`
+        `@/views/admin/role/list/index.vue`
     )
   },
   {
-    path: '/article/add',
-    meta: { breadcrumb: true },
+      path: '/admin/article/add',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'articleadd',
     title: '写文章',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/article/add/index.vue`
+        `@/views/admin/article/add/index.vue`
     )
   },
   {
-    path: '/article/edit',
-    meta: { breadcrumb: true },
+      path: '/admin/article/edit',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'articleedit',
     title: '修改文章',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/article/edit/index.vue`
+        `@/views/admin/article/edit/index.vue`
     )
   },
   {
-    path: '/article/list',
-    meta: { breadcrumb: true },
+      path: '/admin/article/list',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'articlelist',
     title: '文章列表',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/article/list/index.vue`
+        `@/views/admin/article/list/index.vue`
     )
   },
   {
-    path: '/article/category',
-    meta: { breadcrumb: true },
+      path: '/admin/article/category',
+      meta: {breadcrumb: true, roles: ['ADMIN']},
     name: 'category',
     title: '分类目录',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy-once" */
-      `@/views/article/category/index.vue`
+        `@/views/admin/article/category/index.vue`
     )
   },
     {
-        path: '/article/label',
-        meta: {breadcrumb: true},
+        path: '/admin/article/label',
+        meta: {breadcrumb: true, roles: ['ADMIN']},
         name: 'label',
         title: '标签云管理',
         component: () => import(
             /* webpackChunkName: "routes" */
             /* webpackMode: "lazy-once" */
-            `@/views/article/label/index.vue`
+            `@/views/admin/article/label/index.vue`
             )
     }
 
