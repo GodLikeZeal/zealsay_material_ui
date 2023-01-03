@@ -15,7 +15,7 @@
     "@mdi/font": "^3.5.95",
     "@vue/cli-plugin-babel": "^3.4.0",
     "@vue/cli-plugin-eslint": "^3.4.0",
-    "@vue/cli-service": "^3.4.0",
+    "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-standard": "^3.0.1",
     "axios": "^0.18.0",
     "chartist": "0.11.0",
